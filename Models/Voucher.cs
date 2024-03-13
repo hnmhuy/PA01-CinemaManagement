@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CinemaManagement.Models
+namespace CinemaManagement.Models;
+
+public partial class Voucher
 {
-    public partial class Voucher
-    {
-        public string? VoucherCode { get; set; }
+    public string? VoucherCode { get; set; }
 
-        public double? DiscountAmount { get; set; }
+    public double? DiscountAmount { get; set; }
 
-        public bool? IsExpired { get; set; }
+    public bool? IsExpired { get; set; }
 
-        public bool? IsPercentageDiscount { get; set; }
+    public bool? IsPercentageDiscount { get; set; }
 
-        public double? RequirementAmount { get; set; }
+    public double? RequirementAmount { get; set; }
 
-        public int? VoucherAmount { get; set; }
+    public int? VoucherAmount { get; set; }
 
-        public int VoucherId { get; set; }
+    public int VoucherId { get; set; }
 
-        public virtual ICollection<BillVoucher> BillVouchers { get; set; } = new List<BillVoucher>();
-    }
-
+    public virtual ICollection<BillVoucher> BillVouchers { get; set; } = new List<BillVoucher>();
 }

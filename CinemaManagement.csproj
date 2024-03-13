@@ -15,6 +15,7 @@
     <Content Remove="Assets\Fonts\Segoe Fluent Icons.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Assets\Icons\imdb.png" />
     <None Remove="Navigation\NavBarLeft.xaml" />
     <None Remove="Navigation\NavBarTop.xaml" />
     <None Remove="Views\AccountPage.xaml" />
@@ -112,6 +113,9 @@
     <Page Update="Views\NavBarTop.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\Images\" />
   </ItemGroup>
 
   <!-- 
