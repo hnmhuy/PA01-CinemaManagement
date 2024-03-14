@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Application
     x:Class="CinemaManagement.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,10 +8,18 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
+                <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
             <FontFamily x:Key="FIcon">pack://application:,,,/CinemaManegement;component/Assets/fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons</FontFamily>
-            <!-- Other app resources here -->
+            <!--  Other app resources here  -->
+
+            <AcrylicBrush
+                x:Key="TopMovieBackgroud"
+                FallbackColor="Black"
+                TintColor="Gray"
+                TintLuminosityOpacity="0.058000002754852176"
+                TintOpacity="0" />
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

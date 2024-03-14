@@ -17,6 +17,11 @@
 
     <Page.Resources>
 
+        <!--  Converter  -->
+
+        <vm:RankIconConverter x:Key="RankToIconConverter" />
+        <vm:StringToColorConverter x:Key="StringToColorConverter" />
+
         <!--  Style  -->
         <Style x:Key="MovieTag" TargetType="StackPanel">
             <Setter Property="Padding" Value="8,4,8,4" />
@@ -39,9 +44,14 @@
             <Setter Property="FocusVisualPrimaryBrush" Value="#E38B29" />
             <Setter Property="FocusVisualSecondaryBrush" Value="#FFD8A9" />
             <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Width" Value="225" />
-            <Setter Property="Height" Value="400" />
+            <Setter Property="Width" Value="220" />
+            <Setter Property="Height" Value="360" />
             <Setter Property="Background" Value="{StaticResource AcrylicBackgroundFillColorDefaultBrush}" />
+        </Style>
+
+        <Style x:Key="PosterImage" TargetType="Image">
+            <Setter Property="Width" Value="220" />
+            <Setter Property="Stretch" Value="Fill" />
         </Style>
 
         <Style x:Key="MovieListScroller" TargetType="ScrollViewer">
@@ -51,18 +61,49 @@
             <Setter Property="VerticalScrollBarVisibility" Value="Hidden" />
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="VerticalScrollMode" Value="Disabled" />
-            <Setter Property="Height" Value="420" />
-            <Setter Property="Padding" Value="12,0,12,0" />
+            <Setter Property="Height" Value="380" />
+            <Setter Property="Padding" Value="80,0,12,0" />
         </Style>
 
         <Style x:Key="MovieListTitle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontSize" Value="30" />
             <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Margin" Value="18,12,0,0" />
+            <Setter Property="Margin" Value="80,12,0,0" />
         </Style>
 
-        <!--  Data template  -->
+        <Style x:Key="BannelTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="80" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+        </Style>
 
+        <Style x:Key="BannelRealeaseTag" TargetType="StackPanel">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="Red" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="8,4,8,4" />
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Spacing" Value="4" />
+        </Style>
+
+        <Style x:Key="MovieList" TargetType="Grid">
+            <Setter Property="Background" Value="#99000000" />
+        </Style>
+
+        <Style x:Key="BannelRealseTxt" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+
+        <Style x:Key="BannelDescription" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="WrapWholeWords" />
+            <Setter Property="MaxHeight" Value="150" />
+            <Setter Property="TextAlignment" Value="Justify" />
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+        <!--  Data template  -->
         <Flyout
             x:Key="MovieCardHighLighted"
             x:Name="HighlightedMovieCard"
@@ -231,35 +272,34 @@
         <DataTemplate x:Name="MovieCardTemplate" x:DataType="m:Movie">
             <Grid
                 Name="MovieCard"
+                BorderBrush="#FF8400"
+                BorderThickness="0"
                 FlyoutBase.AttachedFlyout="{StaticResource MovieCardHighLighted}"
                 PointerEntered="MovieCard_PointerEntered"
                 PointerExited="MovieCard_PointerExited"
                 Style="{StaticResource MovieCard}">
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-
                 <Image
                     Name="Poster"
                     Grid.Row="0"
                     Grid.RowSpan="2"
-                    Width="255"
-                    Height="400"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Source="{Binding PosterPath}"
-                    Stretch="Fill" />
+                    Style="{StaticResource PosterImage}" />
                 <StackPanel
                     Grid.Row="1"
                     Padding="8,4,8,8"
                     Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}">
                     <TextBlock
+                        Height="40"
                         Style="{StaticResource SubtitleTextBlockStyle}"
                         Text="{Binding Title}"
                         TextWrapping="WrapWholeWords" />
 
-                    <Grid>
+                    <Grid VerticalAlignment="Bottom">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -298,16 +338,196 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Name="TopMovie" x:DataType="vm:RankMovie">
+            <StackPanel Name="TopMovieCard" Orientation="Horizontal">
+                <!--<TextBlock Style="{StaticResource RankNumber}" Text="10" />-->
+                <Image Height="250" Source="{Binding Rank, Converter={StaticResource RankToIconConverter}}" />
+                <Grid
+                    Name="MovieCard"
+                    BorderBrush="#FF8400"
+                    BorderThickness="0"
+                    FlyoutBase.AttachedFlyout="{StaticResource MovieCardHighLighted}"
+                    PointerEntered="MovieCard_PointerEntered"
+                    PointerExited="MovieCard_PointerExited"
+                    Style="{StaticResource MovieCard}">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Image
+                        Name="Poster"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Source="{Binding Movie.PosterPath}"
+                        Style="{StaticResource PosterImage}" />
+                    <StackPanel
+                        Grid.Row="1"
+                        Padding="8,4,8,8"
+                        Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}">
+                        <TextBlock
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="{Binding Movie.Title}"
+                            TextWrapping="WrapWholeWords" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Name="IMDBRating"
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="{Binding Movie.AgeCertificate.DisplayContent}" />
+                            <Image
+                                Grid.Column="0"
+                                Height="28"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Source="ms-appx:///Assets/Icons/imdb.png" />
+                            <Border
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Background="{Binding Movie.AgeCertificate.BackgroundColor}"
+                                BorderBrush="{Binding Movie.AgeCertificate.ForegroundColor}"
+                                Style="{StaticResource ResourceKey=MovieTagBorder}">
+                                <TextBlock
+                                    Name="AgeCertificate"
+                                    FontSize="12"
+                                    Foreground="{Binding Movie.AgeCertificate.ForegroundColor}"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{Binding Movie.AgeCertificate.DisplayContent}" />
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+
     </Page.Resources>
 
     <Grid>
 
         <Grid.RowDefinitions>
+            <RowDefinition MinHeight="600" MaxHeight="780" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Name="GoldenHour">
+        <Grid Grid.Row="0" Margin="0,0,0,-280">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".4*" />
+                <ColumnDefinition Width=".6*" />
+            </Grid.ColumnDefinitions>
+
+            <Image
+                Grid.Row="0"
+                Grid.RowSpan="4"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Source="D:\CinemaManagement\Assets\Images\Poster_Horizontal\elemental.webp"
+                Stretch="UniformToFill" />
+            <Rectangle Grid.Column="0" Grid.ColumnSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                        <GradientStop Offset="0.0" Color="#99000000" />
+                        <GradientStop Offset="0.2" Color="#88000000" />
+                        <GradientStop Offset="0.4" Color="#77000000" />
+                        <GradientStop Offset="0.5" Color="#77000000" />
+                        <GradientStop Offset="0.6" Color="#22000000" />
+                        <GradientStop Offset="0.8" Color="#11000000" />
+                        <GradientStop Offset="1.0" Color="#00000000" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Grid
+                Grid.Column="0"
+                Margin="0,0,0,280"
+                Padding="80,0,30,50"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Stretch"
+                RowSpacing="10">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".6*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Style="{StaticResource BannelTitle}"
+                    Text="Elemental" />
+                <StackPanel Grid.Row="1" Style="{StaticResource BannelRealeaseTag}">
+                    <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xE8EC;" />
+                    <TextBlock Style="{StaticResource BannelRealseTxt}" Text="New Release" />
+                </StackPanel>
+                <TextBlock
+                    Grid.Row="2"
+                    Style="{StaticResource BannelDescription}"
+                    Text="Elemental is a 2023 American animated romantic comedy-drama film produced by Walt Disney Pictures and Pixar Animation Studios and distributed by Walt Disney Studios Motion Pictures." />
+                <StackPanel
+                    Grid.Row="3"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Button Width="180" Style="{StaticResource ButtonRevealStyle}">More</Button>
+                    <Button Width="180" Style="{StaticResource ButtonRevealStyle}">Book A Ticket</Button>
+                </StackPanel>
+            </Grid>
+
+
+        </Grid>
+
+        <Grid
+            Name="RankingMovie"
+            Grid.Row="1"
+            RowSpacing="2">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="1.0" Color="#99000000" />
+                    <GradientStop Offset="0.8" Color="#88000000" />
+                    <GradientStop Offset="0.6" Color="#77000000" />
+                    <GradientStop Offset="0.5" Color="#77000000" />
+                    <GradientStop Offset="0.4" Color="#22000000" />
+                    <GradientStop Offset="0.2" Color="#11000000" />
+                    <GradientStop Offset="0.0" Color="#00000000" />
+                </LinearGradientBrush>
+            </Grid.Background>
+
+            <StackPanel Grid.Row="0">
+                <TextBlock Style="{StaticResource MovieListTitle}" Text="Top movie" />
+            </StackPanel>
+
+            <ScrollViewer
+                Name="RankingMovieList"
+                Grid.Row="1"
+                Style="{StaticResource MovieListScroller}">
+                <ItemsRepeater ItemTemplate="{StaticResource TopMovie}" ItemsSource="{Binding TopTen}">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Orientation="Horizontal" Spacing="8" />
+                    </ItemsRepeater.Layout>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid
+            Name="GoldenHour"
+            Grid.Row="2"
+            Style="{StaticResource MovieList}">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -323,12 +543,35 @@
                 Style="{StaticResource MovieListScroller}">
                 <ItemsRepeater ItemTemplate="{StaticResource MovieCardTemplate}" ItemsSource="{Binding GoldenHours}">
                     <ItemsRepeater.Layout>
-                        <StackLayout Orientation="Horizontal" Spacing="8" />
+                        <StackLayout Orientation="Horizontal" Spacing="12" />
                     </ItemsRepeater.Layout>
                 </ItemsRepeater>
             </ScrollViewer>
         </Grid>
 
+        <Grid
+            Name="BlockBuster"
+            Grid.Row="3"
+            Style="{StaticResource MovieList}">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
+            <StackPanel Grid.Row="0">
+                <TextBlock Style="{StaticResource MovieListTitle}" Text="Golden Hour" />
+            </StackPanel>
+
+            <ScrollViewer
+                Name="BlockBusterMovieList"
+                Grid.Row="1"
+                Style="{StaticResource MovieListScroller}">
+                <ItemsRepeater ItemTemplate="{StaticResource MovieCardTemplate}" ItemsSource="{Binding BlockBuster}">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Orientation="Horizontal" Spacing="12" />
+                    </ItemsRepeater.Layout>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>

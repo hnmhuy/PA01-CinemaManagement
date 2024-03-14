@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\Images\" />
+    <Folder Include="ValueConverters\" />
   </ItemGroup>
 
   <!-- 
