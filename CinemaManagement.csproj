@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -118,7 +118,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\Images\" />
+    <Folder Include="Assets\Images\Person\" />
     <Folder Include="ValueConverters\" />
   </ItemGroup>
 

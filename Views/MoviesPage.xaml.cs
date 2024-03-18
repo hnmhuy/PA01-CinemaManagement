@@ -27,14 +27,23 @@ namespace CinemaManagement.Views
     /// </summary>
     public sealed partial class MoviesPage : Page, INotifyPropertyChanged
     {
+<<<<<<< Updated upstream
         public MovieViewModel Movie { get; set; }
         public MoviesPage()
         {
             this.InitializeComponent();
             Movie = new MovieViewModel();
             DataContext = Movie;
+=======
+        public MoviePageViewModel ViewModel { get; set; }
+        public MoviesPage()
+        {
+            this.InitializeComponent();
+            ViewModel = new MoviePageViewModel();
+            DataContext = ViewModel;
+           
+>>>>>>> Stashed changes
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 

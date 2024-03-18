@@ -1,6 +1,4 @@
 ﻿using CinemaManagement.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
@@ -8,15 +6,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using System.Windows.Forms;
-using Windows.UI.Popups;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml;
 
 namespace CinemaManagement.ViewModels
 {

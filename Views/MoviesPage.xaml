@@ -16,7 +16,7 @@
 
 
     <Page.DataContext>
-        <vm:MovieViewModel x:Name="MovieViewModel"/>
+        <vm:MoviePageViewModel/>
     </Page.DataContext>
 
 
@@ -24,6 +24,8 @@
         <!--  Converter  -->
         <vm:GenreViewConverter x:Key="GenreViewConverter"/>
         <vm:TotalMovieConverter x:Key="TotalMovieConverter"/>
+        <vm:TotalPeopleConverter x:Key="TotalPeopleConverter"/>
+        <vm:TotalGenreConverter x:Key="TotalGenreConverter"/>
 
 
         <!--  Style  -->
@@ -135,6 +137,10 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
 
+                    <Grid.DataContext>
+                        <vm:MovieViewModel/>
+                    </Grid.DataContext>
+
                     <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
                         <TextBlock Text="{Binding MoviesList, Converter={StaticResource ResourceKey=TotalMovieConverter}}" Style="{StaticResource totalAmount}"/>
                         <TextBlock Text=" Movies" Style="{StaticResource totalAmount}" Margin="0 5 0 12"/>
@@ -157,6 +163,7 @@
                         SelectedItem="{Binding SelectedMovie}"
                         ItemsSource="{Binding MoviesList}"    
                            >
+                            
 
                             <controls:DataGrid.Resources>
 
@@ -276,7 +283,6 @@
                                                         Command="{Binding DeleteCommand}"
                                                         CommandParameter="{Binding}"
                                                        >
-
                                                     <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                 </Button>
                                             </StackPanel>
@@ -299,6 +305,10 @@
                         <RowDefinition Height="auto"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
+
+                    <Grid.DataContext>
+                        <vm:PersonViewModel/>
+                    </Grid.DataContext>
 
                     <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
                         <TextBlock Text="{Binding PeopleList, Converter={StaticResource ResourceKey=TotalPeopleConverter}}" Style="{StaticResource totalAmount}"/>
@@ -347,10 +357,10 @@
                             </controls:DataGrid.Resources>
 
                             <controls:DataGrid.Columns>
-                                <controls:DataGridTemplateColumn Header="Name" Width="2.5*">
+                                <controls:DataGridTemplateColumn Header="Name" Width="1.5*">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <StackPanel Style="{StaticResource stackContent}">
+                                            <StackPanel Style="{StaticResource stackContent}" Padding="30">
                                                 <Border Style="{StaticResource posterBorder}">
                                                     <Image Source="{Binding AvatarPath}" Width="50" Height="50" Stretch="UniformToFill"/>
                                                 </Border>
@@ -360,14 +370,41 @@
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
 
-                                <controls:DataGridTextColumn Header="ID" Width="SizeToCells"
-                                        Binding="{Binding PersonId}">
-                                </controls:DataGridTextColumn>
+                                <controls:DataGridTemplateColumn Header="PersonID" Width="0.5*">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding PersonId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
 
-                                <controls:DataGridTextColumn Header="Biography" Width="*"
-                                    Binding="{Binding Biography}">
+                                <controls:DataGridTemplateColumn Header="Biography" Width="2.5*">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Biography}" TextWrapping="Wrap" Padding="10"/>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
 
-                                </controls:DataGridTextColumn>
+                                <controls:DataGridTemplateColumn Header="Action" Width="150">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                                                <Button Style="{StaticResource AccentButtonStyle}" Padding="10" >
+                                                    <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                </Button>
+                                                <Button Style="{StaticResource AccentButtonStyle}" Padding="10" 
+                                                        DataContext="{Binding DataContext, ElementName=MovieViewModel}"
+                                                        Command="{Binding DeleteCommand}"
+                                                        CommandParameter="{Binding}"
+                                                       >
+                                                    <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
 
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
@@ -383,6 +420,10 @@
                         <RowDefinition Height="auto"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
+                    
+                    <Grid.DataContext>
+                        <vm:GenreViewModel/>
+                    </Grid.DataContext>
 
                     <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
                         <TextBlock Text="{Binding GenresList, Converter={StaticResource ResourceKey=TotalGenreConverter}}" Style="{StaticResource totalAmount}"/>
@@ -430,17 +471,45 @@
                             </controls:DataGrid.Resources>
 
                             <controls:DataGrid.Columns>
-                                
-                                <controls:DataGridTextColumn 
-                                    Header="GenreID" Width="*" 
-                                    Binding="{Binding GenreId}">
-                                </controls:DataGridTextColumn>
 
-                                <controls:DataGridTextColumn 
-                                    Header="Name" 
-                                    Width="*" Binding="{Binding GenreName}">
 
-                                </controls:DataGridTextColumn>
+                                <controls:DataGridTemplateColumn Header="GenreID" Width="*">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding GenreId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <controls:DataGridTemplateColumn Header="Name" Width="*">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding GenreName}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <controls:DataGridTemplateColumn Header="Action" Width="150">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                                                <Button Style="{StaticResource AccentButtonStyle}" Padding="10" >
+                                                    <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                </Button>
+                                                <Button Style="{StaticResource AccentButtonStyle}" Padding="10" 
+                                                        DataContext="{Binding DataContext, ElementName=MovieViewModel}"
+                                                        Command="{Binding DeleteCommand}"
+                                                        CommandParameter="{Binding}"
+                                                       >
+                                                    <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+
+
 
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
@@ -450,14 +519,8 @@
                 </Grid>
             </PivotItem>
 
-            <Pivot.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding}" FontSize="16"/>
-                </DataTemplate>
-            </Pivot.HeaderTemplate>
+
         </Pivot>
-
-
 
 
 
