@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -41,6 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Primitives" Version="7.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3">
@@ -116,7 +119,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\Images\" />
+    <Folder Include="Assets\Images\Person\" />
     <Folder Include="ValueConverters\" />
   </ItemGroup>
   <ItemGroup>

@@ -450,7 +450,7 @@
                 Grid.RowSpan="4"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
-                Source="D:\CinemaManagement\Assets\Images\Poster_Horizontal\elemental.webp"
+                Source="\Assets\Images\Poster_Horizontal\elemental.webp"
                 Stretch="UniformToFill" />
             <Rectangle Grid.Column="0" Grid.ColumnSpan="2">
                 <Rectangle.Fill>
