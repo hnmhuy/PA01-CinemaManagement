@@ -1,6 +1,6 @@
 ﻿using CinemaManagement.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+//using CommunityToolkit.Mvvm.ComponentModel;
+//using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;

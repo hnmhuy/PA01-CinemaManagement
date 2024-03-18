@@ -1,195 +1,321 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
-    x:Class="CinemaManegement.Views.DashboardPage"
+    x:Class="CinemaManagement.Views.DashboardPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:CinemaManegement.Views"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:wctprimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CinemaManagement.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:CinemaManagement.ViewModels"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    xmlns:wctprimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
 
     <Page.DataContext>
-        <vm:DashboardViewModel x:Name="DashboardViewModel"/>
+        <vm:DashboardViewModel x:Name="DashboardViewModel" />
     </Page.DataContext>
     <Page.Resources>
         <!--  Converter  -->
-        <vm:GenreViewConverter x:Key="GenreViewConverter"/>
-        <vm:TotalMovieConverter x:Key="TotalMovieConverter"/>
+        <vm:GenreViewConverter x:Key="GenreViewConverter" />
+        <vm:TotalMovieConverter x:Key="TotalMovieConverter" />
         <!--  Style  -->
         <Style x:Key="textboxSearch" TargetType="AutoSuggestBox">
-            <Setter Property="Width" Value="300"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Width" Value="300" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
         <Style x:Key="PivotItemStyle" TargetType="PivotItem">
-            <Setter Property="Margin" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
         </Style>
-        <Style x:Key="addButton" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-            <Setter Property="Background" Value="Beige"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+        <Style
+            x:Key="addButton"
+            BasedOn="{StaticResource AccentButtonStyle}"
+            TargetType="Button">
+            <Setter Property="Background" Value="Beige" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
-        <!--Margin="12 5 5 12" FontSize="16" FontWeight="Bold"-->
+        <!--  Margin="12 5 5 12" FontSize="16" FontWeight="Bold"  -->
         <Style x:Key="totalAmount" TargetType="TextBlock">
-            <Setter Property="Margin" Value="12 5 0 12"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="12,5,0,12" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
         </Style>
         <Style x:Key="stackContent" TargetType="StackPanel">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Orientation" Value="Horizontal"/>
-            <Setter Property="Padding" Value="10"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Padding" Value="10" />
         </Style>
 
         <Style x:Key="imdbRating" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Foreground" Value="#593900"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="0"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#593900" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
 
         </Style>
 
         <Style x:Key="imdbBorder" TargetType="Border">
-            <Setter Property="Width" Value="46"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Background" Value="#ffe7c0"/>
+            <Setter Property="Width" Value="46" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Background" Value="#ffe7c0" />
             <Setter Property="BorderThickness" Value="1.25" />
             <Setter Property="BorderBrush" Value="#eba200" />
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="8" />
         </Style>
 
         <Style x:Key="posterBorder" TargetType="Border">
-            <Setter Property="Width" Value="50"/>
-            <Setter Property="Height" Value="50"/>
+            <Setter Property="Width" Value="50" />
+            <Setter Property="Height" Value="50" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="8" />
         </Style>
 
 
     </Page.Resources>
 
-    <Grid Padding="20 0 20 20" Background="#d9e1f3">
+    <Grid Padding="20,0,20,20" Background="#d9e1f3">
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="3*"/>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="3*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
 
-        <StackPanel CornerRadius="12" Margin="0 25 0 10" Padding="15" Background="White" Orientation="Horizontal">
-            <Image Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Source="/Assets/Icons/ticket.png" Width="90" Height="90" Stretch="UniformToFill"/>
-            <StackPanel Margin="20 0 0 0" Orientation="Vertical" VerticalAlignment="Center">
-                <TextBlock Foreground="#11297e" FontWeight="Bold" FontSize="35" Text="6"></TextBlock>
-                <TextBlock Foreground="#11297e" FontWeight="Medium" FontSize="12" Text="Movies on sale"></TextBlock>
-            </StackPanel>
-            
-        </StackPanel>
-        <StackPanel Grid.Column="1" CornerRadius="12" Margin="10 25 0 10" Padding="15" Background="White" Orientation="Horizontal">
-            <Image Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Source="/Assets/Icons/clapperboard.png" Width="90" Height="90" Stretch="UniformToFill"/>
-            <StackPanel Margin="20 0 0 0" Orientation="Vertical" VerticalAlignment="Center">
-                <TextBlock Foreground="#11297e" FontWeight="Bold" FontSize="35" Text="6"></TextBlock>
-                <TextBlock Foreground="#11297e" FontWeight="Medium" FontSize="12" Text="Showtimes today"></TextBlock>
+        <StackPanel
+            Margin="0,25,0,10"
+            Padding="15"
+            Background="White"
+            CornerRadius="12"
+            Orientation="Horizontal">
+            <Image
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Width="90"
+                Height="90"
+                Source="/Assets/Icons/ticket.png"
+                Stretch="UniformToFill" />
+            <StackPanel
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <TextBlock
+                    FontSize="35"
+                    FontWeight="Bold"
+                    Foreground="#11297e"
+                    Text="6" />
+                <TextBlock
+                    FontSize="12"
+                    FontWeight="Medium"
+                    Foreground="#11297e"
+                    Text="Movies on sale" />
             </StackPanel>
 
         </StackPanel>
-        <StackPanel Grid.Column="2" CornerRadius="12" Margin="10 25 0 10" Padding="15" Background="White" Orientation="Horizontal">
-            <Image Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Source="/Assets/Icons/spotlights.png" Width="90" Height="90" Stretch="UniformToFill"/>
-            <StackPanel Margin="20 0 0 0" Orientation="Vertical" VerticalAlignment="Center">
-                <TextBlock Foreground="#11297e" FontWeight="Bold" FontSize="35" Text="6"></TextBlock>
-                <TextBlock Foreground="#11297e" FontWeight="Medium" FontSize="12" Text="Showtimes this week"></TextBlock>
+        <StackPanel
+            Grid.Column="1"
+            Margin="10,25,0,10"
+            Padding="15"
+            Background="White"
+            CornerRadius="12"
+            Orientation="Horizontal">
+            <Image
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Width="90"
+                Height="90"
+                Source="/Assets/Icons/clapperboard.png"
+                Stretch="UniformToFill" />
+            <StackPanel
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <TextBlock
+                    FontSize="35"
+                    FontWeight="Bold"
+                    Foreground="#11297e"
+                    Text="6" />
+                <TextBlock
+                    FontSize="12"
+                    FontWeight="Medium"
+                    Foreground="#11297e"
+                    Text="Showtimes today" />
+            </StackPanel>
+
+        </StackPanel>
+        <StackPanel
+            Grid.Column="2"
+            Margin="10,25,0,10"
+            Padding="15"
+            Background="White"
+            CornerRadius="12"
+            Orientation="Horizontal">
+            <Image
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Width="90"
+                Height="90"
+                Source="/Assets/Icons/spotlights.png"
+                Stretch="UniformToFill" />
+            <StackPanel
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <TextBlock
+                    FontSize="35"
+                    FontWeight="Bold"
+                    Foreground="#11297e"
+                    Text="6" />
+                <TextBlock
+                    FontSize="12"
+                    FontWeight="Medium"
+                    Foreground="#11297e"
+                    Text="Showtimes this week" />
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="3" CornerRadius="12" Margin="10 25 0 10" Padding="10" Background="White" Orientation="Horizontal">
-            <Image Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Source="/Assets/Icons/video-camera.png" Width="90" Height="90" Stretch="UniformToFill"/>
-            <StackPanel Margin="20 0 0 0" Orientation="Vertical" VerticalAlignment="Center">
-                <TextBlock Foreground="#11297e" FontWeight="Bold" FontSize="35" Text="6"></TextBlock>
-                <TextBlock Foreground="#11297e" FontWeight="Medium" FontSize="12" Text="Showtimes this month"></TextBlock>
+        <StackPanel
+            Grid.Column="3"
+            Margin="10,25,0,10"
+            Padding="10"
+            Background="White"
+            CornerRadius="12"
+            Orientation="Horizontal">
+            <Image
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Width="90"
+                Height="90"
+                Source="/Assets/Icons/video-camera.png"
+                Stretch="UniformToFill" />
+            <StackPanel
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <TextBlock
+                    FontSize="35"
+                    FontWeight="Bold"
+                    Foreground="#11297e"
+                    Text="6" />
+                <TextBlock
+                    FontSize="12"
+                    FontWeight="Medium"
+                    Foreground="#11297e"
+                    Text="Showtimes this month" />
             </StackPanel>
 
         </StackPanel>
 
-        <TextBlock Grid.Row="1" Foreground="#11297e" FontSize="20" HorizontalAlignment="Center"  Text="Top highest-grossing movies"></TextBlock>
+        <TextBlock
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            FontSize="20"
+            Foreground="#11297e"
+            Text="Top highest-grossing movies" />
 
-        <Border Grid.Row="3" Grid.RowSpan="2" Grid.ColumnSpan="4" CornerRadius="12" Background="White">
+        <Border
+            Grid.Row="3"
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="4"
+            Background="White"
+            CornerRadius="12">
 
             <controls:DataGrid
-                GridLinesVisibility="Horizontal"
-                CanUserReorderColumns="False" CanUserResizeColumns="False"
-                x:Name="dataGrid1" Grid.Row="1"
+                x:Name="dataGrid1"
+                Grid.Row="1"
                 AutoGenerateColumns="False"
-                ItemsSource="{Binding MoviesList}"> 
+                CanUserReorderColumns="False"
+                CanUserResizeColumns="False"
+                GridLinesVisibility="Horizontal"
+                ItemsSource="{Binding MoviesList}">
 
                 <controls:DataGrid.Resources>
-                    
+
                     <Color x:Key="HeaderBackgroundColor">#FFFFFF</Color>
                     <Color x:Key="HeaderHoveredBackgroundColor">#8cc7fc</Color>
                     <Color x:Key="HeaderPressedBackgroundColor">#8cc7fc</Color>
-                    <StaticResource x:Key="DataGridColumnHeaderBackgroundColor" ResourceKey="HeaderBackgroundColor"/>
-                    <StaticResource x:Key="DataGridColumnHeaderHoveredBackgroundColor" ResourceKey="HeaderHoveredBackgroundColor"/>
-                    <StaticResource x:Key="DataGridColumnHeaderPressedBackgroundColor" ResourceKey="HeaderPressedBackgroundColor"/>
+                    <StaticResource x:Key="DataGridColumnHeaderBackgroundColor" ResourceKey="HeaderBackgroundColor" />
+                    <StaticResource x:Key="DataGridColumnHeaderHoveredBackgroundColor" ResourceKey="HeaderHoveredBackgroundColor" />
+                    <StaticResource x:Key="DataGridColumnHeaderPressedBackgroundColor" ResourceKey="HeaderPressedBackgroundColor" />
 
                     <Style TargetType="wctprimitives:DataGridColumnHeader">
                         <Setter Property="FontWeight" Value="Bold" />
                         <Setter Property="HorizontalContentAlignment" Value="Center" />
                     </Style>
                     <Style TargetType="wctprimitives:DataGridRowHeader">
-                        <Setter Property="Background" Value="#8cc7fc"/>
+                        <Setter Property="Background" Value="#8cc7fc" />
                     </Style>
 
                 </controls:DataGrid.Resources>
 
                 <controls:DataGrid.Columns>
 
-                    <controls:DataGridTemplateColumn Header="Name" Width="2*">
+                    <controls:DataGridTemplateColumn Width="2*" Header="Name">
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Style="{StaticResource stackContent}">
                                     <Border Style="{StaticResource posterBorder}">
-                                        <Image Source="{Binding PosterPath}" Width="50" Height="50" Stretch="UniformToFill"/>
+                                        <Image
+                                            Width="50"
+                                            Height="50"
+                                            Source="{Binding PosterPath}"
+                                            Stretch="UniformToFill" />
                                     </Border>
-                                    <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                                    <TextBlock
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Title}" />
                                 </StackPanel>
                             </DataTemplate>
                         </controls:DataGridTemplateColumn.CellTemplate>
                     </controls:DataGridTemplateColumn>
 
 
-                    <controls:DataGridTemplateColumn Header="Genres" Width="Auto">
+                    <controls:DataGridTemplateColumn Width="Auto" Header="Genres">
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Style="{StaticResource stackContent}">
                                     <ItemsControl ItemsSource="{Binding Genres, Converter={StaticResource ResourceKey=GenreViewConverter}}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal"/>
+                                                <StackPanel Orientation="Horizontal" />
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <Border BorderThickness="1" CornerRadius="10" Width="Auto" Padding="10 5">
+                                                    <Border
+                                                        Width="Auto"
+                                                        Padding="10,5"
+                                                        BorderThickness="1"
+                                                        CornerRadius="10">
                                                         <Border.Background>
                                                             <StaticResource ResourceKey="CategorieCard_Background" />
                                                         </Border.Background>
-                                                        <TextBlock Text="{Binding GenreName}" VerticalAlignment="Center"/>
+                                                        <TextBlock VerticalAlignment="Center" Text="{Binding GenreName}" />
                                                     </Border>
-                                                    <FontIcon Glyph="{Binding Icon}" FontSize="6" FontFamily="{StaticResource FIcon}" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                                                    <FontIcon
+                                                        Margin="0,0,10,0"
+                                                        VerticalAlignment="Center"
+                                                        FontFamily="{StaticResource FIcon}"
+                                                        FontSize="6"
+                                                        Glyph="{Binding Icon}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -201,34 +327,41 @@
 
 
 
-                    <controls:DataGridTemplateColumn Header="IMDB Rating" Width="SizeToHeader">
+                    <controls:DataGridTemplateColumn Width="SizeToHeader" Header="IMDB Rating">
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Style="{StaticResource imdbBorder}">
-                                    <TextBlock Text="{Binding Imdbrating}" Style="{StaticResource imdbRating}"/>
+                                    <TextBlock Style="{StaticResource imdbRating}" Text="{Binding Imdbrating}" />
                                 </Border>
                             </DataTemplate>
                         </controls:DataGridTemplateColumn.CellTemplate>
                     </controls:DataGridTemplateColumn>
 
 
-                    <controls:DataGridTextColumn Header="Published Year" Width="SizeToHeader"
-                                         Binding="{Binding PublishYear}">
+                    <controls:DataGridTextColumn
+                        Width="SizeToHeader"
+                        Binding="{Binding PublishYear}"
+                        Header="Published Year">
 
                         <controls:DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                                <Setter Property="HorizontalTextAlignment" Value="Center" />
                             </Style>
                         </controls:DataGridTextColumn.ElementStyle>
                     </controls:DataGridTextColumn>
 
-                    <controls:DataGridTemplateColumn Header="Duration" Width="1*">
+                    <controls:DataGridTemplateColumn Width="1*" Header="Duration">
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Style="{StaticResource stackContent}" HorizontalAlignment="Center">
-                                    <FontIcon FontFamily="{StaticResource FIcon}" FontSize="18" Glyph="&#xE823;" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                                    <TextBlock Text="{Binding Duration}" VerticalAlignment="Center" />
-                                    <TextBlock Text=" m" VerticalAlignment="Center"/>
+                                <StackPanel HorizontalAlignment="Center" Style="{StaticResource stackContent}">
+                                    <FontIcon
+                                        Margin="0,0,10,0"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{StaticResource FIcon}"
+                                        FontSize="18"
+                                        Glyph="&#xE823;" />
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Duration}" />
+                                    <TextBlock VerticalAlignment="Center" Text=" m" />
                                 </StackPanel>
                             </DataTemplate>
                         </controls:DataGridTemplateColumn.CellTemplate>

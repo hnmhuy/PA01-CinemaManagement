@@ -15,8 +15,6 @@ public partial class Movie
 
     public int? AgeCertificateId { get; set; }
 
-    public int? DirectorId { get; set; }
-
     public int MovieId { get; set; }
 
     public bool? IsGoldenHour { get; set; }
@@ -31,11 +29,9 @@ public partial class Movie
 
     public virtual AgeCertificate? AgeCertificate { get; set; }
 
-    public virtual Person? Director { get; set; }
+    public virtual ICollection<Contributor> Contributors { get; set; } = new List<Contributor>();
 
     public virtual ICollection<ShowTime> ShowTimes { get; set; } = new List<ShowTime>();
 
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
-
-    public virtual ICollection<Person> People { get; set; } = new List<Person>();
 }

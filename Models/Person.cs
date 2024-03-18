@@ -13,7 +13,5 @@ public partial class Person
 
     public int PersonId { get; set; }
 
-    public virtual ICollection<Movie> Movies { get; set; } = new List<Movie>();
-
-    public virtual ICollection<Movie> MoviesNavigation { get; set; } = new List<Movie>();
+    public virtual ICollection<Contributor> Contributors { get; set; } = new List<Contributor>();
 }

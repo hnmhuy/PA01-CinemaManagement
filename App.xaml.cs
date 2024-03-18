@@ -33,7 +33,7 @@ namespace CinemaManagement
         public App()
         {
             this.InitializeComponent();
-            App.Current.RequestedTheme = (ApplicationTheme)(int)0;
+            //App.Current.RequestedTheme = (ApplicationTheme)(int)0;
 
         }
 

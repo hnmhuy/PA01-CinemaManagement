@@ -23,11 +23,15 @@ public partial class DbCinemaManagementContext : DbContext
 
     public virtual DbSet<BillVoucher> BillVouchers { get; set; }
 
+    public virtual DbSet<Contributor> Contributors { get; set; }
+
     public virtual DbSet<Genre> Genres { get; set; }
 
     public virtual DbSet<Movie> Movies { get; set; }
 
     public virtual DbSet<Person> People { get; set; }
+
+    public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<ShowTime> ShowTimes { get; set; }
 
@@ -43,7 +47,7 @@ public partial class DbCinemaManagementContext : DbContext
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.AccountId).HasName("PK__Account__349DA5A667912836");
+            entity.HasKey(e => e.AccountId).HasName("PK__Account__349DA5A6B20B82D5");
 
             entity.ToTable("Account");
 
@@ -59,7 +63,7 @@ public partial class DbCinemaManagementContext : DbContext
 
         modelBuilder.Entity<AgeCertificate>(entity =>
         {
-            entity.HasKey(e => e.AgeCertificateId).HasName("PK__AgeCerti__64F2799DB0BE1E10");
+            entity.HasKey(e => e.AgeCertificateId).HasName("PK__AgeCerti__64F2799DAFAB1822");
 
             entity.ToTable("AgeCertificate");
 
@@ -71,7 +75,7 @@ public partial class DbCinemaManagementContext : DbContext
 
         modelBuilder.Entity<Bill>(entity =>
         {
-            entity.HasKey(e => e.BillId).HasName("PK__Bill__11F2FC6AD3D07370");
+            entity.HasKey(e => e.BillId).HasName("PK__Bill__11F2FC6AFB66AB54");
 
             entity.ToTable("Bill");
 
@@ -85,7 +89,7 @@ public partial class DbCinemaManagementContext : DbContext
 
         modelBuilder.Entity<BillVoucher>(entity =>
         {
-            entity.HasKey(e => new { e.BillId, e.VoucherId }).HasName("PK__BillVouc__125C1BF855451402");
+            entity.HasKey(e => new { e.BillId, e.VoucherId }).HasName("PK__BillVouc__125C1BF8634441F6");
 
             entity.ToTable("BillVoucher");
 
@@ -102,9 +106,30 @@ public partial class DbCinemaManagementContext : DbContext
                 .HasConstraintName("FK_BillVoucher_Voucher");
         });
 
+        modelBuilder.Entity<Contributor>(entity =>
+        {
+            entity.HasKey(e => new { e.MovieId, e.PersonId }).HasName("PK__Contribu__01706BA4C8A4F6AF");
+
+            entity.ToTable("Contributor");
+
+            entity.HasOne(d => d.Movie).WithMany(p => p.Contributors)
+                .HasForeignKey(d => d.MovieId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Contributor_Movie");
+
+            entity.HasOne(d => d.Person).WithMany(p => p.Contributors)
+                .HasForeignKey(d => d.PersonId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Contributor_Person");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Contributors)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("FK_Contributor_Role");
+        });
+
         modelBuilder.Entity<Genre>(entity =>
         {
-            entity.HasKey(e => e.GenreId).HasName("PK__Genre__0385057EA0DE1C9C");
+            entity.HasKey(e => e.GenreId).HasName("PK__Genre__0385057E0A4BFE98");
 
             entity.ToTable("Genre");
 
@@ -114,24 +139,20 @@ public partial class DbCinemaManagementContext : DbContext
 
         modelBuilder.Entity<Movie>(entity =>
         {
-            entity.HasKey(e => e.MovieId).HasName("PK__Movie__4BD2941AF49CB936");
+            entity.HasKey(e => e.MovieId).HasName("PK__Movie__4BD2941AB122F043");
 
             entity.ToTable("Movie");
 
             entity.Property(e => e.MovieId).ValueGeneratedNever();
-            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Description).HasMaxLength(4000);
             entity.Property(e => e.Imdbrating).HasColumnName("IMDBRating");
-            entity.Property(e => e.PosterPath).HasMaxLength(100);
-            entity.Property(e => e.Title).HasMaxLength(30);
-            entity.Property(e => e.TrailerPath).HasMaxLength(100);
+            entity.Property(e => e.PosterPath).HasMaxLength(1000);
+            entity.Property(e => e.Title).HasMaxLength(500);
+            entity.Property(e => e.TrailerPath).HasMaxLength(1000);
 
             entity.HasOne(d => d.AgeCertificate).WithMany(p => p.Movies)
                 .HasForeignKey(d => d.AgeCertificateId)
                 .HasConstraintName("FK_AgeCertificate");
-
-            entity.HasOne(d => d.Director).WithMany(p => p.Movies)
-                .HasForeignKey(d => d.DirectorId)
-                .HasConstraintName("FK_Movie_Person");
 
             entity.HasMany(d => d.Genres).WithMany(p => p.Movies)
                 .UsingEntity<Dictionary<string, object>>(
@@ -146,43 +167,36 @@ public partial class DbCinemaManagementContext : DbContext
                         .HasConstraintName("FK_MovieGenre_Movie"),
                     j =>
                     {
-                        j.HasKey("MovieId", "GenreId").HasName("PK__MovieGen__BBEAC44DCAF5C5C6");
+                        j.HasKey("MovieId", "GenreId").HasName("PK__MovieGen__BBEAC44DE4F33ACE");
                         j.ToTable("MovieGenre");
-                    });
-
-            entity.HasMany(d => d.People).WithMany(p => p.MoviesNavigation)
-                .UsingEntity<Dictionary<string, object>>(
-                    "MovieActor",
-                    r => r.HasOne<Person>().WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_MovieActor_Person"),
-                    l => l.HasOne<Movie>().WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_MovieActor_Movie"),
-                    j =>
-                    {
-                        j.HasKey("MovieId", "PersonId").HasName("PK__MovieAct__01706BA491BCC65B");
-                        j.ToTable("MovieActor");
                     });
         });
 
         modelBuilder.Entity<Person>(entity =>
         {
-            entity.HasKey(e => e.PersonId).HasName("PK__Person__AA2FFBE540A5C4D3");
+            entity.HasKey(e => e.PersonId).HasName("PK__Person__AA2FFBE519DFACA3");
 
             entity.ToTable("Person");
 
             entity.Property(e => e.PersonId).ValueGeneratedNever();
-            entity.Property(e => e.AvatarPath).HasMaxLength(100);
-            entity.Property(e => e.Biography).HasMaxLength(1000);
+            entity.Property(e => e.AvatarPath).HasMaxLength(1000);
+            entity.Property(e => e.Biography).HasMaxLength(2000);
             entity.Property(e => e.Fullname).HasMaxLength(30);
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE1A07E834BA");
+
+            entity.ToTable("Role");
+
+            entity.Property(e => e.RoleId).ValueGeneratedNever();
+            entity.Property(e => e.RoleName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<ShowTime>(entity =>
         {
-            entity.HasKey(e => e.ShowTimeId).HasName("PK__ShowTime__DF1BC81FC1DEB901");
+            entity.HasKey(e => e.ShowTimeId).HasName("PK__ShowTime__DF1BC81F397A0901");
 
             entity.ToTable("ShowTime");
 
@@ -196,7 +210,7 @@ public partial class DbCinemaManagementContext : DbContext
 
         modelBuilder.Entity<Ticket>(entity =>
         {
-            entity.HasKey(e => e.TicketId).HasName("PK__Ticket__712CC6071004B117");
+            entity.HasKey(e => e.TicketId).HasName("PK__Ticket__712CC607EB28508F");
 
             entity.ToTable("Ticket");
 
@@ -214,7 +228,7 @@ public partial class DbCinemaManagementContext : DbContext
 
         modelBuilder.Entity<Voucher>(entity =>
         {
-            entity.HasKey(e => e.VoucherId).HasName("PK__Voucher__3AEE7921C3AF3DD6");
+            entity.HasKey(e => e.VoucherId).HasName("PK__Voucher__3AEE7921338A44E5");
 
             entity.ToTable("Voucher");
 
