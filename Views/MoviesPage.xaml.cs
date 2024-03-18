@@ -27,12 +27,12 @@ namespace CinemaManagement.Views
     /// </summary>
     public sealed partial class MoviesPage : Page, INotifyPropertyChanged
     {
-        public MovieViewModel MoviesList { get; set; }
+        public MovieViewModel Movie { get; set; }
         public MoviesPage()
         {
             this.InitializeComponent();
-            MoviesList = new MovieViewModel();
-            DataContext = MoviesList;
+            Movie = new MovieViewModel();
+            DataContext = Movie;
         }
 
 
