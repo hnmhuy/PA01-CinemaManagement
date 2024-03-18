@@ -33,6 +33,8 @@ namespace CinemaManagement
         public App()
         {
             this.InitializeComponent();
+            App.Current.RequestedTheme = (ApplicationTheme)(int)0;
+
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace CinemaManagement
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            int role = 0;
+            int role = 1;
             m_window = new MainWindow(role);
             m_window.Activate();
         }

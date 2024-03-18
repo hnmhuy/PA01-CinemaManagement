@@ -20,6 +20,10 @@
                 TintLuminosityOpacity="0.058000002754852176"
                 TintOpacity="0" />
 
+            <AcrylicBrush x:Key="CategorieCard_Background"
+                    TintOpacity="0.8" TintLuminosityOpacity="0.8" TintColor="SkyBlue" FallbackColor="SkyBlue"  />
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
