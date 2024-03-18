@@ -152,7 +152,7 @@
                         <controls:DataGrid
                         GridLinesVisibility="Horizontal"
                         CanUserReorderColumns="False" CanUserResizeColumns="False"
-                        x:Name="dataGrid1" Grid.Row="1"
+                        x:Name="MovieDataGrid" Grid.Row="1"
                         AutoGenerateColumns="False"
                         SelectedItem="{Binding SelectedMovie}"
                         ItemsSource="{Binding MoviesList}"    
@@ -275,9 +275,9 @@
                                                         DataContext="{Binding DataContext, ElementName=MovieViewModel}"
                                                         Command="{Binding DeleteCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Content="Delete">
+                                                       >
 
-                                                    <!--<FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                                                    <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                 </Button>
                                             </StackPanel>
                                         </DataTemplate>
@@ -300,13 +300,78 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" x:Name="totalActors" Text="28 Movies" Style="{StaticResource totalAmount}"/>
+                    <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
+                        <TextBlock Text="{Binding PeopleList, Converter={StaticResource ResourceKey=TotalPeopleConverter}}" Style="{StaticResource totalAmount}"/>
+                        <TextBlock Text=" People" Style="{StaticResource totalAmount}" Margin="0 5 0 12"/>
+                    </StackPanel>
                     <Button Grid.Row="0" Style="{StaticResource addButton}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE710;" Margin="0 0 5 0" />
-                            <TextBlock Text="Add Movie"/>
+                            <TextBlock Text="Add Person"/>
                         </StackPanel>
                     </Button>
+
+                    <Border Grid.Row="1" BorderThickness="1" BorderBrush="Black" CornerRadius="12" Background="#efefef">
+
+                        <controls:DataGrid
+                        GridLinesVisibility="Horizontal"
+                        CanUserReorderColumns="False" CanUserResizeColumns="False"
+                        x:Name="PeopleDataGrid" Grid.Row="1"
+                        AutoGenerateColumns="False"
+                        SelectedItem="{Binding SelectedPerson}"
+                        ItemsSource="{Binding PeopleList}"    
+                                >
+
+                            <controls:DataGrid.Resources>
+
+                                <Color x:Key="HeaderBackgroundColor">#FF60B560</Color>
+                                <!-- Greenish color -->
+                                <Color x:Key="HeaderHoveredBackgroundColor">#FFFFF700</Color>
+                                <!-- Yellowish color -->
+                                <Color x:Key="HeaderPressedBackgroundColor">#FF00e5ff</Color>
+                                <!-- Blueish color -->
+
+                                <!-- Override the default theme resources with your custom colors -->
+                                <StaticResource x:Key="DataGridColumnHeaderBackgroundColor" ResourceKey="HeaderBackgroundColor"/>
+                                <StaticResource x:Key="DataGridColumnHeaderHoveredBackgroundColor" ResourceKey="HeaderHoveredBackgroundColor"/>
+                                <StaticResource x:Key="DataGridColumnHeaderPressedBackgroundColor" ResourceKey="HeaderPressedBackgroundColor"/>
+
+                                <Style TargetType="wctprimitives:DataGridColumnHeader">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                </Style>
+                                <Style TargetType="wctprimitives:DataGridRowHeader">
+                                    <Setter Property="Background" Value="DarkBlue"/>
+                                </Style>
+
+                            </controls:DataGrid.Resources>
+
+                            <controls:DataGrid.Columns>
+                                <controls:DataGridTemplateColumn Header="Name" Width="2.5*">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Style="{StaticResource stackContent}">
+                                                <Border Style="{StaticResource posterBorder}">
+                                                    <Image Source="{Binding AvatarPath}" Width="50" Height="50" Stretch="UniformToFill"/>
+                                                </Border>
+                                                <TextBlock Text="{Binding Fullname}" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <controls:DataGridTextColumn Header="ID" Width="SizeToCells"
+                                        Binding="{Binding PersonId}">
+                                </controls:DataGridTextColumn>
+
+                                <controls:DataGridTextColumn Header="Biography" Width="*"
+                                    Binding="{Binding Biography}">
+
+                                </controls:DataGridTextColumn>
+
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </Border>
                 </Grid>
 
 
@@ -319,50 +384,69 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" x:Name="totalGenres" Text="20 Categories" Style="{StaticResource totalAmount}"/>
+                    <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
+                        <TextBlock Text="{Binding GenresList, Converter={StaticResource ResourceKey=TotalGenreConverter}}" Style="{StaticResource totalAmount}"/>
+                        <TextBlock Text=" Genres" Style="{StaticResource totalAmount}" Margin="0 5 0 12"/>
+                    </StackPanel>
                     <Button Grid.Row="0" Style="{StaticResource addButton}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE710;" Margin="0 0 5 0" />
-                            <TextBlock Text="Add Movie"/>
+                            <TextBlock Text="Add Genre"/>
                         </StackPanel>
                     </Button>
 
+                    <Border Grid.Row="1" BorderThickness="1" BorderBrush="Black" CornerRadius="12" Background="#efefef">
+
+                        <controls:DataGrid
+                            GridLinesVisibility="Horizontal"
+                            CanUserReorderColumns="False" CanUserResizeColumns="False"
+                            x:Name="GenreDataGrid" Grid.Row="1"
+                            AutoGenerateColumns="False"
+                            SelectedItem="{Binding SelectedGenre}"
+                            ItemsSource="{Binding GenresList}">
+
+                            <controls:DataGrid.Resources>
+
+                                <Color x:Key="HeaderBackgroundColor">#FF60B560</Color>
+                                <!-- Greenish color -->
+                                <Color x:Key="HeaderHoveredBackgroundColor">#FFFFF700</Color>
+                                <!-- Yellowish color -->
+                                <Color x:Key="HeaderPressedBackgroundColor">#FF00e5ff</Color>
+                                <!-- Blueish color -->
+
+                                <!-- Override the default theme resources with your custom colors -->
+                                <StaticResource x:Key="DataGridColumnHeaderBackgroundColor" ResourceKey="HeaderBackgroundColor"/>
+                                <StaticResource x:Key="DataGridColumnHeaderHoveredBackgroundColor" ResourceKey="HeaderHoveredBackgroundColor"/>
+                                <StaticResource x:Key="DataGridColumnHeaderPressedBackgroundColor" ResourceKey="HeaderPressedBackgroundColor"/>
+
+                                <Style TargetType="wctprimitives:DataGridColumnHeader">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                </Style>
+                                <Style TargetType="wctprimitives:DataGridRowHeader">
+                                    <Setter Property="Background" Value="DarkBlue"/>
+                                </Style>
+
+                            </controls:DataGrid.Resources>
+
+                            <controls:DataGrid.Columns>
+                                
+                                <controls:DataGridTextColumn 
+                                    Header="GenreID" Width="*" 
+                                    Binding="{Binding GenreId}">
+                                </controls:DataGridTextColumn>
+
+                                <controls:DataGridTextColumn 
+                                    Header="Name" 
+                                    Width="*" Binding="{Binding GenreName}">
+
+                                </controls:DataGridTextColumn>
+
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </Border>
 
 
-
-
-                    <!--<controls:DataGrid x:Name="dataGrid2" 
-                        Height="600" Grid.Row="1"
-                        AutoGenerateColumns="False"
-                        ItemsSource="{x:Bind CustomersList}">
-                        <controls:DataGrid.Columns>
-                            -->
-                    <!-- Name Column -->
-                    <!--
-                            <controls:DataGridTemplateColumn Header="Name">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <TextBlock Padding="5,0,5,0"
-                                            Text="{Binding FirstName}"/>
-                                            <TextBlock Text="{Binding LastName}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                                <controls:DataGridTemplateColumn.CellEditingTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding FirstName}" BorderThickness="0"/>
-                                            <TextBox Text="{Binding LastName}" BorderThickness="0"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellEditingTemplate>
-                            </controls:DataGridTemplateColumn>
-                            -->
-                    <!-- other columns below -->
-                    <!--
-                        </controls:DataGrid.Columns>
-                    </controls:DataGrid>-->
                 </Grid>
             </PivotItem>
 
