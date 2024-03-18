@@ -14,6 +14,7 @@
             x:Name="NavigationControl_Top"
             Grid.RowSpan="2"
             Grid.Column="1"
+            Margin="0,8,0,0"
             Canvas.ZIndex="0"
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="False"
@@ -28,7 +29,7 @@
                     Margin="24,0,12,0"
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
-                    <Image Height="70" Source="ms-appx::///Assets/Icons/imdb.png" />
+                    <Image Height="70" Source="\Assets\Icons\app_icon.png" />
                     <!--<TextBlock
                          x:Name="AppTitle"
                          Margin="12,0,0,0"
@@ -39,7 +40,7 @@
             </NavigationView.PaneHeader>
 
             <!--  MainContent  -->
-            <ScrollView>
+            <ScrollView HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled">
                 <Frame x:Name="MainContent" />
             </ScrollView>
 

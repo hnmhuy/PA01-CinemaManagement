@@ -53,6 +53,9 @@ namespace CinemaManagement.Views
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Interval = TimeSpan.FromSeconds(1);
             DataContext = viewModel;
+
+            Debug.WriteLine("CurrentWindows: " + Window.Current);
+            Debug.WriteLine("CurrentWindows: ");
         }
 
         private void DispatcherTimer_Tick(object sender, object e)
@@ -82,28 +85,18 @@ namespace CinemaManagement.Views
         private Point CalculateDisplayPosition()
         {
             frame = (this.Parent as Frame);
-            double frameWidth = frame.ActualWidth;
-            double frameHeight = frame.ActualHeight;
-            Debug.WriteLine(frameWidth + " " + frameHeight);
+            if (frame != null)
+            {
+                double frameWidth = frame.ActualWidth;
+                double flyoutWidth = 450;
+                Point displayTargetPoint = displayTarget.TransformToVisual(frame).TransformPoint(new Point(0, 0));
 
-
-            double flyoutWidth = 450;
-            double flyoutHeight = 500;
-
-            Debug.WriteLine(flyoutWidth + " " + flyoutHeight);
-
-            Point displayTargetPoint = displayTarget.TransformToVisual(frame).TransformPoint(new Point(0, 0));
-
-            Debug.WriteLine(displayTargetPoint.X + " " + displayTargetPoint.Y);
-
-            Point predictPoint = new Point(displayTargetPoint.X + displayTarget.ActualWidth / 2, displayTargetPoint.Y + displayTarget.ActualHeight + 40);
-            if (predictPoint.X > frameWidth - flyoutWidth / 2 ) predictPoint.X = frameWidth - flyoutWidth /2;
-            //if (predictPoint.Y > frameHeight - flyoutHeight / 2) predictPoint.Y = frameHeight - flyoutHeight / 2;
-            Debug.WriteLine(predictPoint.X + " " + predictPoint.Y);
-            return predictPoint;
+                Point predictPoint = new Point(displayTargetPoint.X + displayTarget.ActualWidth / 2, displayTargetPoint.Y + displayTarget.ActualHeight + 40);
+                if (predictPoint.X > frameWidth - flyoutWidth / 2) predictPoint.X = frameWidth - flyoutWidth / 2;
+                //if (predictPoint.Y > frameHeight - flyoutHeight / 2) predictPoint.Y = frameHeight - flyoutHeight / 2;
+                return predictPoint;
+            } else return new Point(110, displayTarget.ActualHeight + 40);
         }
-
-
 
         private void MovieCard_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
@@ -128,11 +121,6 @@ namespace CinemaManagement.Views
             (sender as FrameworkElement).StartAnimation(_springAnimation);
         }
 
-        private void HighlightedMovieCard_Opening(object sender, object e)
-        {
-
-        }
-
         private void HighlightedMovieCard_Opened(object sender, object e)
         {
             Grid highlightContent = flyoutCard.Content as Grid;
@@ -140,8 +128,6 @@ namespace CinemaManagement.Views
             MediaPlayerElement temp = highlightContent.FindName("TrailerVideo") as MediaPlayerElement;
             
             // Update video source
-
-
             if (temp != null)
             {
                 temp.Source = MediaSource.CreateFromUri(new Uri("ms-appx://" + viewModel.HighlightingMovie.TrailerPath));
@@ -193,6 +179,24 @@ namespace CinemaManagement.Views
             _springAnimation.FinalValue = new Vector3(finalValue);
         }
 
+        private void NavigateToDetailPage()
+        {
+            NavigationTransitionInfo transitionInfo = new DrillInNavigationTransitionInfo();
+            (this.Parent as Frame).Navigate(typeof(MovieDetailPage),null, transitionInfo);
+        }
 
+        private void MovieCardButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigateToDetailPage();
+        }
+
+        private void HighlightMovieCardCover_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (flyoutCard != null)
+            {
+                flyoutCard.Hide();
+            }
+            NavigateToDetailPage();
+        }
     }
 }

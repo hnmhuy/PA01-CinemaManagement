@@ -21,6 +21,7 @@
     <None Remove="Views\AccountPage.xaml" />
     <None Remove="Views\BrowsePage.xaml" />
     <None Remove="Views\DashboardPage.xaml" />
+    <None Remove="Views\MovieDetailPage.xaml" />
     <None Remove="Views\MoviesPage.xaml" />
     <None Remove="Views\NavBarLeft.xaml" />
     <None Remove="Views\NavBarTop.xaml" />
@@ -117,6 +118,11 @@
   <ItemGroup>
     <Folder Include="Assets\Images\" />
     <Folder Include="ValueConverters\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\MovieDetailPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!-- 

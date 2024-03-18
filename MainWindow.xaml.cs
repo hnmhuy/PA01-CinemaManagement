@@ -27,9 +27,11 @@ namespace CinemaManagement
     {
 
         private int role = 0;
+        public NavigationHelper navigationHelper { get; set; }
         public MainWindow(int role)
         {
             this.InitializeComponent();
+            this.role = role;
             ExtendsContentIntoTitleBar = true;
             Page page = null;
 
@@ -37,17 +39,17 @@ namespace CinemaManagement
             {
                 page = new NavBarTop();
                 this.Content = page;
-                NavigationHelper navigationHelper = new NavigationHelper(
+                navigationHelper = new NavigationHelper(
                     (page as NavBarTop).NavBar,
                     (page as NavBarTop).ContentFrame,
-                    typeof(BrowsePage));
+                    typeof(MovieDetailPage));
             }
             else if (role == 1)
             {
                 page = new NavBarLeft();
                 this.Content = page;
                 SetTitleBar((page as NavBarLeft).appTitleBar);
-                NavigationHelper navigationHelper = new NavigationHelper(
+                navigationHelper = new NavigationHelper(
                     (page as NavBarLeft).NavBar,
                     (page as NavBarLeft).ContentFrame,
                     typeof(DashboardPage));

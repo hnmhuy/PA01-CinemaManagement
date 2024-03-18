@@ -111,9 +111,7 @@
             Closed="HighlightedMovieCard_Closed"
             Closing="HighlightedMovieCard_Closing"
             ElementSoundMode="Default"
-            Opened="HighlightedMovieCard_Opened"
-            Opening="HighlightedMovieCard_Opening">
-
+            Opened="HighlightedMovieCard_Opened">
             <Flyout.FlyoutPresenterStyle>
                 <Style TargetType="FlyoutPresenter">
                     <Setter Property="Padding" Value="0" />
@@ -197,16 +195,23 @@
                         Text="{Binding Description}"
                         TextWrapping="WrapWholeWords" />
 
-                    <StackPanel
+                    <!--<StackPanel
                         Grid.Row="3"
                         Padding="0,8,0,0"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal"
                         Spacing="8">
                         <Button>More</Button>
-                        <Button>A Ticket</Button>
-                    </StackPanel>
+                        <Button>Book A Ticket</Button>
+                    </StackPanel>-->
                 </Grid>
+                <Rectangle
+                    Name="HighlightMovieCardCover"
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="0"
+                    Fill="Transparent"
+                    Tapped="HighlightMovieCardCover_Tapped" />
 
                 <CheckBox
                     x:Name="Muted"
@@ -266,82 +271,16 @@
                         </ControlTemplate>
                     </CheckBox.Template>
                 </CheckBox>
+
             </Grid>
         </Flyout>
 
         <DataTemplate x:Name="MovieCardTemplate" x:DataType="m:Movie">
-            <Grid
-                Name="MovieCard"
-                BorderBrush="#FF8400"
-                BorderThickness="0"
-                FlyoutBase.AttachedFlyout="{StaticResource MovieCardHighLighted}"
-                PointerEntered="MovieCard_PointerEntered"
-                PointerExited="MovieCard_PointerExited"
-                Style="{StaticResource MovieCard}">
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Image
-                    Name="Poster"
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Source="{Binding PosterPath}"
-                    Style="{StaticResource PosterImage}" />
-                <StackPanel
-                    Grid.Row="1"
-                    Padding="8,4,8,8"
-                    Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}">
-                    <TextBlock
-                        Height="40"
-                        Style="{StaticResource SubtitleTextBlockStyle}"
-                        Text="{Binding Title}"
-                        TextWrapping="WrapWholeWords" />
-
-                    <Grid VerticalAlignment="Bottom">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Name="IMDBRating"
-                            Grid.Column="1"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                            Text="{Binding AgeCertificate.DisplayContent}" />
-                        <Image
-                            Grid.Column="0"
-                            Height="28"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Source="ms-appx:///Assets/Icons/imdb.png" />
-                        <Border
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Background="{Binding AgeCertificate.BackgroundColor}"
-                            BorderBrush="{Binding AgeCertificate.ForegroundColor}"
-                            Style="{StaticResource ResourceKey=MovieTagBorder}">
-                            <TextBlock
-                                Name="AgeCertificate"
-                                FontSize="12"
-                                Foreground="{Binding AgeCertificate.ForegroundColor}"
-                                Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="{Binding AgeCertificate.DisplayContent}" />
-                        </Border>
-                    </Grid>
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Name="TopMovie" x:DataType="vm:RankMovie">
-            <StackPanel Name="TopMovieCard" Orientation="Horizontal">
-                <!--<TextBlock Style="{StaticResource RankNumber}" Text="10" />-->
-                <Image Height="250" Source="{Binding Rank, Converter={StaticResource RankToIconConverter}}" />
+            <Button
+                Name="MovieCardButton"
+                Padding="0"
+                Click="MovieCardButton_Click"
+                CornerRadius="12">
                 <Grid
                     Name="MovieCard"
                     BorderBrush="#FF8400"
@@ -359,18 +298,19 @@
                         Name="Poster"
                         Grid.Row="0"
                         Grid.RowSpan="2"
-                        Source="{Binding Movie.PosterPath}"
+                        Source="{Binding PosterPath}"
                         Style="{StaticResource PosterImage}" />
                     <StackPanel
                         Grid.Row="1"
                         Padding="8,4,8,8"
                         Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}">
                         <TextBlock
+                            Height="40"
                             Style="{StaticResource SubtitleTextBlockStyle}"
-                            Text="{Binding Movie.Title}"
+                            Text="{Binding Title}"
                             TextWrapping="WrapWholeWords" />
 
-                        <Grid>
+                        <Grid VerticalAlignment="Bottom">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -383,7 +323,7 @@
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="{Binding Movie.AgeCertificate.DisplayContent}" />
+                                Text="{Binding AgeCertificate.DisplayContent}" />
                             <Image
                                 Grid.Column="0"
                                 Height="28"
@@ -394,19 +334,97 @@
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Background="{Binding Movie.AgeCertificate.BackgroundColor}"
-                                BorderBrush="{Binding Movie.AgeCertificate.ForegroundColor}"
+                                Background="{Binding AgeCertificate.BackgroundColor}"
+                                BorderBrush="{Binding AgeCertificate.ForegroundColor}"
                                 Style="{StaticResource ResourceKey=MovieTagBorder}">
                                 <TextBlock
                                     Name="AgeCertificate"
                                     FontSize="12"
-                                    Foreground="{Binding Movie.AgeCertificate.ForegroundColor}"
+                                    Foreground="{Binding AgeCertificate.ForegroundColor}"
                                     Style="{StaticResource BodyStrongTextBlockStyle}"
-                                    Text="{Binding Movie.AgeCertificate.DisplayContent}" />
+                                    Text="{Binding AgeCertificate.DisplayContent}" />
                             </Border>
                         </Grid>
                     </StackPanel>
                 </Grid>
+            </Button>
+        </DataTemplate>
+
+        <DataTemplate x:Name="TopMovie" x:DataType="vm:RankMovie">
+            <StackPanel Name="TopMovieCard" Orientation="Horizontal">
+                <!--<TextBlock Style="{StaticResource RankNumber}" Text="10" />-->
+                <Image Height="250" Source="{Binding Rank, Converter={StaticResource RankToIconConverter}}" />
+                <Button
+                    Name="MovieCardButton"
+                    Padding="0"
+                    Click="MovieCardButton_Click"
+                    CornerRadius="12">
+                    <Grid
+                        Name="MovieCard"
+                        BorderBrush="#FF8400"
+                        BorderThickness="0"
+                        FlyoutBase.AttachedFlyout="{StaticResource MovieCardHighLighted}"
+                        PointerEntered="MovieCard_PointerEntered"
+                        PointerExited="MovieCard_PointerExited"
+                        Style="{StaticResource MovieCard}">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Image
+                            Name="Poster"
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Source="{Binding Movie.PosterPath}"
+                            Style="{StaticResource PosterImage}" />
+                        <StackPanel
+                            Grid.Row="1"
+                            Padding="8,4,8,8"
+                            Background="{StaticResource AcrylicBackgroundFillColorBaseBrush}">
+                            <TextBlock
+                                Style="{StaticResource SubtitleTextBlockStyle}"
+                                Text="{Binding Movie.Title}"
+                                TextWrapping="WrapWholeWords" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Name="IMDBRating"
+                                    Grid.Column="1"
+                                    Margin="5,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{Binding Movie.AgeCertificate.DisplayContent}" />
+                                <Image
+                                    Grid.Column="0"
+                                    Height="28"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Source="ms-appx:///Assets/Icons/imdb.png" />
+                                <Border
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Background="{Binding Movie.AgeCertificate.BackgroundColor}"
+                                    BorderBrush="{Binding Movie.AgeCertificate.ForegroundColor}"
+                                    Style="{StaticResource ResourceKey=MovieTagBorder}">
+                                    <TextBlock
+                                        Name="AgeCertificate"
+                                        FontSize="12"
+                                        Foreground="{Binding Movie.AgeCertificate.ForegroundColor}"
+                                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                                        Text="{Binding Movie.AgeCertificate.DisplayContent}" />
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Button>
             </StackPanel>
         </DataTemplate>
 

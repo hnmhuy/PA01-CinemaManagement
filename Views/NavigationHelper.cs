@@ -24,7 +24,6 @@ namespace CinemaManagement.Views
             set { homePage = value; }
         }
 
-
         public Frame ContentFrame
         {
             get { return contentFrame; }
@@ -99,8 +98,7 @@ namespace CinemaManagement.Views
                 NavView_Navigate(settingPage, args.RecommendedNavigationTransitionInfo);
             }
             else if (args.SelectedItemContainer != null)
-            {
-                Debug.WriteLine(args.SelectedItemContainer.Tag.ToString());
+            {          
                 Type navPageType = Type.GetType(args.SelectedItemContainer.Tag.ToString());
                 NavView_Navigate(navPageType, args.RecommendedNavigationTransitionInfo);
             }
@@ -118,7 +116,6 @@ namespace CinemaManagement.Views
             if (navPageType is not null && !Type.Equals(preNavPageType, navPageType))
             {
                 ContentFrame.Navigate(navPageType, null, transitionInfo);
-                Debug.Write("Navigated to " + navPageType.ToString());
             }
         }
 
@@ -134,10 +131,10 @@ namespace CinemaManagement.Views
                 return false;
 
             // Don't go back if the nav pane is overlayed.
-            if (NavView.IsPaneOpen &&
-                (NavView.DisplayMode == NavigationViewDisplayMode.Compact ||
-                 NavView.DisplayMode == NavigationViewDisplayMode.Minimal))
-                return false;
+            //if (NavView.IsPaneOpen &&
+            //    (NavView.DisplayMode == NavigationViewDisplayMode.Compact ||
+            //     NavView.DisplayMode == NavigationViewDisplayMode.Minimal))
+            //    return false;
 
             ContentFrame.GoBack();
             return true;
@@ -146,6 +143,9 @@ namespace CinemaManagement.Views
         private void On_Navigated(object sender, NavigationEventArgs e)
         {
             NavView.IsBackEnabled = ContentFrame.CanGoBack;
+            NavView.IsBackButtonVisible = ContentFrame.CanGoBack ?
+                NavigationViewBackButtonVisible.Visible :
+                NavigationViewBackButtonVisible.Collapsed;
 
             if (ContentFrame.SourcePageType == settingPage)
             {
@@ -156,9 +156,24 @@ namespace CinemaManagement.Views
             else if (ContentFrame.SourcePageType != null)
             {
                 // Select the nav view item that corresponds to the page being navigated to.
-                //NavView.SelectedItem = NavView.MenuItems
-                //            .OfType<NavigationViewItem>()
-                //            .First(i => i.Tag.Equals(ContentFrame.SourcePageType.FullName.ToString()));
+
+                // Find the NavigationViewItem for the page by name.
+                //NavigationViewItem selectedItem = NavView.MenuItems
+                //    .OfType<NavigationViewItem>()
+                //    .First(n => n.Tag.Equals(e.SourcePageType.FullName));
+
+                //if (selectedItem != null)
+                //{
+                //    NavView.SelectedItem = selectedItem;
+                //    //NavView.Header =
+                //    //    ((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
+                //}
+                //else
+                //{
+                //    // If not found, collapse the NavigationView.
+                //    NavView.SelectedItem = null;
+                //    //NavView.Header = "Cinema Management";
+                //}
 
                 //NavView.Header =
                 //    ((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();

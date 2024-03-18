@@ -12,7 +12,12 @@
             </ResourceDictionary.MergedDictionaries>
             <FontFamily x:Key="FIcon">pack://application:,,,/CinemaManegement;component/Assets/fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons</FontFamily>
             <!--  Other app resources here  -->
-
+            <Color x:Key="SystemAccentColorLight1">#FFE89942</Color>
+            <Color x:Key="SystemAccentColorLight2">#FFEDA85B</Color>
+            <Color x:Key="SystemAccentColorLight3">#FFF1B673</Color>
+            <Color x:Key="SystemAccentColorDark1">#FFCD7821</Color>
+            <Color x:Key="SystemAccentColorDark2">#FFB86419</Color>
+            <Color x:Key="SystemAccentColorDark3">#FFA25110</Color>
             <AcrylicBrush
                 x:Key="TopMovieBackgroud"
                 FallbackColor="Black"
