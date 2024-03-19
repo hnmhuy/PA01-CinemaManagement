@@ -263,8 +263,26 @@
                     </Style>
 
                 </controls:DataGrid.Resources>
+                
+
 
                 <controls:DataGrid.Columns>
+
+                    <controls:DataGridTemplateColumn  Width="*" Header="Rank">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Center" Style="{StaticResource stackContent}">
+                                    <Border  Style="{StaticResource posterBorder}" CornerRadius="50">
+                                        <Image
+                                            
+                                            Width="50"
+                                            Height="50"
+                                            Source="{Binding Rank}"/>
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
 
                     <controls:DataGridTemplateColumn Width="2*" Header="Name">
                         <controls:DataGridTemplateColumn.CellTemplate>
@@ -274,13 +292,13 @@
                                         <Image
                                             Width="50"
                                             Height="50"
-                                            Source="{Binding PosterPath}"
+                                            Source="{Binding Movie.PosterPath}"
                                             Stretch="UniformToFill" />
                                     </Border>
                                     <TextBlock
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding Title}" />
+                                        Text="{Binding Movie.Title}" />
                                 </StackPanel>
                             </DataTemplate>
                         </controls:DataGridTemplateColumn.CellTemplate>
@@ -291,7 +309,7 @@
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Style="{StaticResource stackContent}">
-                                    <ItemsControl ItemsSource="{Binding Genres, Converter={StaticResource ResourceKey=GenreViewConverter}}">
+                                    <ItemsControl ItemsSource="{Binding Movie.Genres, Converter={StaticResource ResourceKey=GenreViewConverter}}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <StackPanel Orientation="Horizontal" />
@@ -315,7 +333,7 @@
                                                         VerticalAlignment="Center"
                                                         FontFamily="{StaticResource FIcon}"
                                                         FontSize="6"
-                                                        Glyph="{Binding Icon}" />
+                                                        Glyph="{Binding Movie.Icon}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -331,7 +349,7 @@
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Style="{StaticResource imdbBorder}">
-                                    <TextBlock Style="{StaticResource imdbRating}" Text="{Binding Imdbrating}" />
+                                    <TextBlock Style="{StaticResource imdbRating}" Text="{Binding Movie.Imdbrating}" />
                                 </Border>
                             </DataTemplate>
                         </controls:DataGridTemplateColumn.CellTemplate>
@@ -340,7 +358,7 @@
 
                     <controls:DataGridTextColumn
                         Width="SizeToHeader"
-                        Binding="{Binding PublishYear}"
+                        Binding="{Binding Movie.PublishYear}"
                         Header="Published Year">
 
                         <controls:DataGridTextColumn.ElementStyle>
@@ -360,7 +378,7 @@
                                         FontFamily="{StaticResource FIcon}"
                                         FontSize="18"
                                         Glyph="&#xE823;" />
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Duration}" />
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Movie.Duration}" />
                                     <TextBlock VerticalAlignment="Center" Text=" m" />
                                 </StackPanel>
                             </DataTemplate>
