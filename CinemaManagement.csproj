@@ -18,6 +18,7 @@
     <None Remove="Assets\Icons\imdb.png" />
     <None Remove="Navigation\NavBarLeft.xaml" />
     <None Remove="Navigation\NavBarTop.xaml" />
+    <None Remove="ViewModels\VouchersPage.xaml" />
     <None Remove="Views\AccountPage.xaml" />
     <None Remove="Views\BrowsePage.xaml" />
     <None Remove="Views\CelebritiesPage.xaml" />
@@ -27,8 +28,9 @@
     <None Remove="Views\NavBarLeft.xaml" />
     <None Remove="Views\NavBarTop.xaml" />
     <None Remove="Views\SearchPage.xaml" />
-    <None Remove="Views\ShowtimesPage.xaml" />
+    <None Remove="Views\ShowtimePage.xaml" />
     <None Remove="Views\StatisticPage.xaml" />
+    <None Remove="Views\VouchersPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,11 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\StatisticPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\ShowtimesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -122,6 +119,21 @@
   <ItemGroup>
     <Folder Include="Assets\Images\" />
     <Folder Include="ValueConverters\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\ShowtimePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\VouchersPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="ViewModels\VouchersPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\CelebritiesPage.xaml">
