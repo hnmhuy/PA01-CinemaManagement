@@ -20,7 +20,7 @@
     <None Remove="Navigation\NavBarTop.xaml" />
     <None Remove="Views\AccountPage.xaml" />
     <None Remove="Views\BrowsePage.xaml" />
-    <None Remove="Views\CelebrityPage.xaml" />
+    <None Remove="Views\CelebritiesPage.xaml" />
     <None Remove="Views\DashboardPage.xaml" />
     <None Remove="Views\MovieDetailPage.xaml" />
     <None Remove="Views\MoviesPage.xaml" />
@@ -122,7 +122,7 @@
     <Folder Include="ValueConverters\" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\CelebrityPage.xaml">
+    <Page Update="Views\CelebritiesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

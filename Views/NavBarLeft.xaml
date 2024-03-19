@@ -82,12 +82,16 @@
                         <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xf182;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Celebrity" Tag="CinemaManagement.Views.CelebritiesPage" >
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xE734;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Statistics" Tag="CinemaManagement.Views.StatisticPage">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xe9d2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Celebrity" Tag="CinemaManagement.Views.CelebrityPage" />
                 <NavigationViewItem
                     Content="Account"
                     Icon="Contact"
