@@ -115,6 +115,7 @@ namespace CinemaManagement.ViewModels
             ObservableCollection<Movie> res = new ObservableCollection<Movie>();
             res.Add(new Movie
             {
+                MovieId=1,
                 Title = "Avatar: The way of water",
                 Duration = 120,
                 PublishYear = 2022,
@@ -129,6 +130,7 @@ namespace CinemaManagement.ViewModels
             });
             res.Add(new Movie
             {
+                MovieId = 2,
                 Title = "Dune Part Two",
                 Duration = 120,
                 PublishYear = 2022,
@@ -143,6 +145,7 @@ namespace CinemaManagement.ViewModels
             });
             res.Add(new Movie
             {
+                MovieId = 3,
                 Title = "Avatar: The way of water",
                 Duration = 120,
                 PublishYear = 2022,
