@@ -22,10 +22,12 @@
     <None Remove="Views\BrowsePage.xaml" />
     <None Remove="Views\CelebritiesPage.xaml" />
     <None Remove="Views\DashboardPage.xaml" />
+    <None Remove="Views\LoginPage.xaml" />
     <None Remove="Views\MovieDetailPage.xaml" />
     <None Remove="Views\MoviesPage.xaml" />
     <None Remove="Views\NavBarLeft.xaml" />
     <None Remove="Views\NavBarTop.xaml" />
+    <None Remove="Views\RegisterPage.xaml" />
     <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\ShowtimesPage.xaml" />
     <None Remove="Views\StatisticPage.xaml" />
@@ -65,6 +67,12 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Views\RegisterPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\LoginPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Views\StatisticPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
