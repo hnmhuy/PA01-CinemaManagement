@@ -5,17 +5,17 @@ namespace CinemaManagement.Models;
 
 public partial class Account
 {
-    public string? Username { get; set; }
+    public string Username { get; set; } = null!;
 
-    public string? Password { get; set; }
+    public string Password { get; set; } = null!;
 
-    public DateTime? Dob { get; set; }
+    public DateTime Dob { get; set; }
 
-    public string? Gender { get; set; }
+    public string Gender { get; set; } = null!;
 
     public string? Fullname { get; set; }
 
-    public bool? IsAdmin { get; set; }
+    public bool IsAdmin { get; set; }
 
     public int AccountId { get; set; }
 

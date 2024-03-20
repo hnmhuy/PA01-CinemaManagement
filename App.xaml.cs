@@ -15,6 +15,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using CinemaManagement.Windows;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,7 +45,9 @@ namespace CinemaManagement
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             int role = 0;
-            m_window = new MainWindow(role);
+            //m_window = new MainWindow(role);
+            m_window = new AuthenticateWindow(); 
+            // Set the size of the window
             m_window.Activate();
         }
 

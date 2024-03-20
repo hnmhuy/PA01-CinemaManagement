@@ -42,7 +42,7 @@ namespace CinemaManagement
                 navigationHelper = new NavigationHelper(
                     (page as NavBarTop).NavBar,
                     (page as NavBarTop).ContentFrame,
-                    typeof(MovieDetailPage));
+                    typeof(LoginPage));
             }
             else if (role == 1)
             {

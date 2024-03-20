@@ -5,11 +5,11 @@ namespace CinemaManagement.Models;
 
 public partial class Movie
 {
-    public string? Title { get; set; }
+    public string Title { get; set; } = null!;
 
-    public int? Duration { get; set; }
+    public int Duration { get; set; }
 
-    public int? PublishYear { get; set; }
+    public int PublishYear { get; set; }
 
     public double? Imdbrating { get; set; }
 
@@ -17,9 +17,9 @@ public partial class Movie
 
     public int MovieId { get; set; }
 
-    public bool? IsGoldenHour { get; set; }
+    public bool IsGoldenHour { get; set; }
 
-    public bool? IsBlockbuster { get; set; }
+    public bool IsBlockbuster { get; set; }
 
     public string? PosterPath { get; set; }
 

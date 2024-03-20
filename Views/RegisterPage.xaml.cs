@@ -31,11 +31,34 @@ namespace CinemaManagement.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    /// 
+
     public sealed partial class RegisterPage : Page
     {
+
+        public HyperlinkButton GoToLogin;
+        public RegisterViewModel dataContext;   
         public RegisterPage()
         {
             this.InitializeComponent();
+            GoToLogin = GoToLoginButton;
+            dataContext = new RegisterViewModel();
+            this.DataContext = dataContext;
+
+            DOBInput.MinDate = dataContext.minDate;
+            DOBInput.MaxDate = dataContext.maxDate;
+        }
+
+        private void ModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Debug.WriteLine("Gener changed");
+            var data = sender as ComboBox;
+            if (data != null)
+            {
+                Debug.WriteLine(data.SelectedItem as string);
+                Debug.WriteLine(data.SelectedItem.ToString());
+                Debug.WriteLine((DataContext as RegisterViewModel).Gender);
+            }
         }
     }
 }

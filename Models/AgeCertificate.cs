@@ -5,9 +5,9 @@ namespace CinemaManagement.Models;
 
 public partial class AgeCertificate
 {
-    public string? DisplayContent { get; set; }
+    public string DisplayContent { get; set; } = null!;
 
-    public int? RequireAge { get; set; }
+    public int RequireAge { get; set; }
 
     public int AgeCertificateId { get; set; }
 

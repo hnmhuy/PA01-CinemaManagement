@@ -24,8 +24,20 @@ namespace CinemaManagement.Views
     /// </summary>
     public sealed partial class LoginPage : Page
     {
+        public TextBox userName;
+        public PasswordBox password;
+        public Button LoginButton;
+        public HyperlinkButton GoToRegister;
+        public LoginViewModel dataContext;
+
         public LoginPage() {
             this.InitializeComponent();
+            userName = txtUser;
+            password = txtPass;
+            LoginButton = btnLogin;
+            GoToRegister = GoToRegisterButton;
+            dataContext = new LoginViewModel(); 
+            this.DataContext = dataContext;
         }
     }
 }

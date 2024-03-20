@@ -18,21 +18,18 @@
     <None Remove="Assets\Icons\imdb.png" />
     <None Remove="Navigation\NavBarLeft.xaml" />
     <None Remove="Navigation\NavBarTop.xaml" />
-    <None Remove="ViewModels\VouchersPage.xaml" />
     <None Remove="Views\AccountPage.xaml" />
     <None Remove="Views\BrowsePage.xaml" />
-    <None Remove="Views\CelebritiesPage.xaml" />
+    <None Remove="Views\CelebrityPage.xaml" />
     <None Remove="Views\DashboardPage.xaml" />
-    <None Remove="Views\LoginPage.xaml" />
     <None Remove="Views\MovieDetailPage.xaml" />
     <None Remove="Views\MoviesPage.xaml" />
     <None Remove="Views\NavBarLeft.xaml" />
     <None Remove="Views\NavBarTop.xaml" />
-    <None Remove="Views\RegisterPage.xaml" />
     <None Remove="Views\SearchPage.xaml" />
-    <None Remove="Views\ShowtimePage.xaml" />
+    <None Remove="Views\ShowtimesPage.xaml" />
     <None Remove="Views\StatisticPage.xaml" />
-    <None Remove="Views\VouchersPage.xaml" />
+    <None Remove="Windows\AuthenticateWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-rc2.1" />
@@ -69,13 +67,12 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\RegisterPage.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-    <Page Update="Views\LoginPage.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
     <Page Update="Views\StatisticPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\ShowtimesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -129,22 +126,12 @@
     <Folder Include="ValueConverters\" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\ShowtimePage.xaml">
+    <Page Update="Windows\AuthenticateWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\VouchersPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="ViewModels\VouchersPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\CelebritiesPage.xaml">
+    <Page Update="Views\CelebrityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

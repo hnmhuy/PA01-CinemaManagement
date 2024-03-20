@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CinemaManagement.Models;
+using System;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -8,6 +9,7 @@ namespace CinemaManagement.ViewModels
     {
         private readonly Action<object> _execute;
         private readonly Func<object, bool> _canExecute;
+        private (bool, Account, string) value;
 
         public event EventHandler CanExecuteChanged;
 
@@ -20,6 +22,11 @@ namespace CinemaManagement.ViewModels
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
+        }
+
+        public RelayCommand((bool, Account, string) value)
+        {
+            this.value = value;
         }
 
         public bool CanExecute(object parameter)
