@@ -155,16 +155,23 @@
                     <Border Grid.Row="1" BorderThickness="1" BorderBrush="Black" CornerRadius="12" Background="#efefef">
 
                         <controls:DataGrid
+                            SelectionChanged="MovieDataGrid_SelectionChanged" 
                         GridLinesVisibility="Horizontal"
                         CanUserReorderColumns="False" CanUserResizeColumns="False"
                         x:Name="MovieDataGrid" Grid.Row="1"
                         AutoGenerateColumns="False"
                         SelectedItem="{Binding SelectedMovie}"
-                        ItemsSource="{Binding MoviesList}"    
+                        ItemsSource="{Binding MoviesList}"
                            >
-                            
+
+                            <controls:DataGrid.DataContext>
+                                <vm:MovieViewModel/>
+                            </controls:DataGrid.DataContext>
+                                
+
 
                             <controls:DataGrid.Resources>
+
 
                                 <Color x:Key="HeaderBackgroundColor">#FF60B560</Color>
                                 <!-- Greenish color -->
@@ -195,9 +202,9 @@
                                         <DataTemplate>
                                             <StackPanel Style="{StaticResource stackContent}">
                                                 <Border Style="{StaticResource posterBorder}">
-                                                    <Image Source="{Binding PosterPath}" Width="50" Height="50" Stretch="UniformToFill"/>
+                                                    <Image Source="{Binding movie.PosterPath}" Width="50" Height="50" Stretch="UniformToFill"/>
                                                 </Border>
-                                                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                                                <TextBlock Text="{Binding movie.Title}" VerticalAlignment="Center" Margin="10 0 0 0"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
@@ -208,7 +215,7 @@
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Style="{StaticResource stackContent}">
-                                                <ItemsControl ItemsSource="{Binding Genres, Converter={StaticResource ResourceKey=GenreViewConverter}}">
+                                                <ItemsControl ItemsSource="{Binding movie.Genres, Converter={StaticResource ResourceKey=GenreViewConverter}}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
                                                             <StackPanel Orientation="Horizontal"/>
@@ -239,7 +246,7 @@
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Border Style="{StaticResource imdbBorder}">
-                                                <TextBlock Text="{Binding Imdbrating}" Style="{StaticResource imdbRating}"/>
+                                                <TextBlock Text="{Binding movie.Imdbrating}" Style="{StaticResource imdbRating}"/>
                                             </Border>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
@@ -247,7 +254,7 @@
 
 
                                 <controls:DataGridTextColumn Header="Published Year" Width="SizeToHeader"
-                                                         Binding="{Binding PublishYear}">
+                                                         Binding="{Binding movie.PublishYear}">
 
                                     <controls:DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
@@ -261,7 +268,7 @@
                                         <DataTemplate>
                                             <StackPanel Style="{StaticResource stackContent}" HorizontalAlignment="Center">
                                                 <FontIcon FontFamily="{StaticResource FIcon}" FontSize="18" Glyph="&#xE823;" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                                                <TextBlock Text="{Binding Duration}" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding movie.Duration}" VerticalAlignment="Center" />
                                                 <TextBlock Text=" m" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </DataTemplate>
@@ -270,21 +277,19 @@
 
 
 
-                                <controls:DataGridTemplateColumn Header="Action" Width="150">
+                                <controls:DataGridTemplateColumn Header="Action" Width="150" x:Name="ActionColumn" >
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-                                                <Button Style="{StaticResource AccentButtonStyle}" Padding="10" >
-                                                    <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                </Button>
+                                            <!--<StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                                                    <Button Style="{StaticResource AccentButtonStyle}" Padding="10" >
+                                                        <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                    </Button>-->
                                                 <Button Style="{StaticResource AccentButtonStyle}" Padding="10" 
-                                                        DataContext="{Binding DataContext, ElementName=MovieViewModel}"
                                                         Command="{Binding DeleteCommand}"
-                                                        CommandParameter="{Binding}"
-                                                       >
-                                                    <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                </Button>
-                                            </StackPanel>
+                                                        CommandParameter="{Binding}">
+                                                        <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                    </Button>   
+                                            <!--</StackPanel>-->
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
@@ -298,7 +303,7 @@
             </PivotItem>
            
 
-            <PivotItem Header="Genres">
+            <PivotItem Header="Genres" >
                 <!--Pivot content goes here-->
                 <Grid Margin="0" Padding="0">
                     <Grid.RowDefinitions>
@@ -382,7 +387,6 @@
                                                     <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                 </Button>
                                                 <Button Style="{StaticResource AccentButtonStyle}" Padding="8" 
-                                                        DataContext="{Binding DataContext, ElementName=MovieViewModel}"
                                                         Command="{Binding DeleteCommand}"
                                                         CommandParameter="{Binding}"
                                                        >
