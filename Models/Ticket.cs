@@ -15,6 +15,8 @@ public partial class Ticket
 
     public double? Price { get; set; }
 
+    public bool? IsVip { get; set; }
+
     public int? BillId { get; set; }
 
     public int? ShowTimeId { get; set; }
