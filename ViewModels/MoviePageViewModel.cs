@@ -39,6 +39,11 @@ namespace CinemaManagement.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private void RaisePropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));

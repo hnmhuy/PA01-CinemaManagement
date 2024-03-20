@@ -9,33 +9,57 @@ using System.Linq;
 
 namespace CinemaManagement.ViewModels
 {
+    public class MovieCommand : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public RelayCommand DeleteCommand { get; set; }
+        public Movie movie { get; set; }
+
+
+
+        public MovieCommand(Movie _movie, RelayCommand _deleteCommand)
+        {
+            this.movie = _movie;
+            this.DeleteCommand = _deleteCommand;
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+    }
 
     public class MovieViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public ObservableCollection<Movie> MoviesList { get; set; }
-        public Movie SelectedMovie { get; set; }
+        public ObservableCollection<MovieCommand> MoviesList { get; set; }
+        public MovieCommand SelectedMovie { get; set; }
+        public int SelectedIndexMovie { get; set; }
         private ICollection<Genre> GenreList { get; set; }
         private ICollection<AgeCertificate> ageCertificates { get; set; }
-        public RelayCommand DeleteCommand { get; set; }
+        public RelayCommand DeleteCommand { get; }
         //public RelayCommand EditCommand { get; set; }
 
         public MovieViewModel()
         {
             GenerateGenreData();
             GenerateAgeCertificate();
-            MoviesList = GenerateSampleData();
-            SelectedMovie = MoviesList[1];
-            //DeleteCommand = new RelayCommand(execute => OnDelete(SelectedMovie), canExecute => SelectedMovie != null);
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
+            MoviesList = GenerateSampleData(DeleteCommand);
+            SelectedMovie = MoviesList[1];
+            ////DeleteCommand = new RelayCommand(execute => OnDelete(SelectedMovie), canExecute => SelectedMovie != null);
 
         }
 
-
-
         private bool CanDelete(object parameter)
         {
+            //if (SelectedIndexMovie <0) return false;
+            //Debug.WriteLine("Index" + SelectedIndexMovie);  
+            //SelectedMovie = MoviesList[SelectedIndexMovie];
             // Add your condition here to determine if the delete command can execute
+            //return true;
             return SelectedMovie != null;
         }
 
@@ -47,10 +71,14 @@ namespace CinemaManagement.ViewModels
             // Check if SelectedMovie is correctly set
             if (SelectedMovie != null)
             {
-                Debug.WriteLine($"Deleting movie: {SelectedMovie.Title}");
-
-                // Remove the selected movie from the MoviesList
+                Debug.WriteLine($"Deleting movie: {SelectedMovie.movie.Title}");
+                //var deleteItem = MoviesList.Where(x => x.movie ==  SelectedMovie).FirstOrDefault();
+                //if (deleteItem != null)
+                //{
+                //    MoviesList.Remove(deleteItem);
+                //}
                 MoviesList.Remove(SelectedMovie);
+                // Remove the selected movie from the MoviesList
             }
             else
             {
@@ -91,7 +119,7 @@ namespace CinemaManagement.ViewModels
             }
         }
 
-        private ObservableCollection<Movie> GenerateSampleData()
+        private ObservableCollection<MovieCommand> GenerateSampleData(RelayCommand DeleteCommand)
         {
 
             List<Genre> avatarGenres = new List<Genre>
@@ -112,8 +140,8 @@ namespace CinemaManagement.ViewModels
             };
 
             // Generate sample data for G
-            ObservableCollection<Movie> res = new ObservableCollection<Movie>();
-            res.Add(new Movie
+            ObservableCollection<MovieCommand> res = new ObservableCollection<MovieCommand>();
+            res.Add(new MovieCommand(new Movie
             {
                 MovieId=1,
                 Title = "Avatar: The way of water",
@@ -127,13 +155,13 @@ namespace CinemaManagement.ViewModels
                 TrailerPath = "/Assets/Videos/avatar.mp4",
                 Genres = avatarGenres
                 
-            });
-            res.Add(new Movie
+            }, DeleteCommand));
+            res.Add(new MovieCommand(new Movie
             {
                 MovieId = 2,
                 Title = "Dune Part Two",
                 Duration = 120,
-                PublishYear = 2022,
+                PublishYear = 2023,
                 Imdbrating = 7.8,
                 AgeCertificateId = 2,
                 AgeCertificate = ageCertificates.ElementAt(1),
@@ -142,8 +170,8 @@ namespace CinemaManagement.ViewModels
                 TrailerPath = "/Assets/Videos/dune2.mp4",
                 Genres = duneGenres
 
-            });
-            res.Add(new Movie
+            }, DeleteCommand));
+            res.Add(new MovieCommand(new Movie
             {
                 MovieId = 3,
                 Title = "Avatar: The way of water",
@@ -157,7 +185,7 @@ namespace CinemaManagement.ViewModels
                 TrailerPath = "/Assets/Videos/avatar.mp4",
                 Genres = pandaGenres
 
-            });
+            }, DeleteCommand));
 
             return res;
         }

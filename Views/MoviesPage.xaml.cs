@@ -1,5 +1,6 @@
 using CinemaManagement.Models;
 using CinemaManagement.ViewModels;
+using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -47,6 +48,24 @@ namespace CinemaManagement.Views
             }
         }
 
+        private void Button_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
 
+        }
+
+        private void MovieDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var data = sender as DataGrid;
+            Debug.WriteLine(data.SelectedIndex);
+            Debug.WriteLine(data.SelectedItem);
+            (data.DataContext as MovieViewModel).SelectedMovie = data.SelectedItem as MovieCommand;
+
+            //if (data != null)
+            //{
+            //    Debug.WriteLine(data.movie.Title);
+            //}
+            Debug.WriteLine(sender);
+            Debug.WriteLine(e);
+        }
     }
 }
