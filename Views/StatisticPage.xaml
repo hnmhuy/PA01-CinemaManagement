@@ -21,7 +21,7 @@
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
         <StackPanel Height="50" HorizontalAlignment="Right" Margin="0,20,50,0" Orientation="Horizontal">
-           
+
             <!--Month-->
             <DatePicker x:Name="MonthDatePicker" DayFormat="{}{day.integer} ({dayofweek.abbreviated})" DayVisible="False" />
             

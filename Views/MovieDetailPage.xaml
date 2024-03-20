@@ -9,11 +9,31 @@
     xmlns:m="using:CinemaManagement.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:ABI.Microsoft.UI.Xaml.Media"
+    xmlns:sys="using:System"
     xmlns:vm="using:CinemaManagement.ViewModels"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
     <Page.Resources>
+
+        <!--  Converters  -->
+
+        <local:VietnameseCurrencyConverter x:Key="VietnameseCurrencyConverter" />
+        <local:NumberSeatConverter x:Key="NumberSeatConverter" />
+        <local:DiscountConverter x:Key="DiscountConverter" />
+        <local:VisibleConverter x:Key="VisibleConverter" />
+        <local:PercentConverter x:Key="PercentConverter" />
+
+        <LinearGradientBrush x:Key="GradientBackground" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Offset="0.0" Color="#99000000" />
+            <GradientStop Offset="0.2" Color="#88000000" />
+            <GradientStop Offset="0.4" Color="#77000000" />
+            <GradientStop Offset="0.5" Color="#77000000" />
+            <GradientStop Offset="0.6" Color="#22000000" />
+            <GradientStop Offset="0.8" Color="#11000000" />
+            <GradientStop Offset="1.0" Color="#00000000" />
+        </LinearGradientBrush>
+
         <Style x:Key="MainContent" TargetType="Grid">
             <Setter Property="RowSpacing" Value="12" />
             <Setter Property="ColumnSpacing" Value="12" />
@@ -21,14 +41,13 @@
 
         <Style x:Key="MovieDetailStyle" TargetType="Grid">
             <Setter Property="RowSpacing" Value="12" />
-            <Setter Property="Margin" Value="24,0,24,0" />
+            <Setter Property="Padding" Value="0,24,0,0" />
         </Style>
 
         <Style x:Key="Poster" TargetType="Grid">
             <Setter Property="MaxWidth" Value="380" />
             <Setter Property="MinWidth" Value="200" />
             <Setter Property="CornerRadius" Value="12" />
-            <Setter Property="Margin" Value="8" />
         </Style>
 
         <Style x:Key="PosterImage" TargetType="Image">
@@ -38,9 +57,10 @@
         </Style>
 
         <Style x:Key="InfoContainer" TargetType="Grid">
-            <Setter Property="Padding" Value="24" />
+            <Setter Property="Padding" Value="12" />
             <Setter Property="RowSpacing" Value="24" />
-            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="ColumnSpacing" Value="24" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
         <Style x:Key="MovieTitle" TargetType="TextBlock">
@@ -80,7 +100,9 @@
 
         <Style x:Key="Description" TargetType="TextBlock">
             <Setter Property="TextWrapping" Value="WrapWholeWords" />
-            <Setter Property="FontSize" Value="18   " />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="TextAlignment" Value="Justify" />
+            <Setter Property="MaxHeight" Value="200" />
         </Style>
 
         <Style x:Key="BookDateTime" TargetType="Grid">
@@ -92,8 +114,9 @@
         </Style>
 
         <Style x:Key="ShowtimeSection" TargetType="Grid">
-            <Setter Property="RowSpacing" Value="24" />
+            <Setter Property="Padding" Value="24" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="ColumnSpacing" Value="12" />
         </Style>
 
         <Style x:Key="MapSeat" TargetType="Grid">
@@ -101,20 +124,6 @@
             <Setter Property="Background" Value="{StaticResource LayerOnMicaBaseAltFillColorDefaultBrush}" />
             <Setter Property="CornerRadius" Value="24" />
         </Style>
-
-        <!--
-            Name="InteractiveSeat"
-            Width="50"
-            Height="50"
-            HorizontalAlignment="Center"
-            AllowFocusOnInteraction="False"
-            Background="{StaticResource ToggleButtonDisabledForegroundThemeBrush}"
-            BorderBrush="{StaticResource ToggleButtonDisabledForegroundThemeBrush}"
-            BorderThickness="1"
-            CornerRadius="8"
-            Opacity="0.3"
-        -->
-
 
         <Style x:Key="SeatStyleBorder" TargetType="Border">
             <Setter Property="Width" Value="50" />
@@ -133,14 +142,32 @@
             <Setter Property="CornerRadius" Value="24, 24, 0,0" />
             <Setter Property="Background" Value="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
             <Setter Property="Padding" Value="0,0,0,18" />
-            <Setter Property="Margin" Value="0,0,0,-24" />
+            <Setter Property="Margin" Value="0,24,0,0" />
         </Style>
 
         <Style x:Key="SeatMapKeys" TargetType="Grid">
             <Setter Property="CornerRadius" Value="0, 0, 24, 24" />
             <Setter Property="ColumnSpacing" Value="12" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Padding" Value="24" />
             <Setter Property="Background" Value="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
         </Style>
+
+        <Style x:Key="BookingDetail" TargetType="Grid">
+            <Setter Property="CornerRadius" Value="24" />
+            <Setter Property="Margin" Value="0,24,0,0" />
+            <Setter Property="Padding" Value="24" />
+            <Setter Property="Background" Value="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
+        </Style>
+
+        <Style x:Key="InfoBlock" TargetType="StackPanel">
+            <Setter Property="Padding" Value="0,12,0,12" />
+            <Setter Property="Spacing" Value="8" />
+            <Setter Property="BorderBrush" Value="{StaticResource AccentAAFillColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="0,1.2,0,0" />
+        </Style>
+
+        <!--  Data template  -->
 
         <DataTemplate x:Key="Seat" x:DataType="m:Ticket">
             <ToggleButton
@@ -148,8 +175,10 @@
                 Width="50"
                 Height="50"
                 Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
+                Checked="InteractiveSeat_Checked"
                 IsChecked="False"
-                IsEnabled="{Binding IsAvailable}">
+                IsEnabled="{Binding IsAvailable}"
+                Unchecked="InteractiveSeat_Unchecked">
                 <StackPanel Orientation="Vertical">
                     <FontIcon
                         FontFamily="{StaticResource FIcon}"
@@ -184,6 +213,125 @@
                     Text="{Binding}" />
             </Border>
         </DataTemplate>
+
+        <DataTemplate x:Key="GenreList" x:DataType="m:Genre">
+            <Border Style="{StaticResource InfoBadge}">
+                <TextBlock FontSize="16" Text="Action" />
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Contributor" x:DataType="vm:ContributorAndSeparator">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <HyperlinkButton
+                    Padding="0"
+                    Content="{Binding Contributor}"
+                    Foreground="{StaticResource TextFillColorTertiaryBrush}" />
+                <FontIcon
+                    FontFamily="{StaticResource FIcon}"
+                    FontSize="5"
+                    Foreground="{StaticResource TextFillColorTertiaryBrush}"
+                    Glyph="&#xF127;"
+                    Visibility="{Binding isSeparatorVisible}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ContributorGroup" x:DataType="vm:GroupContributor">
+            <StackPanel
+                MinHeight="100"
+                BorderBrush="{StaticResource AccentAAFillColorDefaultBrush}"
+                BorderThickness="0,1,0,0"
+                Orientation="Vertical"
+                Spacing="8">
+                <TextBlock
+                    Foreground="{StaticResource AccentAAFillColorDefaultBrush}"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="{Binding GroupName}" />
+                <ItemsRepeater ItemTemplate="{StaticResource Contributor}" ItemsSource="{Binding Contributors}">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Orientation="Horizontal" Spacing="8" />
+                    </ItemsRepeater.Layout>
+                </ItemsRepeater>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="BillRow" x:DataType="vm:BillRow">
+            <Grid>
+                <TextBlock Name="Number" Text="{Binding amount, Converter={StaticResource NumberSeatConverter}}" />
+                <TextBlock
+                    Name="TypeOfSeat"
+                    HorizontalAlignment="Center"
+                    Text="{Binding content}" />
+                <TextBlock
+                    x:Name="Price"
+                    HorizontalAlignment="Right"
+                    Text="{Binding price, Converter={StaticResource VietnameseCurrencyConverter}}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SelectedSeat" x:DataType="m:Ticket">
+            <StackPanel
+                Height="54"
+                Padding="4"
+                Background="{StaticResource LayerOnMicaBaseAltFillColorDefault}"
+                CornerRadius="8"
+                Orientation="Horizontal"
+                Spacing="12">
+                <StackPanel
+                    Padding="8"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SystemAccentColorLight2}"
+                    CornerRadius="9"
+                    Orientation="Horizontal">
+                    <TextBlock FontSize="20" Text="{Binding Row}" />
+                    <TextBlock FontSize="20" Text="{Binding Col}" />
+                </StackPanel>
+                <StackPanel
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Orientation="Vertical">
+                    <TextBlock
+                        FontSize="14"
+                        Text="Normal seat"
+                        TextAlignment="Left" />
+                    <TextBlock FontSize="14" Text="{Binding Price, Converter={StaticResource VietnameseCurrencyConverter}}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="VoucherItem" x:DataType="vm:CheckBoxVoucher">
+            <Border
+                Height="55"
+                Padding="12,0,12,0"
+                Background="{StaticResource LayerOnMicaBaseAltFillColorSecondary}"
+                CornerRadius="9">
+                <CheckBox
+                    Name="Voucher"
+                    VerticalAlignment="Center"
+                    Checked="Voucher_Checked"
+                    IsEnabled="{Binding IsAvailable}"
+                    Unchecked="Voucher_Unchecked">
+                    <StackPanel
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Orientation="Vertical">
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="Black"
+                            Text="{Binding Voucher.VoucherCode}" />
+                        <TextBlock
+                            FontSize="14"
+                            Text="{Binding Voucher.DiscountAmount, Converter={StaticResource PercentConverter}}"
+                            Visibility="{Binding Voucher.IsPercentageDiscount, Converter={StaticResource VisibleConverter}, ConverterParameter=false}" />
+                        <TextBlock
+                            FontSize="14"
+                            Text="{Binding Voucher.DiscountAmount, Converter={StaticResource VietnameseCurrencyConverter}}"
+                            Visibility="{Binding Voucher.IsPercentageDiscount, Converter={StaticResource VisibleConverter}, ConverterParameter=true}" />
+                    </StackPanel>
+                </CheckBox>
+            </Border>
+        </DataTemplate>
+
     </Page.Resources>
 
     <Page.DataContext>
@@ -197,7 +345,7 @@
         </Grid.RowDefinitions>
 
         <Grid
-            Name="MovieDetailSection"
+            x:Name="MovieDetailSection"
             Grid.Row="0"
             Style="{StaticResource MovieDetailStyle}">
             <Grid.ColumnDefinitions>
@@ -205,12 +353,72 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" Style="{StaticResource Poster}">
-                <Image Source="ms-appx:///Assets/Images/Poster/dune2.jpg" Style="{StaticResource PosterImage}" />
-            </Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
+            <StackPanel
+                x:Name="TrailerContainer"
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,-24,0,0"
+                Visibility="Collapsed">
+                <MediaPlayerElement
+                    x:Name="TrailerPlayer"
+                    MaxHeight="900"
+                    AreTransportControlsEnabled="True"
+                    AutoPlay="False" />
+                <Button
+                    Name="GoToShowtime"
+                    Margin="0,-90,24,0"
+                    HorizontalAlignment="Right"
+                    Background="{StaticResource AccentAAFillColorDefaultBrush}"
+                    Click="GoToShowtime_Click"
+                    Foreground="{StaticResource TextOnAccentAAFillColorPrimary}"
+                    PointerEntered="GoToShowtime_PointerEntered"
+                    PointerExited="GoToShowtime_PointerExited">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                            <FontIcon
+                                FontFamily="{StaticResource FIcon}"
+                                FontSize="14"
+                                Glyph="&#xE747;" />
+                            <FontIcon
+                                Margin="0,-10,0,-8"
+                                FontFamily="{StaticResource FIcon}"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Glyph="&#xE75D;" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="txtGotoShowtime"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Text="Showitme"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+
+            <Rectangle
+                Grid.Row="1"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,-24,0,0"
+                Fill="{StaticResource GradientBackground}" />
             <Grid
-                Name="InfoContainer"
+                Grid.Row="1"
+                Grid.Column="0"
+                Style="{StaticResource Poster}">
+                <Image Source="{Binding movie.PosterPath}" Style="{StaticResource PosterImage}" />
+            </Grid>
+            <Grid
+                x:Name="InfoContainer"
+                Grid.Row="1"
                 Grid.Column="1"
                 Style="{StaticResource InfoContainer}">
                 <Grid.RowDefinitions>
@@ -218,8 +426,8 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width=".3*" />
+                    <ColumnDefinition Width=".65*" />
+                    <ColumnDefinition Width=".35*" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock
@@ -228,16 +436,23 @@
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     Style="{StaticResource TitleLargeTextBlockStyle}"
-                    Text="Dune Part Two" />
+                    Text="{Binding movie.Title}" />
 
                 <StackPanel
                     Name="OverviewInfo"
                     Grid.Row="1"
                     Grid.Column="0"
                     Style="{StaticResource OverviewInfo}">
-                    <Border Style="{StaticResource InfoBadge}">
-                        <TextBlock FontSize="16" Text="Action" />
-                    </Border>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled">
+                        <ItemsRepeater
+                            Name="GenreList"
+                            ItemTemplate="{StaticResource GenreList}"
+                            ItemsSource="{Binding genreList}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Horizontal" Spacing="8" />
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </ScrollViewer>
                     <StackPanel
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
@@ -282,15 +497,30 @@
                     <TextBlock
                         Name="Description"
                         Style="{StaticResource Description}"
-                        Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio nec urna aliquet tincidunt. Nulla facilisi. Nulla nec odio nec urna aliquet tincidunt. Nulla facilisi. Nulla nec odio nec urna aliquet tincidunt. Nulla facilisi." />
-                    <Button
-                        Name="ShowtimeButton"
-                        Padding="12"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Content="Watch Trailer Video"
-                        FontSize="18"
-                        FontWeight="Bold" />
+                        Text="{Binding movie.Description}" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Button
+                            Name="TrailerButton"
+                            Padding="8"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Click="TrailerButton_Click"
+                            FontSize="18">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xF5B0;" />
+                                <TextBlock Text="Watch trailer" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <ItemsRepeater ItemTemplate="{StaticResource ContributorGroup}" ItemsSource="{Binding contributorList}">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Vertical" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
                 </StackPanel>
             </Grid>
         </Grid>
@@ -300,14 +530,14 @@
             Style="{StaticResource ShowtimeSection}">
 
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="500" />
+                <ColumnDefinition Width="380" />
             </Grid.ColumnDefinitions>
 
             <Grid
@@ -360,197 +590,326 @@
                 </StackPanel>
             </Grid>
 
-            <ScrollViewer
-                Grid.Row="1"
-                Grid.Column="0"
-                Style="{StaticResource SeatMapContainer}">
-                <StackPanel HorizontalAlignment="Center">
-                    <StackPanel Margin="0,-20,0,30">
-                        <Path
+
+            <StackPanel Grid.Row="1" Grid.Column="0">
+                <ScrollViewer
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Style="{StaticResource SeatMapContainer}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <StackPanel Margin="0,-20,0,30">
+                            <Path
+                                HorizontalAlignment="Center"
+                                Data="M 0,100 C 500,60 500,60 1000,100"
+                                Stroke="#E38B29"
+                                StrokeThickness="2.8" />
+                            <TextBlock
+                                Margin="0,-18,0,0"
+                                HorizontalAlignment="Center"
+                                CharacterSpacing="160"
+                                FontSize="28"
+                                FontWeight="Bold"
+                                Text="SCREEN" />
+                        </StackPanel>
+                        <StackPanel
                             HorizontalAlignment="Center"
-                            Data="M 0,100 C 500,60 500,60 1000,100"
-                            Stroke="#E38B29"
-                            StrokeThickness="2.8" />
-                        <TextBlock
-                            Margin="0,-18,0,0"
-                            HorizontalAlignment="Center"
-                            CharacterSpacing="160"
-                            FontSize="28"
-                            FontWeight="Bold"
-                            Text="SCREEN" />
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="12">
+                            <ItemsRepeater
+                                Name="RowNameLeft"
+                                Grid.Column="0"
+                                Width="50"
+                                Height="{Binding seatMapHeight}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ItemTemplate="{StaticResource RowName}"
+                                ItemsSource="{Binding rowList}">
+                                <ItemsRepeater.Layout>
+                                    <UniformGridLayout
+                                        MaximumRowsOrColumns="1"
+                                        MinColumnSpacing="12"
+                                        MinRowSpacing="12"
+                                        Orientation="Horizontal" />
+                                </ItemsRepeater.Layout>
+                            </ItemsRepeater>
+
+                            <ItemsRepeater
+                                Name="SeatContainer"
+                                Grid.Column="1"
+                                Width="{Binding seatMapWidth}"
+                                Height="{Binding seatMapHeight}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ItemTemplate="{StaticResource Seat}"
+                                ItemsSource="{Binding ticketList}">
+                                <ItemsRepeater.Layout>
+                                    <UniformGridLayout
+                                        MaximumRowsOrColumns="{Binding ShowTime.MaxCol}"
+                                        MinColumnSpacing="12"
+                                        MinRowSpacing="12"
+                                        Orientation="Horizontal" />
+                                </ItemsRepeater.Layout>
+                            </ItemsRepeater>
+
+                            <ItemsRepeater
+                                Name="RowNameRight"
+                                Grid.Column="0"
+                                Height="{Binding seatMapHeight}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ItemTemplate="{StaticResource RowName}"
+                                ItemsSource="{Binding rowList}">
+                                <ItemsRepeater.Layout>
+                                    <UniformGridLayout
+                                        MaximumRowsOrColumns="1"
+                                        MinColumnSpacing="12"
+                                        MinRowSpacing="12"
+                                        Orientation="Horizontal" />
+                                </ItemsRepeater.Layout>
+                            </ItemsRepeater>
+                        </StackPanel>
                     </StackPanel>
+                </ScrollViewer>
+
+                <Grid
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Style="{StaticResource SeatMapKeys}">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <StackPanel
+                        Grid.Column="0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Spacing="4">
+                        <Border
+                            Background="{StaticResource ToggleButtonDisabledForegroundThemeBrush}"
+                            BorderBrush="{StaticResource ToggleButtonDisabledForegroundThemeBrush}"
+                            Opacity="0.3"
+                            Style="{StaticResource SeatStyleBorder}">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <FontIcon
+                                    FontFamily="{StaticResource FIcon}"
+                                    FontSize="18"
+                                    Glyph="&#xE747;" />
+                                <FontIcon
+                                    Margin="0,-10,0,-8"
+                                    FontFamily="{StaticResource FIcon}"
+                                    FontSize="25"
+                                    FontWeight="Bold"
+                                    Glyph="&#xE75D;" />
+                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <TextBlock FontSize="10" Text="##" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Text="Unavailable" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Column="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        Spacing="4">
+                        <Border
+                            Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
+                            BorderBrush="{StaticResource ToggleButtonBorderThemeBrush}"
+                            Style="{StaticResource SeatStyleBorder}">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <FontIcon
+                                    FontFamily="{StaticResource FIcon}"
+                                    FontSize="18"
+                                    Glyph="&#xE747;" />
+                                <FontIcon
+                                    Margin="0,-10,0,-8"
+                                    FontFamily="{StaticResource FIcon}"
+                                    FontSize="25"
+                                    FontWeight="Bold"
+                                    Glyph="&#xE75D;" />
+                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <TextBlock FontSize="10" Text="##" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Text="Available" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Column="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Spacing="4">
+                        <Border
+                            Background="{StaticResource SystemAccentColorLight2}"
+                            BorderBrush="{StaticResource ToggleButtonDisabledForegroundThemeBrush}"
+                            Style="{StaticResource SeatStyleBorder}">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <FontIcon
+                                    FontFamily="{StaticResource FIcon}"
+                                    FontSize="18"
+                                    Foreground="Black"
+                                    Glyph="&#xE747;" />
+                                <FontIcon
+                                    Margin="0,-10,0,-8"
+                                    FontFamily="{StaticResource FIcon}"
+                                    FontSize="25"
+                                    FontWeight="Bold"
+                                    Foreground="Black"
+                                    Glyph="&#xE75D;" />
+                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <TextBlock
+                                        FontSize="10"
+                                        Foreground="Black"
+                                        Text="##" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Text="Your selection" />
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+            <Grid
+                Name="BookingDetail"
+                Grid.Row="1"
+                Grid.Column="2"
+                BorderThickness="1"
+                Style="{StaticResource BookingDetail}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="100" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Text="Select Your Seats" />
+
+                <StackPanel
+                    Name="ShowtimeIfo"
+                    Grid.Row="1"
+                    Style="{StaticResource InfoBlock}">
+                    <TextBlock
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Text="{Binding movie.Title}" />
+                    <StackPanel
+                        HorizontalAlignment="Stretch"
                         Orientation="Horizontal"
                         Spacing="12">
-                        <ItemsRepeater
-                            Name="RowNameLeft"
-                            Grid.Column="0"
-                            Width="50"
-                            Height="{Binding seatMapHeight}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            ItemTemplate="{StaticResource RowName}"
-                            ItemsSource="{Binding rowList}">
-                            <ItemsRepeater.Layout>
-                                <UniformGridLayout
-                                    MaximumRowsOrColumns="1"
-                                    MinColumnSpacing="12"
-                                    MinRowSpacing="12"
-                                    Orientation="Horizontal" />
-                            </ItemsRepeater.Layout>
-                        </ItemsRepeater>
-
-                        <ItemsRepeater
-                            Name="SeatContainer"
-                            Grid.Column="1"
-                            Width="{Binding seatMapWidth}"
-                            Height="{Binding seatMapHeight}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            ItemTemplate="{StaticResource Seat}"
-                            ItemsSource="{Binding ticketList}">
-                            <ItemsRepeater.Layout>
-                                <UniformGridLayout
-                                    MaximumRowsOrColumns="{Binding ShowTime.MaxCol}"
-                                    MinColumnSpacing="12"
-                                    MinRowSpacing="12"
-                                    Orientation="Horizontal" />
-                            </ItemsRepeater.Layout>
-                        </ItemsRepeater>
-
-                        <ItemsRepeater
-                            Name="RowNameRight"
-                            Grid.Column="0"
-                            Height="{Binding seatMapHeight}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            ItemTemplate="{StaticResource RowName}"
-                            ItemsSource="{Binding rowList}">
-                            <ItemsRepeater.Layout>
-                                <UniformGridLayout
-                                    MaximumRowsOrColumns="1"
-                                    MinColumnSpacing="12"
-                                    MinRowSpacing="12"
-                                    Orientation="Horizontal" />
-                            </ItemsRepeater.Layout>
-                        </ItemsRepeater>
+                        <TextBlock FontWeight="Bold" Text="Date" />
+                        <TextBlock HorizontalAlignment="Stretch" Text="20/03/2024" />
+                    </StackPanel>
+                    <StackPanel
+                        HorizontalAlignment="Stretch"
+                        Orientation="Horizontal"
+                        Spacing="12">
+                        <TextBlock FontWeight="Bold" Text="Time" />
+                        <TextBlock HorizontalAlignment="Stretch" Text="10:00 AM" />
                     </StackPanel>
                 </StackPanel>
-            </ScrollViewer>
-
-            <Grid
-                Grid.Row="2"
-                Grid.Column="0"
-                Style="{StaticResource SeatMapKeys}">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
                 <StackPanel
-                    Grid.Column="0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Spacing="4">
-                    <Border
-                        Background="{StaticResource ToggleButtonDisabledForegroundThemeBrush}"
-                        BorderBrush="{StaticResource ToggleButtonDisabledForegroundThemeBrush}"
-                        Opacity="0.3"
-                        Style="{StaticResource SeatStyleBorder}">
-                        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                            <FontIcon
-                                FontFamily="{StaticResource FIcon}"
-                                FontSize="18"
-                                Glyph="&#xE747;" />
-                            <FontIcon
-                                Margin="0,-10,0,-8"
-                                FontFamily="{StaticResource FIcon}"
-                                FontSize="25"
-                                FontWeight="Bold"
-                                Glyph="&#xE75D;" />
-                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                <TextBlock FontSize="10" Text="##" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
+                    Name="SeatList"
+                    Grid.Row="2"
+                    Style="{StaticResource InfoBlock}">
                     <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Text="Unavailable" />
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Text="Selected Seats" />
+                    <ScrollViewer
+                        Height="150"
+                        VerticalScrollBarVisibility="Auto"
+                        VerticalScrollMode="Enabled">
+                        <ItemsRepeater ItemTemplate="{StaticResource SelectedSeat}" ItemsSource="{Binding selectedTickets}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Vertical" Spacing="8" />
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </ScrollViewer>
                 </StackPanel>
 
-                <StackPanel
-                    Grid.Column="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Spacing="4">
-                    <Border
-                        Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
-                        BorderBrush="{StaticResource ToggleButtonBorderThemeBrush}"
-                        Style="{StaticResource SeatStyleBorder}">
-                        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                            <FontIcon
-                                FontFamily="{StaticResource FIcon}"
-                                FontSize="18"
-                                Glyph="&#xE747;" />
-                            <FontIcon
-                                Margin="0,-10,0,-8"
-                                FontFamily="{StaticResource FIcon}"
-                                FontSize="25"
-                                FontWeight="Bold"
-                                Glyph="&#xE75D;" />
-                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                <TextBlock FontSize="10" Text="##" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Text="Available" />
-                </StackPanel>
+                <!--  Voucher  -->
 
                 <StackPanel
-                    Grid.Column="2"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Spacing="4">
-                    <Border
-                        Background="{StaticResource SystemAccentColorLight2}"
-                        BorderBrush="{StaticResource ToggleButtonDisabledForegroundThemeBrush}"
-                        Style="{StaticResource SeatStyleBorder}">
-                        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                            <FontIcon
-                                FontFamily="{StaticResource FIcon}"
-                                FontSize="18"
-                                Foreground="Black"
-                                Glyph="&#xE747;" />
-                            <FontIcon
-                                Margin="0,-10,0,-8"
-                                FontFamily="{StaticResource FIcon}"
-                                FontSize="25"
-                                FontWeight="Bold"
-                                Foreground="Black"
-                                Glyph="&#xE75D;" />
-                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                <TextBlock
-                                    FontSize="10"
-                                    Foreground="Black"
-                                    Text="##" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
+                    Name="VoucherList"
+                    Grid.Row="3"
+                    BorderThickness="0,1.2,0,1.2"
+                    Orientation="Vertical"
+                    Style="{StaticResource InfoBlock}">
                     <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Text="Your selection" />
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Text="Voucher" />
+                    <ScrollViewer
+                        Height="150"
+                        Padding="0,0,0,16"
+                        VerticalScrollBarVisibility="Auto"
+                        VerticalScrollMode="Enabled">
+                        <ItemsRepeater ItemTemplate="{StaticResource VoucherItem}" ItemsSource="{Binding checkBoxVouchers}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Vertical" Spacing="8" />
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </ScrollViewer>
+                </StackPanel>
+
+                <!--  Bill  -->
+
+                <StackPanel
+                    Name="BillConfirmation"
+                    Grid.Row="4"
+                    VerticalAlignment="Bottom"
+                    BorderThickness="0"
+                    Style="{StaticResource InfoBlock}">
+                    <ItemsRepeater ItemTemplate="{StaticResource BillRow}" ItemsSource="{Binding billRowList}">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Vertical" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                    <Grid>
+                        <TextBlock
+                            FontSize="20"
+                            FontWeight="Black"
+                            Text="Total" />
+                        <TextBlock
+                            x:Name="TotalPrice"
+                            HorizontalAlignment="Right"
+                            FontSize="20"
+                            FontWeight="Black"
+                            Text="{Binding currentTotalBill, Converter={StaticResource VietnameseCurrencyConverter}}" />
+                    </Grid>
+
+                    <StackPanel
+                        Name="Confirm"
+                        Grid.Row="5"
+                        Margin="0,12,0,0"
+                        Orientation="Vertical">
+                        <Button
+                            Width="300"
+                            Padding="12"
+                            HorizontalAlignment="Center"
+                            Content="Book"
+                            Style="{StaticResource AccentButtonStyle}" />
+                    </StackPanel>
                 </StackPanel>
             </Grid>
-
         </Grid>
-
     </Grid>
 </Page>
