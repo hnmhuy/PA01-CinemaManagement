@@ -31,22 +31,10 @@ namespace CinemaManagement.ViewModels
             }
         }
 
-        private PersonViewModel _peopleList;
-        public PersonViewModel PeopleList
-        {
-            get { return _peopleList; }
-            set
-            {
-                _peopleList = value;
-                RaisePropertyChanged("PeopleList");
-            }
-        }
-
         public MoviePageViewModel()
         {
             MoviesList = new MovieViewModel();
             GenresList = new GenreViewModel();
-            PeopleList = new PersonViewModel();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

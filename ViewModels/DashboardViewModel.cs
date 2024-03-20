@@ -13,9 +13,22 @@ namespace CinemaManagement.ViewModels
 {
     class DashboardViewModel
     {
-        public ObservableCollection<Movie> MoviesList { get; set; }
+        public class MovieWrapper
+        {
+            public String Rank { get; set; }
+            public Movie Movie { get; set; }
+
+            public MovieWrapper(Movie movie, String rank)
+            {
+                this.Movie = movie;
+                this.Rank = rank;
+            }
+        }
+        public ObservableCollection<MovieWrapper> MoviesList { get; set; }
         private ICollection<Genre> GenreList { get; set; }
         private ICollection<AgeCertificate> ageCertificates { get; set; }
+
+        private ICollection<String> Rank { get; set; }
         public DashboardViewModel()
         {
             GenerateGenreData();
@@ -47,7 +60,7 @@ namespace CinemaManagement.ViewModels
             }
         }
 
-        private ObservableCollection<Movie> GenerateSampleData()
+        private ObservableCollection<MovieWrapper> GenerateSampleData()
         {
 
             List<Genre> avatarGenres = new List<Genre>
@@ -68,8 +81,8 @@ namespace CinemaManagement.ViewModels
             };
 
             // Generate sample data for G
-            ObservableCollection<Movie> res = new ObservableCollection<Movie>();
-            res.Add(new Movie
+            ObservableCollection<MovieWrapper> res = new ObservableCollection<MovieWrapper>();
+            res.Add(new MovieWrapper(new Movie
             {
                 Title = "Avatar: The way of water",
                 Duration = 120,
@@ -81,9 +94,8 @@ namespace CinemaManagement.ViewModels
                 Description = "\"Avatar: The Way of Water\" is a sequel to the first \"Avatar\" film, set more than a decade after the events of the first film1. The story follows the Sully family (Jake, Neytiri, and their kids) as they seek refuge with the aquatic Metkayina clan of Pandora, a habitable exomoon on which they live2",
                 TrailerPath = "/Assets/Videos/avatar.mp4",
                 Genres = avatarGenres
-                
-            });
-            res.Add(new Movie
+            }, "/Assets/Icons/Rank01.png"));
+            res.Add(new MovieWrapper(new Movie
             {
                 Title = "Dune Part Two",
                 Duration = 120,
@@ -96,8 +108,8 @@ namespace CinemaManagement.ViewModels
                 TrailerPath = "/Assets/Videos/dune2.mp4",
                 Genres = duneGenres
 
-            });
-            res.Add(new Movie
+            }, "/Assets/Icons/Rank02.png"));
+            res.Add(new MovieWrapper(new Movie
             {
                 Title = "Avatar: The way of water",
                 Duration = 120,
@@ -110,8 +122,8 @@ namespace CinemaManagement.ViewModels
                 TrailerPath = "/Assets/Videos/avatar.mp4",
                 Genres = pandaGenres
 
-            });
-
+            }, "/Assets/Icons/Rank03.png"));
+            Console.WriteLine(res);
             return res;
         }
     

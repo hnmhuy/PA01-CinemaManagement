@@ -27,5 +27,34 @@ namespace CinemaManagement.Views
         {
             this.InitializeComponent();
         }
+
+
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Hide all DatePickers
+            DayDatePicker.Visibility = Visibility.Collapsed;
+            WeekDatePicker.Visibility = Visibility.Collapsed;
+            MonthDatePicker.Visibility = Visibility.Collapsed;
+            YearDatePicker.Visibility = Visibility.Collapsed;
+
+            // Show the selected DatePicker
+            string selectedMode = (string)ModeComboBox.SelectedItem;
+            switch (selectedMode)
+            {
+                case "Day to day":
+                    DayDatePicker.Visibility = Visibility.Visible;
+                    break;
+                case "Week":
+                    WeekDatePicker.Visibility = Visibility.Visible;
+                    break;
+                case "Month":
+                    MonthDatePicker.Visibility = Visibility.Visible;
+                    break;
+                case "Year":
+                    YearDatePicker.Visibility = Visibility.Visible;
+                    break;
+            }
+        }
     }
 }

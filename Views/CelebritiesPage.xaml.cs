@@ -1,3 +1,4 @@
+using CinemaManagement.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -7,6 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -21,11 +23,25 @@ namespace CinemaManagement.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ShowtimesPage : Page
+    public sealed partial class CelebritiesPage : Page, INotifyPropertyChanged
     {
-        public ShowtimesPage()
+        public CelebritiesPageViewModel ViewModel { get; set; }
+        public CelebritiesPage()
         {
             this.InitializeComponent();
+            ViewModel = new CelebritiesPageViewModel();
+            this.DataContext = ViewModel;
         }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
+        }
+
     }
 }
+

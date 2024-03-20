@@ -77,9 +77,19 @@
                         <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xe8b2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Showtimes" Tag="CinemaManagement.Views.ShowtimesPage">
+                <NavigationViewItem Content="Showtimes" Tag="CinemaManagement.Views.ShowtimePage">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xf182;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Celebrity" Tag="CinemaManagement.Views.CelebritiesPage" >
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xE734;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Voucher" Tag="CinemaManagement.Views.VouchersPage" >
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xE8EC;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Statistics" Tag="CinemaManagement.Views.StatisticPage">
@@ -87,7 +97,6 @@
                         <FontIcon FontFamily="{StaticResource FIcon}" Glyph="&#xe9d2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Celebrity" Tag="CinemaManagement.Views.CelebrityPage" />
                 <NavigationViewItem
                     Content="Account"
                     Icon="Contact"

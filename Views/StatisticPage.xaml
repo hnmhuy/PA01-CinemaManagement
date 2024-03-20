@@ -6,10 +6,53 @@
     xmlns:local="using:CinemaManagement.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:vm="using:CinemaManagement.ViewModels"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.DataContext>
+        <vm:StatisticViewModel x:Name="StatisticViewModel" />
+    </Page.DataContext>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <StackPanel Height="50" HorizontalAlignment="Right" Margin="0,20,50,0" Orientation="Horizontal">
+           
+            <!--Month-->
+            <DatePicker x:Name="MonthDatePicker" DayFormat="{}{day.integer} ({dayofweek.abbreviated})" DayVisible="False" />
+            
+            <!--Day to Day-->
+            <StackPanel x:Name="DayDatePicker" Orientation="Horizontal">
+                <TextBlock Text="from" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <CalendarDatePicker PlaceholderText="From" Margin="0,0,20,0"/>
+                <TextBlock Text="to" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <CalendarDatePicker PlaceholderText="To" />
+            </StackPanel>
+            
+            <!--Week-->
+            <CalendarDatePicker x:Name="WeekDatePicker" PlaceholderText="From" Margin="0,0,20,0"/>
 
+             <!--Year-->
+            <DatePicker x:Name="YearDatePicker" DayFormat="{}{day.integer} ({dayofweek.abbreviated})" MonthVisible="False" DayVisible="False" />
+            <ComboBox 
+                x:Name="ModeComboBox"
+                ItemsSource="{Binding Modes}" 
+                SelectedItem="{Binding SelectedMode}" 
+                Margin="20,8,0,0"
+                SelectionChanged="ComboBox_SelectionChanged"
+                />
+        </StackPanel>
+        
+        <lvc:CartesianChart
+            Grid.Row="1"
+            Title="{Binding Title}"
+            Series="{Binding Series}"
+            XAxes="{Binding XAxes}">
+        </lvc:CartesianChart>
     </Grid>
+    
 </Page>
