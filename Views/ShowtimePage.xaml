@@ -145,7 +145,7 @@
             <Button Style="{StaticResource addButton}">
                 <StackPanel Orientation="Horizontal">
                     <FontIcon Glyph="&#xE710;" Margin="0 0 5 0" />
-                    <TextBlock Text="Add Person"/>
+                    <TextBlock Text="Add Showtime"/>
                 </StackPanel>
             </Button>
 
@@ -264,7 +264,7 @@
 
                     <controls:DataGrid.Columns>
 
-                        <controls:DataGridTemplateColumn Header="ShowTimeID" Width="0.3*">
+                        <controls:DataGridTemplateColumn Header="ShowTimeID" Width="SizeToHeader">
                             <controls:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding ShowTimeId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -272,7 +272,7 @@
                             </controls:DataGridTemplateColumn.CellTemplate>
                         </controls:DataGridTemplateColumn>
 
-                        <controls:DataGridTemplateColumn Header="Movie" Width="1.5*">
+                        <controls:DataGridTemplateColumn Header="Movie" Width="*">
                             <controls:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Style="{StaticResource stackContent}" Padding="30">
@@ -298,10 +298,10 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal" Spacing="5">
-                                                        <Border BorderThickness="1" CornerRadius="10" Width="Auto" Padding="10 5">
-                                                            <Border.Background>
+                                                        <Border BorderThickness="1" CornerRadius="10" Width="Auto" Padding="10 5" BorderBrush="#eba200">
+                                                            <!--<Border.Background>
                                                                 <StaticResource ResourceKey="CategorieCard_Background" />
-                                                            </Border.Background>
+                                                            </Border.Background>-->
                                                             <TextBlock Text="{Binding Datetime}" VerticalAlignment="Center"/>
                                                         </Border>
                                                         <FontIcon Glyph="{Binding Icon}" FontSize="6" FontFamily="{StaticResource FIcon}" VerticalAlignment="Center" Margin="0 0 10 0"/>
@@ -333,8 +333,6 @@
                                 </DataTemplate>
                             </controls:DataGridTemplateColumn.CellTemplate>
                         </controls:DataGridTemplateColumn>
-
-
 
 
                         <controls:DataGridTemplateColumn Header="Action" Width="150">
