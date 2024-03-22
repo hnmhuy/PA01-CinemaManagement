@@ -40,5 +40,29 @@ namespace CinemaManagement.ViewModels
             Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove(STORAGE_UID);
             Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove(STORAGE_EXPIRED_DATE);
         }
+
+        static public bool IsSessionExpired()
+        {
+            if (Windows.Storage.ApplicationData.Current.LocalSettings.Values.ContainsKey(STORAGE_EXPIRED_DATE))
+            {
+                var expiredDate = DateTime.Parse((string)Windows.Storage.ApplicationData.Current.LocalSettings.Values[STORAGE_EXPIRED_DATE]);
+                return expiredDate < DateTime.Now;
+            }
+            return true;
+        }
+
+        static public int GetUid()
+        {
+            if (Windows.Storage.ApplicationData.Current.LocalSettings.Values.ContainsKey(STORAGE_UID))
+            {
+                return (int)Windows.Storage.ApplicationData.Current.LocalSettings.Values[STORAGE_UID];
+            }
+            return -1;
+        }
+
+        static public void UpdateSession()
+        {
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values[STORAGE_EXPIRED_DATE] = DateTime.Now.AddHours(1).ToString();
+        }
     }
 }

@@ -66,6 +66,7 @@ namespace CinemaManagement.ViewModels
 
         public void Login()
         {
+            Debug.WriteLine("Login function run");
             if (!Validate())
             {
                 this.value = (false, null, "Username or password is empty");
@@ -77,7 +78,7 @@ namespace CinemaManagement.ViewModels
                 var person = context.Accounts.Where(acc => acc.Username == UserName).FirstOrDefault();
                 if (person == null)
                     this.value =  (false, null, "Account not found");
-                if (BCrypt.Net.BCrypt.Verify(Password, person.Password))
+                else if (BCrypt.Net.BCrypt.Verify(Password, person.Password))
                 {
                     this.value = (true, person, "Login successfully");
                 } else {

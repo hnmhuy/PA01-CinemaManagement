@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -24,11 +25,30 @@ namespace CinemaManagement.Views
     /// </summary>
     public sealed partial class AccountPage : Page
     {
+        public AccountViewModel viewModel { get; set; }
+
         public AccountPage()
         {
             this.InitializeComponent();
-
-            DataContext = new AccountViewModel();
+            viewModel = new AccountViewModel();
+            viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            this.DataContext = viewModel;
         }
-    }
+
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(viewModel.IsAuthenticated))
+            {
+                if (viewModel.IsAuthenticated)
+                {
+                    if (viewModel.returnValue.Item2.IsAdmin)
+                    {
+                        var window = (Application.Current as App).MainWindow;
+                        (Application.Current as App).IsClosedFromAuthenticateWindow = true;
+                        window.Close();
+                    }
+                }
+            }
+        }
+    }    
 }

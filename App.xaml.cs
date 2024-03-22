@@ -19,6 +19,7 @@ using CinemaManagement.WindowViews;
 using CinemaManagement.ViewModels;
 using CinemaManagement.Models;
 using LiveChartsCore.Themes;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,10 +37,13 @@ namespace CinemaManagement
         /// </summary>
         /// 
         private Window _mainWindow;
+        public Window MainWindow => _mainWindow;   
+        public bool IsClosedFromAuthenticateWindow { get; set; }
         private (bool, int, string?) formerData;
         public App()
         {
             this.InitializeComponent();
+            IsClosedFromAuthenticateWindow = false;
         }
 
         /// <summary>
@@ -57,12 +61,17 @@ namespace CinemaManagement
             AuthenticationControl.DestroySession();
 
             formerData = AuthenticationControl.RestoreSession();
-            EnsureWindow();
-            _mainWindow.Activate();
-            if (_mainWindow.Content is FrameworkElement frameworkElement)
+            EnsureWindow();           
+            _mainWindow.Closed += (sender, e) =>
             {
-                frameworkElement.RequestedTheme = _mainWindow is AdminWindow ? ElementTheme.Light : ElementTheme.Dark;
-            }
+                if (IsClosedFromAuthenticateWindow)
+                {
+                    Debug.WriteLine("Closed from AuthenticateWindow");
+                    formerData = AuthenticationControl.RestoreSession();
+                    EnsureWindow();
+                    IsClosedFromAuthenticateWindow = false;
+                }
+            };
             
         }
 
@@ -84,6 +93,11 @@ namespace CinemaManagement
             } else
             {
                 _mainWindow = new CustomerWindow();
+            }
+            _mainWindow.Activate();
+            if (_mainWindow.Content is FrameworkElement frameworkElement)
+            {
+                frameworkElement.RequestedTheme = _mainWindow is AdminWindow ? ElementTheme.Light : ElementTheme.Dark;
             }
         }
 

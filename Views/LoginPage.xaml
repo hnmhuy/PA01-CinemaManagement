@@ -18,7 +18,7 @@
         <Border.Background>
             <ImageBrush ImageSource="/Images/back-image.jpg" Stretch="None" />
         </Border.Background>
-        <Border BorderThickness="2" CornerRadius="10">
+        <Border BorderThickness="2" CornerRadius="12">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Offset="0" Color="Black" />
@@ -76,7 +76,7 @@
                         FontSize="13"
                         FontWeight="Medium"
                         Foreground="White"
-                        Text="{Binding UserName}">
+                        Text="{Binding UserName, Mode=TwoWay}">
                         <TextBox.Background>
                             <ImageBrush
                                 AlignmentX="Left"
@@ -101,7 +101,7 @@
                         FontSize="13"
                         FontWeight="Medium"
                         Foreground="White"
-                        Password="{Binding Password}">
+                        Password="{Binding Password, Mode=TwoWay}">
                         <PasswordBox.Background>
                             <ImageBrush
                                 AlignmentX="Left"
@@ -111,30 +111,29 @@
                     </PasswordBox>
                     <Button
                         x:Name="btnLogin"
+                        Width="150"
+                        Height="40"
                         Margin="0,50,0,0"
                         HorizontalAlignment="Center"
                         BorderThickness="0"
-                        Content="LOG IN"
-                        FontFamily="Montserrat"
-                        FontSize="15"
-                        FontWeight="SemiBold"
-                        Foreground="Red">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Background" Value="White" />
-                            </Style>
-                        </Button.Style>
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border
-                                    Width="150"
-                                    Height="40"
-                                    Background="{TemplateBinding Background}"
-                                    CornerRadius="20">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
+                        Style="{StaticResource AccentButtonStyle}">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <ProgressRing
+                                Name="LoadingRing"
+                                Foreground="{StaticResource TextOnAccentAAFillColorPrimary}"
+                                IsActive="False"
+                                Visibility="Collapsed" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Montserrat"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="Login" />
+                        </StackPanel>
                     </Button>
                     <StackPanel
                         Margin="0,15,0,0"

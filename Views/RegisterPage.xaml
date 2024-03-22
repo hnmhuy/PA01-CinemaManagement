@@ -134,30 +134,29 @@
                     </ComboBox>
                     <Button
                         x:Name="btnRegister"
+                        Width="150"
+                        Height="40"
                         Margin="0,50,0,0"
                         HorizontalAlignment="Center"
                         BorderThickness="0"
-                        Content="Register"
-                        FontFamily="Montserrat"
-                        FontSize="15"
-                        FontWeight="SemiBold"
-                        Foreground="Red">
-                        <!--<Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Background" Value="White" />
-                            </Style>
-                        </Button.Style>
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border
-                                    Width="150"
-                                    Height="40"
-                                    Background="{TemplateBinding Background}"
-                                    CornerRadius="20">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>-->
+                        Style="{StaticResource AccentButtonStyle}">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <ProgressRing
+                                Name="LoadingRing"
+                                Foreground="{StaticResource TextOnAccentAAFillColorPrimary}"
+                                IsActive="False"
+                                Visibility="Collapsed" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Montserrat"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="Register" />
+                        </StackPanel>
                     </Button>
                     <StackPanel
                         Margin="0,15,0,0"

@@ -17,6 +17,7 @@ using Windows.Graphics;
 using Microsoft.UI.Windowing;
 using CinemaManagement.Models;
 using CinemaManagement.ViewModels;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -79,8 +80,10 @@ namespace CinemaManagement.WindowViews
         }
 
         // Function for login button
-        private void LoginBtn_Click(object sender, RoutedEventArgs e)
+        private async void LoginBtn_Click(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Login button clicked");    
+            UpdateLoadingRing(sender as Button, true);
             if (MainContent.Content is LoginPage)
             {
                 CurrPage = MainContent.Content as LoginPage;
@@ -88,26 +91,33 @@ namespace CinemaManagement.WindowViews
                 returnValue = (CurrPage.DataContext as LoginViewModel).value;
                 if (returnValue.Item1)
                 {
+                    Debug.WriteLine("Login success");
+                    // Save the session
+                    AuthenticationControl.SaveSession(returnValue.Item2.AccountId);
+                    // Close the window
                     this.Close();
                 }
                 else
                 {
-                    // Show dialog
-                    var dialog = new ContentDialog
+                    Debug.WriteLine("Login failed");
+                    ContentDialog contentDialog = new ContentDialog
                     {
-                        Title = "Error",
+                        Title = "Login failed",
                         Content = returnValue.Item3,
                         CloseButtonText = "Ok"
                     };
-                    dialog.XamlRoot = this.Content.XamlRoot;
-                    ContentDialogResult result = dialog.ShowAsync().AsTask().Result;
+                    contentDialog.XamlRoot = this.Content.XamlRoot;
+                    _ = await contentDialog.ShowAsync();
+                    UpdateLoadingRing(sender as Button, false);
                 }
             }
         }
 
         // Function for register button
-        private void RegisterBtn_Click(object sender, RoutedEventArgs e)
+        private async void RegisterBtn_Click(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Register button clicked");
+            UpdateLoadingRing(sender as Button, true);
             if (MainContent.Content is RegisterPage)
             {
                 CurrPage = MainContent.Content as RegisterPage;
@@ -115,20 +125,35 @@ namespace CinemaManagement.WindowViews
                 returnValue = (CurrPage.DataContext as RegisterViewModel).value;
                 if (returnValue.Item1)
                 {
+                    Debug.WriteLine("Register success");
+                    // Save the session
+                    AuthenticationControl.SaveSession(returnValue.Item2.AccountId);
+                    // Close the window
                     this.Close();
-                }
-                else
+                } else
                 {
-                    // Show dialog
-                    var dialog = new ContentDialog
+                    Debug.WriteLine("Register failed");
+                    ContentDialog contentDialog = new ContentDialog
                     {
-                        Title = "Error",
+                        Title = "Register failed",
                         Content = returnValue.Item3,
                         CloseButtonText = "Ok"
                     };
-                    dialog.XamlRoot = this.Content.XamlRoot;
-                    ContentDialogResult result = dialog.ShowAsync().AsTask().Result;
+                    contentDialog.XamlRoot = this.Content.XamlRoot;
+                    _ = await contentDialog.ShowAsync();
+                    UpdateLoadingRing(sender as Button, false);
                 }
+            }
+        }
+
+        private void UpdateLoadingRing(Button container, bool isShow)
+        {
+            // Find the loading ring
+            var loadingRing = container.FindName("LoadingRing") as Microsoft.UI.Xaml.Controls.ProgressRing;
+            if (loadingRing != null)
+            {
+                loadingRing.Visibility = isShow ? Visibility.Visible : Visibility.Collapsed;
+                loadingRing.IsActive = isShow;
             }
         }
     }
