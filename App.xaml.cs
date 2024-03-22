@@ -16,6 +16,8 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using CinemaManagement.Windows;
+using CinemaManagement.ViewModels;
+using CinemaManagement.WindowViews;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,9 +46,10 @@ namespace CinemaManagement
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            int role = 0;
+            int role = 1;
             //m_window = new MainWindow(role);
-            m_window = new AuthenticateWindow(); 
+            m_window = new AddMovieWindows();
+            //m_window = new AuthenticateWindow(); 
             // Set the size of the window
             m_window.Activate();
         }

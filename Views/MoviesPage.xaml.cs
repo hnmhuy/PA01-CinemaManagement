@@ -1,4 +1,5 @@
 using CinemaManagement.Models;
+using CinemaManagement.Windows;
 using CinemaManagement.ViewModels;
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
@@ -17,6 +18,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using CinemaManagement.WindowViews;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -66,6 +68,15 @@ namespace CinemaManagement.Views
             //}
             Debug.WriteLine(sender);
             Debug.WriteLine(e);
+        }
+        private void createNewWindow_Click(object sender, RoutedEventArgs e)
+        {
+
+            // Set the content of the window to the desired page
+            var addMoviePage = new AddMovieWindows(); // Assuming AddMoviePage is the desired page
+
+            // Activate and show the new window
+            addMoviePage.Activate();
         }
     }
 }
