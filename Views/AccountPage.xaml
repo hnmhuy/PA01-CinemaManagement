@@ -7,9 +7,90 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    
+    xmlns:vm="using:CinemaManagement.ViewModels"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.DataContext>
+        <vm:AccountViewModel x:Name="AccountViewModel" />
+    </Page.DataContext>
 
-    <Grid>
+        <Border CornerRadius="12">
+    <Border BorderThickness="2" CornerRadius="10">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                <GradientStop Offset="0" Color="#ff104a" />
+                <GradientStop Offset="1" Color="#ff9289" />
+            </LinearGradientBrush>
+        </Border.Background>
+            <Grid CornerRadius="12" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" Width="350" Height="500">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-    </Grid>
+            <StackPanel
+                Grid.Row="1"
+                Width="220"
+                Margin="0,35,0,0"
+                Orientation="Vertical">
+                <Image
+                    Width="100"
+                    Height="100"
+                    Source="/Assets/Man.png" />
+                   
+                <TextBlock
+                    Margin="0,35,0,0"
+                    FontFamily="Montserrat"
+                    FontSize="12"
+                    FontWeight="Medium"
+                    Foreground="#ff104a"
+                    Text="FullName" />
+                    <TextBox
+                    x:Name="fullName"
+                    Margin="0,5,0,0"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="White"
+                    BorderThickness="2,2,2,2"
+                    FontFamily="Montserrat"
+                    FontSize="13"
+                    FontWeight="Medium"
+                    Foreground="White"
+                    Text="{Binding FullName, Mode=TwoWay}">
+                    </TextBox>
+                    <TextBlock
+                    Margin="0,15,0,0"
+                    FontFamily="Montserrat"
+                    FontSize="12"
+                    FontWeight="Medium"
+                    Foreground="#ff104a"
+                    Text="Date of Birth" />
+                <CalendarDatePicker
+                    Background="White"
+                    IsEnabled="False"
+                    x:Name="DOBInput"
+                    Width="220"
+                    Margin="0,5,0,0"
+                    Date="{Binding SelectedDate}"
+                    PlaceholderText="Date of Birth" />
+                <TextBlock
+                    Margin="0,15,0,0"
+                    FontFamily="Montserrat"
+                    FontSize="12"
+                    FontWeight="Medium"
+                    Foreground="#ff104a"
+                    Text="Gender" />
+                    <ComboBox
+                        Background="White"
+                        x:Name="ModeComboBox"
+                        Width="220"
+                        Margin="0,5,0,0"
+                        ItemsSource="{Binding GenderList}"
+                        PlaceholderText="Select gender"
+                        SelectedValue="{Binding Gender}">
+                    </ComboBox>
+                    <Button x:Name="EditBtn" HorizontalAlignment="Center" Margin="0,30,0,0" Background="White" Command="{Binding SaveChanges}" Content="Save Changes"/>
+                </StackPanel>
+            </Grid>
+    </Border>
+</Border>
 </Page>
