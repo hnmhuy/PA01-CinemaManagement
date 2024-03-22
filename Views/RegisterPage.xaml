@@ -9,10 +9,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
-    <Page.DataContext>
-        <vm:RegisterViewModel />
-    </Page.DataContext>
-
     <Border CornerRadius="12">
         <Border BorderThickness="2" CornerRadius="10">
             <Border.Background>
@@ -141,7 +137,6 @@
                         Margin="0,50,0,0"
                         HorizontalAlignment="Center"
                         BorderThickness="0"
-                        Command="{Binding RegisterCommand}"
                         Content="Register"
                         FontFamily="Montserrat"
                         FontSize="15"

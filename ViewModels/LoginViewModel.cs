@@ -22,7 +22,6 @@ namespace CinemaManagement.ViewModels
         private string _userName;
         private string _password;
         public (bool, Account, string) value;
-        public RelayCommand LoginCommand { get; set; }
 
         public string UserName
         {
@@ -48,10 +47,9 @@ namespace CinemaManagement.ViewModels
         {
             UserName = "";
             Password = "";
-            LoginCommand = new RelayCommand(Login, Validate);
         }
 
-        public bool Validate(object obj)
+        public bool Validate()
         {
             if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
             {
@@ -66,8 +64,13 @@ namespace CinemaManagement.ViewModels
             return BCrypt.Net.BCrypt.HashPassword(Password);
         }
 
-        public void Login(object obj)
+        public void Login()
         {
+            if (!Validate())
+            {
+                this.value = (false, null, "Username or password is empty");
+                return;
+            }
             DbCinemaManagementContext context = new DbCinemaManagementContext();
             if (context.Database.CanConnect())
             {

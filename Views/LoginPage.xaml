@@ -114,7 +114,6 @@
                         Margin="0,50,0,0"
                         HorizontalAlignment="Center"
                         BorderThickness="0"
-                        Command="{Binding LoginCommand}"
                         Content="LOG IN"
                         FontFamily="Montserrat"
                         FontSize="15"

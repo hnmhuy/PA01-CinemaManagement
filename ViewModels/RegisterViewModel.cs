@@ -1,7 +1,10 @@
 ﻿using CinemaManagement.Models;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +21,7 @@ namespace CinemaManagement.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public static string MALE = "Male";
-        public static string FEMALE = "Female";
-        public RelayCommand RegisterCommand { get; set; }
+        public static string FEMALE = "Female";       
         private string _userName;
         private string _password;
         private DateTime _dob;
@@ -27,6 +29,7 @@ namespace CinemaManagement.ViewModels
         public DateTime minDate = new DateTime(1900, 1, 1);
         // Max dob is for people who are 13 years old from now
         public DateTime maxDate = DateTime.Now.AddYears(-13);
+        public (bool, Account, string) value;
 
         public string UserName
         {
@@ -72,15 +75,13 @@ namespace CinemaManagement.ViewModels
             UserName = "";
             Password = "";
             Dob = maxDate;
-            RegisterCommand = new RelayCommand(Register, Validate); 
         }
 
-        public bool Validate(object obj)
+        public bool Validate()
         {
             //if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
             //{
             //    return false;
-            //}
             return true;
         }
 
@@ -90,14 +91,20 @@ namespace CinemaManagement.ViewModels
             return BCrypt.Net.BCrypt.HashPassword(Password);
         }
 
-        public void Register(object obj)
+        public void Register()
         {
+            if (!Validate())
+            {
+                this.value = (false, null, "Invalid input");
+                return;
+            }
             DbCinemaManagementContext context = new DbCinemaManagementContext();
             if (context.Database.CanConnect())
             {
                 var account = context.Accounts.Where(a => a.Username == UserName).FirstOrDefault();
                 if (account != null)
                 {
+                    this.value = (false, null, "Username already exists");
                     return;
                 }
                 Account newAccount = new Account()
@@ -109,7 +116,19 @@ namespace CinemaManagement.ViewModels
                     IsAdmin = false,
                 };
                 context.Accounts.Add(newAccount);
-                context.SaveChanges();
+                try
+                {
+                    context.SaveChanges();
+                    this.value = (true, newAccount, "Register successfully");
+                    // Save the session
+                    AuthenticationControl.SaveSession(newAccount.AccountId);
+
+                    AuthenticationControl.RestoreSession();
+                } catch (Exception e)
+                {
+                   Debug.WriteLine(e.Message);  
+                   this.value = (false, null, "Register failed");
+                }
             }
         }
     }

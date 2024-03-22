@@ -29,7 +29,9 @@
     <None Remove="Views\SearchPage.xaml" />
     <None Remove="Views\ShowtimesPage.xaml" />
     <None Remove="Views\StatisticPage.xaml" />
-    <None Remove="Windows\AuthenticateWindow.xaml" />
+    <None Remove="WindowViews\AdminWindow.xaml" />
+    <None Remove="WindowViews\AuthenticateWindow.xaml" />
+    <None Remove="WindowViews\CustomerWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -124,6 +126,16 @@
   <ItemGroup>
     <Folder Include="Assets\Images\" />
     <Folder Include="ValueConverters\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="WindowViews\AdminWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="WindowViews\CustomerWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Windows\AuthenticateWindow.xaml">

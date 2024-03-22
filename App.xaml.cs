@@ -15,7 +15,10 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using CinemaManagement.Windows;
+using CinemaManagement.WindowViews;
+using CinemaManagement.ViewModels;
+using CinemaManagement.Models;
+using LiveChartsCore.Themes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,11 +34,12 @@ namespace CinemaManagement
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
+        /// 
+        private Window _mainWindow;
+        private (bool, int, string?) formerData;
         public App()
         {
             this.InitializeComponent();
-            App.Current.RequestedTheme = (ApplicationTheme)(int)0;
-
         }
 
         /// <summary>
@@ -44,13 +48,44 @@ namespace CinemaManagement
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            int role = 0;
             //m_window = new MainWindow(role);
-            m_window = new AuthenticateWindow(); 
-            // Set the size of the window
-            m_window.Activate();
+            //authenticateWindow = new AuthenticateWindow(); 
+            //// Set the size of the window
+            //authenticateWindow.Activate();
+
+            // For debugging
+            AuthenticationControl.DestroySession();
+
+            formerData = AuthenticationControl.RestoreSession();
+            EnsureWindow();
+            _mainWindow.Activate();
+            if (_mainWindow.Content is FrameworkElement frameworkElement)
+            {
+                frameworkElement.RequestedTheme = _mainWindow is AdminWindow ? ElementTheme.Light : ElementTheme.Dark;
+            }
+            
         }
 
-        private Window m_window;
+        private void EnsureWindow()
+        {
+            if (formerData.Item1)
+            {
+                var uid = formerData.Item2;
+                DbCinemaManagementContext context = new DbCinemaManagementContext();
+                var user = context.Accounts.Where(u => u.AccountId == uid).FirstOrDefault();
+                if (user != null && user.IsAdmin)
+                {
+                    _mainWindow = new AdminWindow();
+                }
+                else
+                {
+                    _mainWindow = new CustomerWindow();
+                }
+            } else
+            {
+                _mainWindow = new CustomerWindow();
+            }
+        }
+
     }
 }

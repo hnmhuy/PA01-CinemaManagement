@@ -35,23 +35,25 @@ namespace CinemaManagement.Views
 
     public sealed partial class RegisterPage : Page
     {
-
+        public Button RegisterButton;
         public HyperlinkButton GoToLogin;
-        public RegisterViewModel dataContext;   
+        public RegisterViewModel dataContext;
+        private RegisterViewModel viewModel;
         public RegisterPage()
         {
             this.InitializeComponent();
             GoToLogin = GoToLoginButton;
-            dataContext = new RegisterViewModel();
+            viewModel = new RegisterViewModel();
+            dataContext = this.viewModel;
             this.DataContext = dataContext;
-
+            RegisterButton = btnRegister;
             DOBInput.MinDate = dataContext.minDate;
             DOBInput.MaxDate = dataContext.maxDate;
         }
 
         private void ModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Debug.WriteLine("Gener changed");
+            Debug.WriteLine("Gender changed");
             var data = sender as ComboBox;
             if (data != null)
             {
