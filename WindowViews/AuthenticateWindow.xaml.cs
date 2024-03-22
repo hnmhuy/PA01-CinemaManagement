@@ -29,6 +29,9 @@ namespace CinemaManagement.WindowViews
     /// </summary>
     public sealed partial class AuthenticateWindow : Window
     {
+        public TextBox userName;
+        public PasswordBox password;
+        public Button LoginButton;
         public HyperlinkButton HyperlinkButton;
         public Button LoginBtn;
         public Button RegisterBtn;
@@ -78,7 +81,7 @@ namespace CinemaManagement.WindowViews
                 MainContent.Navigate(typeof(LoginPage));
             }
         }
-
+       
         // Function for login button
         private async void LoginBtn_Click(object sender, RoutedEventArgs e)
         {

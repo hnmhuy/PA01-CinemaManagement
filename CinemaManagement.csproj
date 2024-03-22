@@ -32,6 +32,8 @@
     <None Remove="WindowViews\AdminWindow.xaml" />
     <None Remove="WindowViews\AuthenticateWindow.xaml" />
     <None Remove="WindowViews\CustomerWindow.xaml" />
+    <None Remove="WindowViews\AddMovieWindows.xaml" />
+    <None Remove="WindowViews\AuthenticateWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +59,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
+    <PackageReference Include="Syncfusion.Editors.WinUI" Version="25.1.35" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -134,6 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="WindowViews\CustomerWindow.xaml">
+		<Generator>MSBuild:Compile</Generator>
+			</Page>
+    <Page Update="Windows\AddMovieWindows.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

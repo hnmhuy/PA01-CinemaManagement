@@ -1,4 +1,5 @@
 using CinemaManagement.Models;
+using CinemaManagement.WindowViews;
 using CinemaManagement.ViewModels;
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
@@ -66,6 +67,14 @@ namespace CinemaManagement.Views
             //}
             Debug.WriteLine(sender);
             Debug.WriteLine(e);
+        }
+        private void createNewWindow_Click(object sender, RoutedEventArgs e)
+        {
+
+            // Set the content of the window to the desired page
+            var addMoviePage = new AddMovieWindows(); // Assuming AddMoviePage is the desired page
+            // Activate and show the new window
+            addMoviePage.Activate();
         }
     }
 }

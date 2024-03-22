@@ -33,6 +33,19 @@ namespace CinemaManagement.ViewModels
 
     public class MovieViewModel : INotifyPropertyChanged
     {
+
+        private readonly DbCinemaManagementContext _context;
+
+        public MovieViewModel(DbCinemaManagementContext context)
+        {
+            _context = context;
+        }
+
+        public List<Movie> GetMovies()
+        {
+            return _context.Movies.ToList();
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public ObservableCollection<MovieCommand> MoviesList { get; set; }
         public MovieCommand SelectedMovie { get; set; }
@@ -49,6 +62,7 @@ namespace CinemaManagement.ViewModels
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
             MoviesList = GenerateSampleData(DeleteCommand);
             SelectedMovie = MoviesList[1];
+            
             ////DeleteCommand = new RelayCommand(execute => OnDelete(SelectedMovie), canExecute => SelectedMovie != null);
 
         }

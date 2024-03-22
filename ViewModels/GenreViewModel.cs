@@ -28,6 +28,7 @@ namespace CinemaManagement.ViewModels
 
         public GenreViewModel()
         {
+            
             GenresList = GenerateGenreSampleData();
             SelectedGenre = GenresList[1];
         }
@@ -76,6 +77,30 @@ namespace CinemaManagement.ViewModels
                     GenreId = 6,
                     GenreName = "Comedy"
                 });
+            genres.Add(
+               new Genre
+               {
+                   GenreId = 7,
+                   GenreName = "Ha"
+               });
+            genres.Add(
+               new Genre
+               {
+                   GenreId = 8,
+                   GenreName = "Hihi"
+               });
+            genres.Add(
+               new Genre
+               {
+                   GenreId = 9,
+                   GenreName = "hoho"
+               });
+            genres.Add(
+               new Genre
+               {
+                   GenreId = 10,
+                   GenreName = "hahahahahahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+               });
             return genres;
         }
 

@@ -44,6 +44,8 @@ namespace CinemaManagement
         {
             this.InitializeComponent();
             IsClosedFromAuthenticateWindow = false;
+
+            (Application.Current as App).RequestedTheme = ApplicationTheme.Light;
         }
 
         /// <summary>
@@ -58,7 +60,7 @@ namespace CinemaManagement
             //authenticateWindow.Activate();
 
             // For debugging
-            AuthenticationControl.DestroySession();
+            // AuthenticationControl.DestroySession();
 
             formerData = AuthenticationControl.RestoreSession();
             EnsureWindow();           

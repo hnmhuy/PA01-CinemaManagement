@@ -38,7 +38,7 @@
             <Setter Property="Padding" Value="0"/>
         </Style>
         <Style x:Key="addButton" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-            <Setter Property="Background" Value="Beige"/>
+            <Setter Property="Background" Value="#3A0057"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
@@ -145,8 +145,7 @@
                         <TextBlock Text=" Movies" Style="{StaticResource totalAmount}" Margin="0 5 0 12"/>
                     </StackPanel>
                     <Button Grid.Row="0" Style="{StaticResource addButton}"
-                            Command="{Binding DeleteCommand}"
-                            CommandParameter="{Binding}">
+                            Click="createNewWindow_Click">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE710;" Margin="0 0 5 0" />
                             <TextBlock Text="Add Movie"/>
@@ -280,16 +279,16 @@
                                 <controls:DataGridTemplateColumn Header="Action" Width="150" x:Name="ActionColumn" >
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <!--<StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
                                                     <Button Style="{StaticResource AccentButtonStyle}" Padding="10" >
                                                         <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                    </Button>-->
+                                                    </Button>
                                                 <Button Style="{StaticResource AccentButtonStyle}" Padding="10" 
                                                         Command="{Binding DeleteCommand}"
                                                         CommandParameter="{Binding}">
                                                         <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                     </Button>   
-                                            <!--</StackPanel>-->
+                                            </StackPanel>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
