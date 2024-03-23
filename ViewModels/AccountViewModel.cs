@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CinemaManagement.ViewModels
 {
@@ -20,6 +21,7 @@ namespace CinemaManagement.ViewModels
         public static string FEMALE = "Female";
         public RelayCommand SaveChanges { get; set; }
         public RelayCommand RequestAuthentication { get; set; }
+        public RelayCommand ResetPassword { get; set; }
         private string _gender;
         private DateTime _selectedDate;
         public ObservableCollection<string> GenderList { get; set; }
@@ -77,6 +79,36 @@ namespace CinemaManagement.ViewModels
                 OnPropertyChanged(nameof(Gender));
             }
         }
+        private string _currentPassword;
+        public string CurrentPassword
+        {
+            get { return _currentPassword; }
+            set
+            {
+                _currentPassword = value;
+                OnPropertyChanged(nameof(CurrentPassword));
+            }
+        }
+        private string _newPassword;
+        public string NewPassword
+        {
+            get { return _newPassword; }
+            set
+            {
+                _newPassword = value;
+                OnPropertyChanged(nameof(NewPassword));
+            }
+        }
+        private string _confirmNewPassword;
+        public string ConfirmNewPassword
+        {
+            get { return _confirmNewPassword; }
+            set
+            {
+                _confirmNewPassword = value;
+                OnPropertyChanged(nameof(ConfirmNewPassword));
+            }
+        }
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -94,8 +126,7 @@ namespace CinemaManagement.ViewModels
                 MALE,
                 FEMALE
             };
-            SaveChanges = new RelayCommand(Change);
-            authenticateInfo = AuthenticationControl.RestoreSession();      
+            authenticateInfo = AuthenticationControl.RestoreSession();
             IsAuthenticated = authenticateInfo.Item1;
             if (IsAuthenticated)
             {
@@ -105,6 +136,44 @@ namespace CinemaManagement.ViewModels
             }
             IsAuthenticating = false;
             RequestAuthentication = new RelayCommand(OnRequestAuthentication, CanRequestAuthentication);
+            SaveChanges = new RelayCommand(Change);
+            ResetPassword = new RelayCommand(ChangePassword);
+        }
+
+        public  void ChangePassword(object obj)
+        {
+            Debug.WriteLine(CurrentPassword);
+            Debug.WriteLine(NewPassword);
+            Debug.WriteLine(ConfirmNewPassword);
+            DbCinemaManagementContext context = new DbCinemaManagementContext();
+            if (context.Database.CanConnect())
+            {
+                var account = context.Accounts.Where(a => a.AccountId == authenticateInfo.Item2).FirstOrDefault();
+                try
+                {
+                    if (BCrypt.Net.BCrypt.Verify(CurrentPassword, account.Password))
+                    {
+                        if (NewPassword == ConfirmNewPassword)
+                        {
+                            account.Password = BCrypt.Net.BCrypt.HashPassword(NewPassword);
+                            Debug.WriteLine("Success");
+                        }
+                        else
+                        {
+                            Debug.WriteLine("failed here");
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("failed");
+                    }
+                } catch
+                {
+                    Debug.WriteLine("failed");
+                }
+                
+                context.SaveChanges();
+            }
         }
 
         public void Change(object obj)
