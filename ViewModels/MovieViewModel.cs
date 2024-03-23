@@ -15,8 +15,6 @@ namespace CinemaManagement.ViewModels
         public RelayCommand DeleteCommand { get; set; }
         public Movie movie { get; set; }
 
-
-
         public MovieCommand(Movie _movie, RelayCommand _deleteCommand)
         {
             this.movie = _movie;

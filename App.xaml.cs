@@ -59,22 +59,28 @@ namespace CinemaManagement
             //// Set the size of the window
             //authenticateWindow.Activate();
 
+            //AddMOvie 
+
+            var m_windown = new AddMovieWindows();
+            m_windown.Activate();
+
+
             // For debugging
             // AuthenticationControl.DestroySession();
 
-            formerData = AuthenticationControl.RestoreSession();
-            EnsureWindow();           
-            _mainWindow.Closed += (sender, e) =>
-            {
-                if (IsClosedFromAuthenticateWindow)
-                {
-                    Debug.WriteLine("Closed from AuthenticateWindow");
-                    formerData = AuthenticationControl.RestoreSession();
-                    EnsureWindow();
-                    IsClosedFromAuthenticateWindow = false;
-                }
-            };
-            
+            //formerData = AuthenticationControl.RestoreSession();
+            //EnsureWindow();           
+            //_mainWindow.Closed += (sender, e) =>
+            //{
+            //    if (IsClosedFromAuthenticateWindow)
+            //    {
+            //        Debug.WriteLine("Closed from AuthenticateWindow");
+            //        formerData = AuthenticationControl.RestoreSession();
+            //        EnsureWindow();
+            //        IsClosedFromAuthenticateWindow = false;
+            //    }
+            //};
+
         }
 
         private void EnsureWindow()
