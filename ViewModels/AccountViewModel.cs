@@ -9,8 +9,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace CinemaManagement.ViewModels
 {
@@ -201,6 +203,13 @@ namespace CinemaManagement.ViewModels
 
         public void Change(object obj)
         {
+            Regex rx = new Regex(@"^(?![ .]+$)[a-zA-Z .]*$", RegexOptions.Compiled);
+            MatchCollection matches1 = rx.Matches(FullName);
+
+            if (matches1.Count <= 0)
+            {
+                return;
+            }
             Debug.WriteLine("Change function run");
             DbCinemaManagementContext context = new DbCinemaManagementContext();
             if (context.Database.CanConnect())

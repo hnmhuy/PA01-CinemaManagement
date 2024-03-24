@@ -127,11 +127,28 @@
 
                         <DropDownButton Content="Age" x:Name="inputMovieAge" HorizontalAlignment="Stretch" Height="40">
                             <DropDownButton.Flyout>
-                                <MenuFlyout Placement="Bottom">
-                                    <MenuFlyoutItem Text="18+"/>
-                                    <MenuFlyoutItem Text="13+"/>
-                                    <MenuFlyoutItem Text="15+"/>
-                                </MenuFlyout>
+                                <Flyout>
+                                    <GridView ItemsSource="{x:Bind AgeCertificateList}"
+                                          SingleSelectionFollowsFocus="False"
+                                          HorizontalAlignment="Stretch"
+                                            SelectionChanged="AgeGridView_SelectionChanged"
+                                        SelectedIndex="-1" Padding="0">
+                                        <GridView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ItemsWrapGrid 
+                                                   MaximumRowsOrColumns="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    Width="250"
+                                                   Orientation="Horizontal"/>       
+                                            </ItemsPanelTemplate>
+                                        </GridView.ItemsPanel>
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding RequireAge}" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap" Height="Auto" Width="200"/>
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                    </GridView>
+                                </Flyout>
                             </DropDownButton.Flyout>
                         </DropDownButton>
 
@@ -219,10 +236,10 @@
 
 
 
-                    <DropDownButton x:Name="colorComboBox" HorizontalAlignment="Stretch" Grid.Row="1" Content="Choose Genres">
-                        <DropDownButton.DataContext>
+                    <DropDownButton x:Name="colorComboBox" HorizontalAlignment="Stretch" Grid.Row="1" Content="Choose Genres" DataContext="{x:Bind genreViewModel}">
+                        <!--<DropDownButton.DataContext>
                             <vm:GenreViewModel/>
-                        </DropDownButton.DataContext>
+                        </DropDownButton.DataContext>-->
                         <!--<DropDownButton.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding GenreName}" Checked="GenreCheckBox_Check" Unchecked="GenreCheckBox_UnCheck"/>
@@ -242,7 +259,7 @@
                                     </GridView.ItemsPanel>
                                     <GridView.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Content="{Binding GenreName}" Checked="GenreCheckBox_Check" Unchecked="GenreCheckBox_UnCheck"/>
+                                            <CheckBox Content="{Binding Genre.GenreName}" Checked="GenreCheckBox_Check" Unchecked="GenreCheckBox_UnCheck"/>
                                         </DataTemplate>
                                     </GridView.ItemTemplate>
                                 </GridView>
@@ -342,17 +359,14 @@
                            Style="{StaticResource ResourceKey=SubTitle}"/>
 
                 <StackPanel Style="{StaticResource InputStackPanel}" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch">
-                    <DropDownButton x:Name="CelebrityDropdown" HorizontalAlignment="Stretch" Content="Choose Celebrities" Click="ChooseCelebrity_Click">
-                        <DropDownButton.DataContext>
-                            <vm:PersonViewModel/>
-                        </DropDownButton.DataContext>
+                    <DropDownButton x:Name="CelebrityDropdown" HorizontalAlignment="Stretch" Content="Choose Celebrities" Click="ChooseCelebrity_Click" DataContext="{x:Bind personViewModel}">
                         <DropDownButton.Flyout>
                             <Flyout>
                                 <GridView ItemsSource="{Binding PeopleList}"
                                           SingleSelectionFollowsFocus="False"
-                                           SelectionChanged="CelebritySelectionChanged"
+                                          SelectionChanged="CelebritySelectionChanged"
                                           HorizontalAlignment="Stretch"
-                                  SelectedIndex="-1" Padding="0">
+                                          SelectedIndex="-1" Padding="0">
                                     <GridView.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <ItemsWrapGrid 
@@ -366,11 +380,11 @@
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch" Width="300"> 
                                                 <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="30" Width="32" Height="32">
-                                                    <Image  Source="{Binding AvatarPath}" 
+                                                    <Image  Source="{Binding Person.AvatarPath}" 
                                                             Width="32" Height="32" 
                                                             HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="UniformToFill"/>
                                                 </Border>
-                                                <TextBlock Text="{Binding Fullname}" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding Person.Fullname}" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap"/>
                                             </StackPanel>
                                             
                                         </DataTemplate>
@@ -427,10 +441,8 @@
                            Style="{StaticResource ResourceKey=SubTitle}"/>
 
                 <StackPanel Style="{StaticResource InputStackPanel}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
-                    <DropDownButton x:Name="RoleDropdown" HorizontalAlignment="Stretch" Content="Choose Roles" Click="RoleDropdown_Click">
-                        <DropDownButton.DataContext>
-                            <vm:RoleViewModel/>
-                        </DropDownButton.DataContext>
+                    <DropDownButton x:Name="RoleDropdown" HorizontalAlignment="Stretch" Content="Choose Roles" Click="RoleDropdown_Click" DataContext="{x:Bind roleViewModel}">
+                       
                         <DropDownButton.Flyout>
                             <Flyout>
                                 <GridView ItemsSource="{Binding RolesList}"
@@ -449,7 +461,7 @@
                                     </GridView.ItemsPanel>
                                     <GridView.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding RoleName}" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap" Height="Auto" Width="200"/>
+                                            <TextBlock Text="{Binding Role.RoleName}" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap" Height="Auto" Width="200"/>
                                         </DataTemplate>
                                     </GridView.ItemTemplate>
                                 </GridView>
@@ -517,7 +529,8 @@
                 <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
                     <Button x:Name="PickAPhotoButton" Content="Open a picture"
                             Click="PickAPhotoButton_Click" Margin="0,0,0,10"/>
-                    <TextBlock x:Name="PickAPhotoOutputTextBlock" TextWrapping="Wrap" Padding="20,5,0,0"/>
+                        <TextBlock Text="Picked Photo " FontWeight="SemiBold"/>
+                        <TextBlock x:Name="PickAPhotoOutputTextBlock" TextWrapping="Wrap" Padding="20,5,0,0"/>
                 </StackPanel>
 
             </StackPanel>
@@ -531,7 +544,8 @@
                 <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
                     <Button x:Name="PickATrailerButton" Content="Open a picture"
                  Click="PickAPhotoButton_Click" Margin="0,0,0,10"/>
-                    <TextBlock x:Name="PickATrailerOutputTextBlock" TextWrapping="Wrap" Padding="20,5,0,0"/>
+                        <TextBlock Text="Picked Trailer " FontWeight="SemiBold"/>
+                        <TextBlock x:Name="PickATrailerOutputTextBlock" TextWrapping="Wrap" Padding="20,5,0,0"/>
                 </StackPanel>
 
             </StackPanel>
@@ -547,7 +561,7 @@
                 <TextBlock Text="Cancel"/>
             </Button>
 
-            <Button HorizontalAlignment="Right" x:Name="SaveBtn" Style="{StaticResource AccentButtonStyle}">
+            <Button HorizontalAlignment="Right" x:Name="SaveBtn" Style="{StaticResource AccentButtonStyle}" Click="SaveMovie_Click">
                 <TextBlock Text="Add"/>
             </Button>
         </StackPanel>

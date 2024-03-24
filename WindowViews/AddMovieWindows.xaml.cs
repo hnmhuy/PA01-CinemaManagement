@@ -27,6 +27,8 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;   
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Windows.Security.Cryptography.Certificates;
+using System.Security.Policy;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -42,6 +44,25 @@ namespace CinemaManagement.WindowViews
     public sealed partial class AddMovieWindows : Window, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public GenreViewModel genreViewModel {  get; set; }
+        public PersonViewModel personViewModel { get; set; }
+        public RoleViewModel roleViewModel { get; set; }
+        public ObservableCollection<AgeCertificate> AgeCertificateList {  get; set; }
+
+        private AgeCertificate _selectedAge;
+        public AgeCertificate SelectedAge
+        {
+            get { return _selectedAge; }
+            set
+            {
+                if(value != _selectedAge)
+                {
+                    _selectedAge = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private ObservableCollection<Genre> _selectedGenreList;
         public ObservableCollection<Genre> SelectedGenreList
@@ -93,11 +114,34 @@ namespace CinemaManagement.WindowViews
 
         public AddMovieWindows()
         {
+
             this.InitializeComponent();
+            var context = new DbCinemaManagementContext();
+            genreViewModel = new GenreViewModel(context);
+            personViewModel = new PersonViewModel(context);
+            roleViewModel = new RoleViewModel(context);
+
+            AgeCertificateList = GetAgeCertificates(context);
+
+
             SelectedGenreList = new ObservableCollection<Genre>();
             SelectedRolesList = new ObservableCollection<Role>();
+
             SelectedCelebritiesList = new ObservableCollection<Person>();
 
+        }
+
+        public ObservableCollection<AgeCertificate> GetAgeCertificates(DbCinemaManagementContext context)
+        {
+            ObservableCollection<AgeCertificate> ageCertificates = new ObservableCollection<AgeCertificate>();
+            var Ages = context.AgeCertificates.ToList();
+            foreach (var ageCertificate in Ages)
+            {
+                AgeCertificate certificate = new AgeCertificate(); // Instantiate AgeCertificate object
+                certificate.RequireAge = ageCertificate.RequireAge; // Set the required age
+                ageCertificates.Add(certificate);
+            }
+            return ageCertificates;
         }
 
         private async void PickAPhotoButton_Click(object sender, RoutedEventArgs e)
@@ -122,16 +166,61 @@ namespace CinemaManagement.WindowViews
             openPicker.FileTypeFilter.Add(".png");
 
             // Open the picker for the user to pick a file
+
             var file = await openPicker.PickSingleFileAsync();
             if (file != null)
             {
-                PickAPhotoOutputTextBlock.Text = "Picked photo: " + file.Name;
+                PickAPhotoOutputTextBlock.Text = file.Name;
+                try
+                {
+                    // Get the folder where the poster will be stored
+                    StorageFolder posterFolder = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("Assets\\Images\\Poster");
+
+                    // Create a new file in the poster folder with the same name as the selected file
+                    StorageFile posterFile = await file.CopyAsync(posterFolder, file.Name, NameCollisionOption.ReplaceExisting);
+
+                    // Optionally, you can store the path of the uploaded poster file for later use
+                    string posterPath = posterFile.Path;
+                }
+                catch (Exception ex)
+                {
+                    // Handle any errors that occur during file copying
+                    PickAPhotoOutputTextBlock.Text = "Error: " + ex.Message;
+                }
             }
             else
             {
                 PickAPhotoOutputTextBlock.Text = "Operation cancelled.";
             }
 
+        }
+
+        private async void PickATrailerButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Create a new FileOpenPicker
+            FileOpenPicker openPicker = new FileOpenPicker();
+            // Set properties for the FileOpenPicker
+            openPicker.ViewMode = PickerViewMode.Thumbnail;
+            openPicker.SuggestedStartLocation = PickerLocationId.VideosLibrary;
+            openPicker.FileTypeFilter.Add(".mp4");
+            openPicker.FileTypeFilter.Add(".avi");
+            openPicker.FileTypeFilter.Add(".mkv");
+
+            // Show the FileOpenPicker and capture the picked file
+            StorageFile file = await openPicker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Display the file name in the associated TextBlock
+                PickATrailerOutputTextBlock.Text = file.Name;
+                // You can also store the file reference for later use
+                // For example: Save the StorageFile object to upload it later
+                // var trailerFile = file;
+            }
+            else
+            {
+                // User canceled the operation
+                PickATrailerOutputTextBlock.Text = "Operation canceled.";
+            }
         }
         private void Menu_Opening(object sender, object e)
         {
@@ -205,11 +294,11 @@ namespace CinemaManagement.WindowViews
         {
             CheckBox clickedCheckBox = sender as CheckBox;
 
-            if (clickedCheckBox.IsChecked == true && clickedCheckBox.DataContext is Genre genre)
+            if (clickedCheckBox.IsChecked == true && clickedCheckBox.DataContext is GenreCommand GenreCommand)
             {
                 //Debug.WriteLine("SELECTED: " + genre.GenreName);
                 //Debug.WriteLine("SELECTED: " + genre.GenreId);
-                SelectedGenreList.Add(new Genre { GenreName = genre.GenreName, GenreId = genre.GenreId });
+                SelectedGenreList.Add(new Genre { GenreName = GenreCommand.Genre.GenreName, GenreId = GenreCommand.Genre.GenreId });
                 Debug.WriteLine(SelectedGenreList.Count);
             }
             foreach (var item in SelectedGenreList)
@@ -223,10 +312,10 @@ namespace CinemaManagement.WindowViews
         {
             CheckBox clickedCheckBox = sender as CheckBox;
 
-            if (clickedCheckBox.IsChecked == false && clickedCheckBox.DataContext is Genre unselectedGenre)
+            if (clickedCheckBox.IsChecked == false && clickedCheckBox.DataContext is GenreCommand unselectedGenre)
             {
                 //Debug.WriteLine("UNSELECTED: " + unselectedGenre.GenreName);
-                var genreToRemove = SelectedGenreList.FirstOrDefault(g => g.GenreId == unselectedGenre.GenreId);
+                var genreToRemove = SelectedGenreList.FirstOrDefault(g => g.GenreId == unselectedGenre.Genre.GenreId);
                 if (genreToRemove != null)
                 {
                     SelectedGenreList.Remove(genreToRemove);
@@ -249,11 +338,11 @@ namespace CinemaManagement.WindowViews
         {
             if (e.AddedItems.Count > 0)
             {
-                Person selectedPerson = e.AddedItems[0] as Person; // Assuming 'Person' is the type of items in your GridView
+                PersonCommand selectedPerson = e.AddedItems[0] as PersonCommand; // Assuming 'Person' is the type of items in your GridView
                 if (selectedPerson != null)
                 {
                     // Add the selected person to the SelectedCelebritiesList
-                    SelectedCelebritiesList.Add(selectedPerson);
+                    SelectedCelebritiesList.Add(selectedPerson.Person);
                     Debug.WriteLine(SelectedCelebritiesList.Count);
                     foreach (var item in SelectedCelebritiesList)
                     {
@@ -276,11 +365,11 @@ namespace CinemaManagement.WindowViews
         {
             if (e.AddedItems.Count > 0)
             {
-                Role selectedRole = e.AddedItems[0] as Role; // Assuming 'Role' is the type of items in your GridView
+                RoleCommand selectedRole = e.AddedItems[0] as RoleCommand; // Assuming 'Role' is the type of items in your GridView
                 if (selectedRole != null)
                 {
                     // Add the selected person to the SelectedCelebritiesList
-                    SelectedRolesList.Add(selectedRole);
+                    SelectedRolesList.Add(selectedRole.Role);
                     Debug.WriteLine(SelectedRolesList.Count);
                     foreach (var item in SelectedRolesList)
                     {
@@ -301,8 +390,9 @@ namespace CinemaManagement.WindowViews
             if (selectedPerson != null)
             {
                 SelectedCelebritiesList.Remove(selectedPerson);
+                Debug.WriteLine("DELETE PERSON");
             }
-                Debug.WriteLine(SelectedRolesList.Count);
+            Debug.WriteLine(SelectedCelebritiesList.Count);
             foreach (var item in SelectedCelebritiesList)
             {
 
@@ -328,6 +418,127 @@ namespace CinemaManagement.WindowViews
                 Debug.WriteLine(item.RoleName + " " + item.RoleId);
             }
         }
+        private void AgeGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                // Assuming each item in AgeCertificateList is of type AgeCertificate
+                SelectedAge = e.AddedItems[0] as AgeCertificate;
+                inputMovieAge.Content = SelectedAge.RequireAge;
+                Debug.WriteLine($"Selected Age: {SelectedAge.RequireAge}");
+            }
+        }
+        private void SaveMovie_Click(object sender, RoutedEventArgs e)
+        {
+            // Fetch data from input fields
+            string title = inputMovieTitle.Text;
+            int duration = (int)inputMovieDuration.Value;
+            string ageCertificate = inputMovieAge.Content.ToString();
+            int publishYear = inputMoviePublishYear.Date.Year;
+
+            string description = string.Empty;
+            REBCustom.Document.GetText(Microsoft.UI.Text.TextGetOptions.None, out description);
+
+            double? imdbRating = string.IsNullOrEmpty(inputMovieImdb.Text) ? null : double.Parse(inputMovieImdb.Text);
+
+            string posterPath = string.Empty;
+            if (PickAPhotoOutputTextBlock.Text != null)
+            {
+                posterPath = "/Assets/Images/Poster/" + PickAPhotoOutputTextBlock.Text;
+
+            }
+
+            string trailerPath = string.Empty;
+            if (PickATrailerOutputTextBlock.Text != null)
+            {
+                trailerPath = "/Assets/Videos/" + PickATrailerOutputTextBlock.Text;
+
+            }
+
+
+
+            // Filter the genres collection to include only the ones present in SelectedGenreList
+
+            //ICollection<Genre> selectedGenres;
+            //using (var context = new DbCinemaManagementContext())
+            //{
+            //    var allGenres = context.Genres.ToList();
+            //    selectedGenres = allGenres.Where(g => SelectedGenreList.Any(sg => sg.GenreId == g.GenreId)).ToList();
+            //}
+
+
+                // TODO: Save movie data to database or perform other operations
+                // For now, we'll just print the data
+            Console.WriteLine("Title: " + title);
+            Console.WriteLine("Duration: " + duration);
+            Console.WriteLine("Age Certificate: " + ageCertificate);
+            Console.WriteLine("Description: " + description);
+            Console.WriteLine("IMDB Rating: " + imdbRating);
+            //Console.WriteLine("Selected Genres: " + string.Join(", ", selectedGenres));
+            Console.WriteLine("Selected Celebrities: ");
+
+
+            // Fetch genres from the database based on selected genre IDs
+
+           
+
+            
+
+            using (var context = new DbCinemaManagementContext())
+            {
+                var allGenres = context.Genres.ToList();
+                var filteredGenres = allGenres.Where(g => SelectedGenreList.Any(sg => sg.GenreId == g.GenreId)).ToList();
+
+                Movie newMovie = new Movie
+                {
+                    Title = title,
+                    Duration = duration,
+                    PublishYear = publishYear,
+                    Imdbrating = imdbRating,
+                    Description = description,
+                    PosterPath = posterPath,
+                    TrailerPath = trailerPath,
+                    Genres = filteredGenres,
+                    IsBlockbuster = checkboxBlock.IsChecked ?? false,
+                    IsGoldenHour = checkboxGolden.IsChecked ?? false
+                };
+
+                context.Movies.Add(newMovie);
+
+                if (SelectedCelebritiesList.Count == SelectedRolesList.Count)
+                {
+                    // Iterate over the selected celebrities and roles to create contributors
+                    for (int i = 0; i < SelectedCelebritiesList.Count; i++)
+                    {
+                        // Create a new Contributor object
+                        Contributor contributor = new Contributor
+                        {
+                            Movie = newMovie,
+                            PersonId = SelectedCelebritiesList[i].PersonId,
+                            RoleId = SelectedRolesList[i].RoleId
+                        };
+                        // Add the contributor to the movie's contributors collection
+                        newMovie.Contributors.Add(contributor);
+                    }
+                }
+                else
+                {
+                    // Handle the case where the number of celebrities does not match the number of roles
+                    Console.WriteLine("Error: The number of celebrities does not match the number of roles.");
+                    return;
+                }
+                context.SaveChanges();
+
+            }
+
+
+            
+            Console.WriteLine("Movie saved successfully.");
+
+
+        }
+
+
     }
 
     public class GenreViewCheckBoxConverter : IValueConverter
