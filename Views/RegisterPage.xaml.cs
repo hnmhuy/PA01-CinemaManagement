@@ -17,6 +17,8 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using Windows.Devices.Display.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -35,7 +37,7 @@ namespace CinemaManagement.Views
 
     public sealed partial class RegisterPage : Page
     {
-        public Button RegisterButton;
+        public Microsoft.UI.Xaml.Controls.Button RegisterButton;
         public HyperlinkButton GoToLogin;
         public RegisterViewModel dataContext;
         private RegisterViewModel viewModel;
@@ -51,10 +53,12 @@ namespace CinemaManagement.Views
             DOBInput.MaxDate = dataContext.maxDate;
         }
 
+
+
         private void ModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Debug.WriteLine("Gender changed");
-            var data = sender as ComboBox;
+            var data = sender as System.Windows.Forms.ComboBox;
             if (data != null)
             {
                 Debug.WriteLine(data.SelectedItem as string);
@@ -62,5 +66,7 @@ namespace CinemaManagement.Views
                 Debug.WriteLine((DataContext as RegisterViewModel).Gender);
             }
         }
+
+        
     }
 }

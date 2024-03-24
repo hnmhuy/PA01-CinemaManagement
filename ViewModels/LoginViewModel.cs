@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CinemaManagement.ViewModels
@@ -72,6 +73,17 @@ namespace CinemaManagement.ViewModels
                 this.value = (false, null, "Username or password is empty");
                 return;
             }
+
+            Regex rx = new Regex(@"^[a-zA-Z0-9_-]{3,30}$", RegexOptions.Compiled);
+            MatchCollection matches1 = rx.Matches(UserName);
+
+            if (matches1.Count <= 0)
+            {
+                this.value = (false, null, "Invalid username. Usernames must be 3-30 characters long and can only include alphanumeric characters, underscores, and hyphens."
+);
+                return;
+            }
+
             DbCinemaManagementContext context = new DbCinemaManagementContext();
             if (context.Database.CanConnect())
             {
