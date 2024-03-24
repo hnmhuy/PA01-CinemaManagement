@@ -24,6 +24,7 @@
         <vm:StatusChangeColorConverter x:Key="StatusChangeColorConverter"/>
         <vm:StatusChangeTextConverter x:Key="StatusChangeTextConverter"/>
         <vm:StatusChangeConverter x:Key="StatusChangeConverter"/>
+        <vm:TotalUseConverter x:Key="TotalUseConverter"/>
 
 
 
@@ -134,7 +135,7 @@
         <TextBlock
             Padding="0 0 0 20"
              Grid.Row="0"
-             Text="Showtimes" FontSize="40" FontWeight="SemiBold"/>
+             Text="All Vouchers" FontSize="40" FontWeight="SemiBold"/>
 
         <StackPanel Style="{StaticResource stackContent}" Grid.Row="0" HorizontalAlignment="Right" Spacing="20">
             <AutoSuggestBox
@@ -146,7 +147,7 @@
             <Button Style="{StaticResource addButton}">
                 <StackPanel Orientation="Horizontal">
                     <FontIcon Glyph="&#xE710;" Margin="0 0 5 0" />
-                    <TextBlock Text="Add Vouchers"/>
+                    <TextBlock Text="Add Voucher"/>
                 </StackPanel>
             </Button>
 
@@ -154,6 +155,7 @@
 
 
         <Grid
+            DataContext="{x:Bind ViewModel}"
                 Name="BookDateTime"
                 Grid.Row="1"
                 Style="{StaticResource BookDateTime}">
@@ -163,7 +165,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Style="{StaticResource stackContent}" Grid.Column="0">
-                <TextBlock Text="{Binding ShowtimesList, Converter={StaticResource ResourceKey=TotalVouchersConverter}}" Style="{StaticResource totalAmount}"/>
+                <TextBlock Text="{Binding VouchersList, Converter={StaticResource ResourceKey=TotalVouchersConverter}}" Style="{StaticResource totalAmount}"/>
                 <TextBlock Text=" Vouchers" Style="{StaticResource totalAmount}" Margin="0 5 0 12"/>
             </StackPanel>
 
@@ -219,15 +221,12 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Grid.DataContext>
-                <vm:VoucherViewModel/>
-            </Grid.DataContext>
-
 
 
             <Border Grid.Row="1" BorderThickness="1" BorderBrush="Black" CornerRadius="12" Background="#efefef">
 
                 <controls:DataGrid
+                      SelectionChanged="VoucherDataGrid_SelectionChanged" 
                     GridLinesVisibility="Horizontal"
                     CanUserReorderColumns="False" CanUserResizeColumns="False"
                     x:Name="ShowtimesDataGrid" Grid.Row="1"
@@ -235,9 +234,7 @@
                     SelectedItem="{Binding SelectedVoucher}"
                     ItemsSource="{Binding VouchersList}"
                 >
-                    <controls:DataGrid.DataContext>
-                        <vm:VoucherViewModel/>
-                    </controls:DataGrid.DataContext>
+
 
                     <controls:DataGrid.Resources>
 
@@ -268,7 +265,7 @@
                         <controls:DataGridTemplateColumn Header="VoucherId" Width="SizeToHeader">
                             <controls:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding VoucherId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Voucher.VoucherId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </DataTemplate>
                             </controls:DataGridTemplateColumn.CellTemplate>
                         </controls:DataGridTemplateColumn>
@@ -276,7 +273,7 @@
                         <controls:DataGridTemplateColumn Header="Code" Width="*">
                             <controls:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding VoucherCode}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Voucher.VoucherCode}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </DataTemplate>
                             </controls:DataGridTemplateColumn.CellTemplate>
                         </controls:DataGridTemplateColumn>
@@ -337,15 +334,18 @@
                         <controls:DataGridTemplateColumn Header="Amount" Width="SizeToHeader">
                             <controls:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding VoucherAmount}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Voucher.VoucherAmount}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </DataTemplate>
                             </controls:DataGridTemplateColumn.CellTemplate>
                         </controls:DataGridTemplateColumn>
 
-
-
-
-
+                        <controls:DataGridTemplateColumn Header="Total Use" Width="SizeToHeader">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource ResourceKey=TotalUseConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
 
                         <controls:DataGridTemplateColumn Header="Action" Width="150">
                             <controls:DataGridTemplateColumn.CellTemplate>
@@ -355,7 +355,6 @@
                                             <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </Button>
                                         <Button Style="{StaticResource AccentButtonStyle}" Padding="10" 
-                                        DataContext="{Binding DataContext, ElementName=CelebrityViewModel}"
                                         Command="{Binding DeleteCommand}"
                                         CommandParameter="{Binding}"
                                     >

@@ -127,8 +127,8 @@
 
 
 
-        <Pivot Grid.Row="1" x:Name="rootPivot" ItemContainerStyle="{StaticResource PivotItemStyle}">
-            <PivotItem Header="Movies" >
+        <Pivot Grid.Row="1" x:Name="rootPivot" ItemContainerStyle="{StaticResource PivotItemStyle}" >
+            <PivotItem Header="Movies" DataContext="{x:Bind movieViewModel}" >
                 <!--Pivot content goes here-->
                 <Grid Margin="0" Padding="0">
                     <Grid.RowDefinitions>
@@ -136,9 +136,9 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <Grid.DataContext>
+                    <!--<Grid.DataContext>
                         <vm:MovieViewModel/>
-                    </Grid.DataContext>
+                    </Grid.DataContext>-->
 
                     <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
                         <TextBlock Text="{Binding MoviesList, Converter={StaticResource ResourceKey=TotalMovieConverter}}" Style="{StaticResource totalAmount}"/>
@@ -154,7 +154,7 @@
                     <Border Grid.Row="1" BorderThickness="1" BorderBrush="Black" CornerRadius="12" Background="#efefef">
 
                         <controls:DataGrid
-                            SelectionChanged="MovieDataGrid_SelectionChanged" 
+                        SelectionChanged="MovieDataGrid_SelectionChanged" 
                         GridLinesVisibility="Horizontal"
                         CanUserReorderColumns="False" CanUserResizeColumns="False"
                         x:Name="MovieDataGrid" Grid.Row="1"
@@ -163,9 +163,9 @@
                         ItemsSource="{Binding MoviesList}"
                            >
 
-                            <controls:DataGrid.DataContext>
+                            <!--<controls:DataGrid.DataContext>
                                 <vm:MovieViewModel/>
-                            </controls:DataGrid.DataContext>
+                            </controls:DataGrid.DataContext>-->
                                 
 
 
@@ -302,7 +302,7 @@
             </PivotItem>
            
 
-            <PivotItem Header="Genres" >
+            <PivotItem Header="Genres" DataContext="{x:Bind genreViewModel}">
                 <!--Pivot content goes here-->
                 <Grid Margin="0" Padding="0">
                     <Grid.RowDefinitions>
@@ -310,9 +310,9 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
                     
-                    <Grid.DataContext>
+                    <!--<Grid.DataContext>
                         <vm:GenreViewModel/>
-                    </Grid.DataContext>
+                    </Grid.DataContext>-->
 
                     <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
                         <TextBlock Text="{Binding GenresList, Converter={StaticResource ResourceKey=TotalGenreConverter}}" Style="{StaticResource totalAmount}"/>
@@ -331,6 +331,7 @@
                             GridLinesVisibility="Horizontal"
                             CanUserReorderColumns="False" CanUserResizeColumns="False"
                             x:Name="GenreDataGrid" Grid.Row="1"
+                            SelectionChanged="GenreDataGrid_SelectionChanged" 
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedGenre}"
                             ItemsSource="{Binding GenresList}">
@@ -365,7 +366,7 @@
                                 <controls:DataGridTemplateColumn Header="GenreID" Width="*">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding GenreId}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="15"/>
+                                            <TextBlock Text="{Binding Genre.GenreId}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="15"/>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
@@ -373,7 +374,7 @@
                                 <controls:DataGridTemplateColumn Header="Name" Width="*">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding GenreName}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Genre.GenreName}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>

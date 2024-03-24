@@ -31,12 +31,21 @@ namespace CinemaManagement.Views
     {
 
         public MoviePageViewModel ViewModel { get; set; }
+        public MovieViewModel movieViewModel { get; set; }
+        public GenreViewModel genreViewModel { get; set; }
         public MoviesPage()
         {
             this.InitializeComponent();
-            ViewModel = new MoviePageViewModel();
+            var _context = new DbCinemaManagementContext();
+
+            movieViewModel = new MovieViewModel(_context);
+            genreViewModel = new GenreViewModel(_context);
+
+            ViewModel = new MoviePageViewModel(movieViewModel, genreViewModel);
             DataContext = ViewModel;
-           
+            //DataContext = movieViewModel; // Setting DataContext for movie-related elements
+            //DataContext = genreViewModel; // Setting 
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -60,6 +69,20 @@ namespace CinemaManagement.Views
             Debug.WriteLine(data.SelectedIndex);
             Debug.WriteLine(data.SelectedItem);
             (data.DataContext as MovieViewModel).SelectedMovie = data.SelectedItem as MovieCommand;
+
+            //if (data != null)
+            //{
+            //    Debug.WriteLine(data.movie.Title);
+            //}
+            Debug.WriteLine(sender);
+            Debug.WriteLine(e);
+        }
+        private void GenreDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var data = sender as DataGrid;
+            Debug.WriteLine(data.SelectedIndex);
+            Debug.WriteLine(data.SelectedItem);
+            (data.DataContext as GenreViewModel).SelectedGenre = data.SelectedItem as GenreCommand;
 
             //if (data != null)
             //{
