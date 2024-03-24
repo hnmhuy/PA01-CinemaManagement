@@ -430,7 +430,7 @@ namespace CinemaManagement.ViewModels
         }
         public void SelectShowTime(int index)
         {
-            if (isDataLoaded && this.showTimes.Count <= 0) return;
+            if (!isDataLoaded || this.showTimes.Count <= 0 || index < 0 || index >= showTimes.Count) return;
             allowDialog = false;
             selectedTickets.Clear();
             billRowList.Clear();

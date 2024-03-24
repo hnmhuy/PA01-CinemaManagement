@@ -240,7 +240,7 @@ namespace CinemaManagement.Views
 
 
 
-            return "Giảm";
+            return "Discount";
             //bool isPercent = (bool)parameter;   
             //if (isPercent)
             //{

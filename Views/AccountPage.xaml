@@ -108,7 +108,6 @@
                         FontFamily="Montserrat"
                         FontSize="13"
                         FontWeight="Medium"
-                        Foreground="White"
                         Text="{Binding FullName, Mode=TwoWay}" />
                     <TextBlock
                         Margin="0,15,0,0"

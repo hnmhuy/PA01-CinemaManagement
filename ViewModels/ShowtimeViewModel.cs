@@ -1,4 +1,5 @@
 ﻿using CinemaManagement.Models;
+using CinemaManagement.WindowViews;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml.Data;
 using System;
@@ -42,6 +43,10 @@ namespace CinemaManagement.ViewModels
         public List<Movie> MoviesList { get; set; }
 
         public ShowtimeCommand SelectedShowtime { get; set; }
+        public RelayCommand AddNewShowtimeCommand { get; set; }
+
+        private ShowTimeModifyWindow _showTimeModifyWindow;
+
 
         private int _totalTickets;
         public int TotalTickets
@@ -74,6 +79,7 @@ namespace CinemaManagement.ViewModels
             SelectedShowtime = ShowtimesList[0];
             TotalTickets = CalculateTotalTickets();
             TotalSaleTickets = CalculateTotalSaleTickets();
+            AddNewShowtimeCommand = new RelayCommand(OnShowtimeModifyWindow);
         }
 
         public ShowtimeViewModel()
@@ -167,7 +173,7 @@ namespace CinemaManagement.ViewModels
             foreach (var show in ShowTimes)
             {
                 res.Add(new ShowtimeCommand(show, DeleteCommand));
-            }    
+            }
             return res;
 
             //var showTime1 = new ShowTime
@@ -315,6 +321,28 @@ namespace CinemaManagement.ViewModels
             return totalSaleTickets;
         }
 
+        public void OnShowtimeModifyWindow(object obj)
+        {
+            this._showTimeModifyWindow = new ShowTimeModifyWindow(null);
+            _showTimeModifyWindow.Activate();
+            _showTimeModifyWindow.Closed += _showTimeModifyWindow_Closed;
+        }
+
+        private void _showTimeModifyWindow_Closed(object sender, Microsoft.UI.Xaml.WindowEventArgs args)
+        {
+            if (_showTimeModifyWindow.returnVal.Item1)
+            {
+                var newShowtime = _context.ShowTimes
+                    .Where(st => st.ShowTimeId == _showTimeModifyWindow.returnVal.Item3)
+                    .Include(st => st.Movie)
+                    .Include(st => st.Tickets)
+                    .FirstOrDefault();
+                // Add the new showtime to the first of the list
+                ShowtimesList.Insert(0, new ShowtimeCommand(newShowtime, DeleteCommand));
+                TotalTickets = CalculateTotalTickets();
+                TotalSaleTickets = CalculateTotalSaleTickets();
+            }
+        }
     }
     public class TotalShowtimesConverter : IValueConverter
     {
@@ -419,7 +447,4 @@ namespace CinemaManagement.ViewModels
             throw new NotImplementedException();
         }
     }
-
-    
-
 }

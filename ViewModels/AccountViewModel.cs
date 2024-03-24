@@ -50,6 +50,17 @@ namespace CinemaManagement.ViewModels
                 OnPropertyChanged(nameof(IsAuthenticating));
             }
         }
+
+        private bool _isLoggingOut;
+        public bool IsLoggingOut
+        {
+            get { return _isLoggingOut; }
+            set
+            {
+                _isLoggingOut = value;
+                OnPropertyChanged(nameof(IsLoggingOut));
+            }
+        }
         public DateTimeOffset? SelectedDate
         {
             get { return _selectedDate; }
@@ -149,7 +160,7 @@ namespace CinemaManagement.ViewModels
             {
                 Debug.WriteLine("Function runs");
                 AuthenticationControl.DestroySession();
-                IsAuthenticated = false;
+                IsLoggingOut = true;
             }
         }
         public  void ChangePassword(object obj)
@@ -232,10 +243,12 @@ namespace CinemaManagement.ViewModels
                 //this.SelectedDate = new DateTime(returnValue.Item2.Dob.Year, returnValue.Item2.Dob.Month, returnValue.Item2.Dob.Day);
                 IsAuthenticating = false;
                 IsAuthenticated = true;
+                IsLoggingOut = false;
             } else
             {
                 IsAuthenticated = false;
                 IsAuthenticating = false;
+                IsLoggingOut = false;
             }
         }
 
