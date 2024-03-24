@@ -19,11 +19,13 @@ namespace CinemaManagement.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;       
         public static string MALE = "Male";
         public static string FEMALE = "Female";
+
+        public RelayCommand SignOut { get; set; }
         public RelayCommand SaveChanges { get; set; }
         public RelayCommand RequestAuthentication { get; set; }
         public RelayCommand ResetPassword { get; set; }
         private string _gender;
-        private DateTime _selectedDate;
+        private DateTimeOffset? _selectedDate;
         public ObservableCollection<string> GenderList { get; set; }
         public (bool, int, string) authenticateInfo;
         public (bool, Account, string) returnValue;
@@ -48,7 +50,7 @@ namespace CinemaManagement.ViewModels
                 OnPropertyChanged(nameof(IsAuthenticating));
             }
         }
-        public DateTime SelectedDate
+        public DateTimeOffset? SelectedDate
         {
             get { return _selectedDate; }
             set
@@ -120,7 +122,6 @@ namespace CinemaManagement.ViewModels
         {
             //FullName = "Nguyễn Văn A";
             //Gender = "Male";
-            //SelectedDate = DateTime.Now;            
             GenderList = new ObservableCollection<string>
             {
                 MALE,
@@ -139,8 +140,18 @@ namespace CinemaManagement.ViewModels
             RequestAuthentication = new RelayCommand(OnRequestAuthentication, CanRequestAuthentication);
             SaveChanges = new RelayCommand(Change);
             ResetPassword = new RelayCommand(ChangePassword);
+            SignOut = new RelayCommand(LogOutUser);
         }
+        public void LogOutUser(object obj)
+        {
 
+            if (IsAuthenticated)
+            {
+                Debug.WriteLine("Function runs");
+                AuthenticationControl.DestroySession();
+                IsAuthenticated = false;
+            }
+        }
         public  void ChangePassword(object obj)
         {
             Debug.WriteLine(CurrentPassword);
@@ -217,8 +228,8 @@ namespace CinemaManagement.ViewModels
                 this.FullName = returnValue.Item2.Fullname;
                 this.Gender = returnValue.Item2.Gender;
                 // Create a date time from string
-
-                this.SelectedDate = new DateTime(returnValue.Item2.Dob.Year, returnValue.Item2.Dob.Month, returnValue.Item2.Dob.Day);
+                this.SelectedDate = new DateTimeOffset(returnValue.Item2.Dob);
+                //this.SelectedDate = new DateTime(returnValue.Item2.Dob.Year, returnValue.Item2.Dob.Month, returnValue.Item2.Dob.Day);
                 IsAuthenticating = false;
                 IsAuthenticated = true;
             } else
