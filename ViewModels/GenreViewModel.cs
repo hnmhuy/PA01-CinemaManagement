@@ -20,17 +20,16 @@ using Microsoft.UI.Xaml;
 namespace CinemaManagement.ViewModels
 {
 
-    public class GenreViewModel : INotifyPropertyChanged
+    public class GenreCommand : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public ObservableCollection<Genre> GenresList { get; set; }
-        public Genre SelectedGenre { get; set; }
+        public RelayCommand DeleteCommand { get; set; }
+        public Genre Genre { get; set; }
 
-        public GenreViewModel()
+        public GenreCommand(Genre _Genre, RelayCommand _deleteCommand)
         {
-            
-            GenresList = GenerateGenreSampleData();
-            SelectedGenre = GenresList[1];
+            this.Genre = _Genre;
+            this.DeleteCommand = _deleteCommand;
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -38,69 +37,115 @@ namespace CinemaManagement.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public ObservableCollection <Genre> GenerateGenreSampleData()
+
+    }
+
+    public class GenreViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public ObservableCollection<GenreCommand> GenresList { get; set; }
+        
+        private GenreCommand _selectedGenre;
+        public GenreCommand SelectedGenre
         {
-            ObservableCollection<Genre> genres = new ObservableCollection<Genre>();
-            genres.Add(
-                new Genre
+            get { return _selectedGenre; }
+            set
+            {
+                if (_selectedGenre != value)
                 {
-                    GenreId = 1,
-                    GenreName = "Sci-Fi"
-                });
-            genres.Add(
-                new Genre
+                    _selectedGenre = value;
+                    OnPropertyChanged(nameof(SelectedGenre));
+                }
+            }
+        }
+
+        private readonly DbCinemaManagementContext _context;
+        public RelayCommand DeleteCommand { get; }
+
+
+        public GenreViewModel(DbCinemaManagementContext context)
+        {
+            _context = context;
+            DeleteCommand = new RelayCommand(OnDelete, CanDelete);
+            GenresList = GenerateGenreSampleData(DeleteCommand);
+            SelectedGenre = GenresList[0];
+        }
+
+        public GenreViewModel()
+        {
+            
+            //GenresList = GenerateGenreSampleData();
+            //SelectedGenre = GenresList[1];
+        }
+
+        private async Task DeleteGenreFromDatabaseAsync(Genre genre)
+        {
+            try
+            {
+                // Retrieve all movies associated with the genre
+                var movies = _context.Movies.Where(m => m.Genres.Any(g => g.GenreId == genre.GenreId)).ToList();
+
+                // Remove the genre from each movie's genre list
+                foreach (var movie in movies)
                 {
-                    GenreId = 2,
-                    GenreName = "Action"
-                });
-            genres.Add(
-                new Genre
-                {
-                    GenreId = 3,
-                    GenreName = "K-Drama"
-                });
-            genres.Add(
-                new Genre
-                {
-                    GenreId = 4,
-                    GenreName = "Romance"
-                });
-            genres.Add(
-                new Genre
-                {
-                    GenreId = 5,
-                    GenreName = "Fantasy"
-                });
-            genres.Add(
-                new Genre
-                {
-                    GenreId = 6,
-                    GenreName = "Comedy"
-                });
-            genres.Add(
-               new Genre
-               {
-                   GenreId = 7,
-                   GenreName = "Ha"
-               });
-            genres.Add(
-               new Genre
-               {
-                   GenreId = 8,
-                   GenreName = "Hihi"
-               });
-            genres.Add(
-               new Genre
-               {
-                   GenreId = 9,
-                   GenreName = "hoho"
-               });
-            genres.Add(
-               new Genre
-               {
-                   GenreId = 10,
-                   GenreName = "hahahahahahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
-               });
+                    movie.Genres.Remove(genre);
+                }
+
+                // Remove the genre from the context
+                _context.Genres.Remove(genre);
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error deleting genre: {ex.Message}");
+            }
+        }
+
+        private bool CanDelete(object parameter)
+        {
+
+            return SelectedGenre != null;
+        }
+
+        private void OnDelete(object obj)
+        {
+            // Print a debug message to indicate that the OnDelete method is being called
+            Debug.WriteLine("OnDelete method called.");
+
+            // Check if SelectedGenre is correctly set
+            if (SelectedGenre != null)
+            {
+                Debug.WriteLine($"Deleting Genre: {SelectedGenre.Genre.GenreName}");
+
+                DeleteGenreFromDatabaseAsync(SelectedGenre.Genre); // Call the method to delete from the database
+
+                GenresList.Remove(SelectedGenre);
+            }
+            else
+            {
+                // Print a debug message if SelectedGenre is null
+                Debug.WriteLine("SelectedGenre is null. Cannot delete.");
+            }
+
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public ObservableCollection <GenreCommand> GenerateGenreSampleData(RelayCommand DeleteCommand)
+        {
+            ObservableCollection<GenreCommand> genres = new ObservableCollection<GenreCommand>();
+            var Genres = _context.Genres.ToList();
+
+            foreach (var genre in Genres)
+            {
+                genres.Add(new GenreCommand(genre,DeleteCommand));
+            }
+
             return genres;
         }
 

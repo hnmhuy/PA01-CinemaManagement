@@ -24,7 +24,7 @@ using Windows.UI;
 using CinemaManagement.Models;
 using CinemaManagement.ViewModels;
 using System.Diagnostics;
-using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;   
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;

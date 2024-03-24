@@ -1,4 +1,6 @@
+using CinemaManagement.Models;
 using CinemaManagement.ViewModels;
+using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -8,6 +10,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -28,8 +31,24 @@ namespace CinemaManagement.Views
         public ShowtimePage()
         {
             this.InitializeComponent();
-            ViewModel = new ShowtimeViewModel();
+            var context = new DbCinemaManagementContext();
+            ViewModel = new ShowtimeViewModel(context);
             this.DataContext = ViewModel;
+        }
+
+        private void ShowtimeDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var data = sender as DataGrid;
+            Debug.WriteLine(data.SelectedIndex);
+            Debug.WriteLine(data.SelectedItem);
+            (data.DataContext as ShowtimeViewModel).SelectedShowtime = data.SelectedItem as ShowtimeCommand;
+
+            //if (data != null)
+            //{
+            //    Debug.WriteLine(data.movie.Title);
+            //}
+            Debug.WriteLine(sender);
+            Debug.WriteLine(e);
         }
     }
 }

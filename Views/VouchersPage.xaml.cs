@@ -1,4 +1,6 @@
+using CinemaManagement.Models;
 using CinemaManagement.ViewModels;
+using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -8,6 +10,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -29,8 +32,23 @@ namespace CinemaManagement.Views
         public VouchersPage()
         {
             this.InitializeComponent();
-            ViewModel = new VoucherViewModel();
+            var context = new DbCinemaManagementContext();
+            ViewModel = new VoucherViewModel(context);
             this.DataContext = ViewModel;
+        }
+        private void VoucherDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var data = sender as DataGrid;
+            Debug.WriteLine(data.SelectedIndex);
+            Debug.WriteLine(data.SelectedItem);
+            (data.DataContext as VoucherViewModel).SelectedVoucher = data.SelectedItem as VoucherCommand;
+
+            //if (data != null)
+            //{
+            //    Debug.WriteLine(data.movie.Title);
+            //}
+            Debug.WriteLine(sender);
+            Debug.WriteLine(e);
         }
     }
 }

@@ -23,6 +23,7 @@
         <local:DiscountConverter x:Key="DiscountConverter" />
         <local:VisibleConverter x:Key="VisibleConverter" />
         <local:PercentConverter x:Key="PercentConverter" />
+        <vm:ConvertFullPath x:Key="ConvertFullPath" />
 
         <LinearGradientBrush x:Key="GradientBackground" StartPoint="0.5,0" EndPoint="0.5,1">
             <GradientStop Offset="0.0" Color="#99000000" />
@@ -110,7 +111,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Padding" Value="24" />
             <Setter Property="CornerRadius" Value="18" />
-            <Setter Property="Background" Value="{StaticResource LayerOnMicaBaseAltFillColorDefaultBrush}" />
+            <Setter Property="Background" Value="{StaticResource AcrylicBackgroundFillColorDefaultInverseBrush}" />
         </Style>
 
         <Style x:Key="ShowtimeSection" TargetType="Grid">
@@ -140,7 +141,7 @@
             <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="CornerRadius" Value="24, 24, 0,0" />
-            <Setter Property="Background" Value="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
+            <Setter Property="Background" Value="{StaticResource AcrylicBackgroundFillColorDefaultInverseBrush}" />
             <Setter Property="Padding" Value="0,0,0,18" />
             <Setter Property="Margin" Value="0,24,0,0" />
         </Style>
@@ -150,14 +151,14 @@
             <Setter Property="ColumnSpacing" Value="12" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Padding" Value="24" />
-            <Setter Property="Background" Value="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
+            <Setter Property="Background" Value="{StaticResource AcrylicBackgroundFillColorDefaultInverseBrush}" />
         </Style>
 
         <Style x:Key="BookingDetail" TargetType="Grid">
             <Setter Property="CornerRadius" Value="24" />
             <Setter Property="Margin" Value="0,24,0,0" />
             <Setter Property="Padding" Value="24" />
-            <Setter Property="Background" Value="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
+            <Setter Property="Background" Value="{StaticResource AcrylicBackgroundFillColorDefaultInverseBrush}" />
         </Style>
 
         <Style x:Key="InfoBlock" TargetType="StackPanel">
@@ -216,20 +217,19 @@
 
         <DataTemplate x:Key="GenreList" x:DataType="m:Genre">
             <Border Style="{StaticResource InfoBadge}">
-                <TextBlock FontSize="16" Text="Action" />
+                <TextBlock FontSize="16" Text="{Binding GenreName}" />
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="Contributor" x:DataType="vm:ContributorAndSeparator">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <HyperlinkButton
-                    Padding="0"
-                    Content="{Binding Contributor}"
-                    Foreground="{StaticResource TextFillColorTertiaryBrush}" />
+            <StackPanel
+                Margin="0,0,4,0"
+                Orientation="Horizontal"
+                Spacing="4">
+                <HyperlinkButton Content="{Binding Contributor}" />
                 <FontIcon
                     FontFamily="{StaticResource FIcon}"
                     FontSize="5"
-                    Foreground="{StaticResource TextFillColorTertiaryBrush}"
                     Glyph="&#xF127;"
                     Visibility="{Binding isSeparatorVisible}" />
             </StackPanel>
@@ -246,11 +246,16 @@
                     Foreground="{StaticResource AccentAAFillColorDefaultBrush}"
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Text="{Binding GroupName}" />
-                <ItemsRepeater ItemTemplate="{StaticResource Contributor}" ItemsSource="{Binding Contributors}">
-                    <ItemsRepeater.Layout>
-                        <StackLayout Orientation="Horizontal" Spacing="8" />
-                    </ItemsRepeater.Layout>
-                </ItemsRepeater>
+                <Border>
+                    <ItemsRepeater
+                        HorizontalAlignment="Left"
+                        ItemTemplate="{StaticResource Contributor}"
+                        ItemsSource="{Binding Contributors}">
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout Orientation="Horizontal" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </Border>
             </StackPanel>
         </DataTemplate>
 
@@ -272,7 +277,7 @@
             <StackPanel
                 Height="54"
                 Padding="4"
-                Background="{StaticResource LayerOnMicaBaseAltFillColorDefault}"
+                Background="{StaticResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
                 CornerRadius="8"
                 Orientation="Horizontal"
                 Spacing="12">
@@ -309,6 +314,7 @@
                     Name="Voucher"
                     VerticalAlignment="Center"
                     Checked="Voucher_Checked"
+                    IsChecked="{Binding IsChecked, Mode=TwoWay}"
                     IsEnabled="{Binding IsAvailable}"
                     Unchecked="Voucher_Unchecked">
                     <StackPanel
@@ -334,9 +340,9 @@
 
     </Page.Resources>
 
-    <Page.DataContext>
+    <!--<Page.DataContext>
         <vm:MovieDetailViewModel />
-    </Page.DataContext>
+    </Page.DataContext>-->
 
     <Grid Style="{StaticResource MainContent}">
         <Grid.RowDefinitions>
@@ -401,8 +407,6 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-
-
             <Rectangle
                 Grid.Row="1"
                 Grid.RowSpan="2"
@@ -414,7 +418,7 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Style="{StaticResource Poster}">
-                <Image Source="{Binding movie.PosterPath}" Style="{StaticResource PosterImage}" />
+                <Image Source="{Binding CurrMovie.PosterPath, Converter={StaticResource ConvertFullPath}, ConverterParameter=Assets/Images/Poster/}" Style="{StaticResource PosterImage}" />
             </Grid>
             <Grid
                 x:Name="InfoContainer"
@@ -436,7 +440,7 @@
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     Style="{StaticResource TitleLargeTextBlockStyle}"
-                    Text="{Binding movie.Title}" />
+                    Text="{Binding CurrMovie.Title}" />
 
                 <StackPanel
                     Name="OverviewInfo"
@@ -466,17 +470,22 @@
                             <TextBlock
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Text="7.5/10" />
+                                Text="{Binding CurrMovie.Imdbrating}" />
+                            <TextBlock
+                                Margin="-6,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Text="/10" />
                         </StackPanel>
                         <Border
-                            Background="Transparent"
-                            BorderBrush="Orange"
+                            Background="{Binding CurrMovie.AgeCertificate.BackgroundColor}"
+                            BorderBrush="{Binding CurrMovie.AgeCertificate.ForegroundColor}"
                             BorderThickness="1.2"
                             Style="{StaticResource InfoBadge}">
                             <TextBlock
                                 FontSize="16"
-                                Foreground="Orange"
-                                Text="C18" />
+                                Foreground="{Binding CurrMovie.AgeCertificate.ForegroundColor}"
+                                Text="{Binding CurrMovie.AgeCertificate.DisplayContent}" />
                         </Border>
                         <StackPanel
                             HorizontalAlignment="Center"
@@ -491,13 +500,13 @@
                                 VerticalAlignment="Center"
                                 FontSize="18"
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="120" />
+                                Text="{Binding CurrMovie.Duration}" />
                         </StackPanel>
                     </StackPanel>
                     <TextBlock
                         Name="Description"
                         Style="{StaticResource Description}"
-                        Text="{Binding movie.Description}" />
+                        Text="{Binding CurrMovie.Description}" />
 
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <Button
@@ -563,9 +572,10 @@
                         Foreground="#E38B29"
                         Text="Date" />
                     <DatePicker
-                        Name="DatePicker"
+                        x:Name="ShowDatePicker"
                         Width="220"
                         HorizontalAlignment="Right"
+                        DateChanged="ShowDatePicker_DateChanged"
                         YearVisible="False" />
 
                     <!--  Vertical Line  -->
@@ -582,16 +592,35 @@
                         Foreground="#E38B29"
                         Text="Time" />
 
-                    <DropDownButton Content=". . : . . AM">
-                        <DropDownButton.Flyout>
-                            <MenuFlyout Placement="Bottom" />
-                        </DropDownButton.Flyout>
-                    </DropDownButton>
+                    <ComboBox
+                        Width="150"
+                        VerticalAlignment="Center"
+                        IsEnabled="{Binding HaveShowtime}"
+                        ItemsSource="{Binding showHours}"
+                        PlaceholderText="Choose time"
+                        SelectedIndex="{Binding SelectedShowTimeIndex, Mode=TwoWay}" />
                 </StackPanel>
             </Grid>
 
+            <Grid
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                MinHeight="200"
+                Visibility="{Binding HaveShowtime, Converter={StaticResource VisibleConverter}, ConverterParameter=true}">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="We don't have any showtime!" />
+            </Grid>
 
-            <StackPanel Grid.Row="1" Grid.Column="0">
+
+            <StackPanel
+                Name="InteractiveSeatMap"
+                Grid.Row="1"
+                Grid.Column="0"
+                Visibility="{Binding HaveShowtime, Converter={StaticResource VisibleConverter}, ConverterParameter=false}">
                 <ScrollViewer
                     Grid.Row="1"
                     Grid.Column="0"
@@ -620,7 +649,7 @@
                                 Name="RowNameLeft"
                                 Grid.Column="0"
                                 Width="50"
-                                Height="{Binding seatMapHeight}"
+                                Height="{Binding SeatMapHeight}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 ItemTemplate="{StaticResource RowName}"
@@ -635,17 +664,17 @@
                             </ItemsRepeater>
 
                             <ItemsRepeater
-                                Name="SeatContainer"
+                                x:Name="SeatContainer"
                                 Grid.Column="1"
-                                Width="{Binding seatMapWidth}"
-                                Height="{Binding seatMapHeight}"
+                                Width="{Binding SeatMapWidth}"
+                                Height="{Binding SeatMapHeight}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 ItemTemplate="{StaticResource Seat}"
                                 ItemsSource="{Binding ticketList}">
                                 <ItemsRepeater.Layout>
                                     <UniformGridLayout
-                                        MaximumRowsOrColumns="{Binding ShowTime.MaxCol}"
+                                        x:Name="SeatLayout"
                                         MinColumnSpacing="12"
                                         MinRowSpacing="12"
                                         Orientation="Horizontal" />
@@ -655,7 +684,7 @@
                             <ItemsRepeater
                                 Name="RowNameRight"
                                 Grid.Column="0"
-                                Height="{Binding seatMapHeight}"
+                                Height="{Binding SeatMapHeight}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 ItemTemplate="{StaticResource RowName}"
@@ -787,7 +816,8 @@
                 Grid.Row="1"
                 Grid.Column="2"
                 BorderThickness="1"
-                Style="{StaticResource BookingDetail}">
+                Style="{StaticResource BookingDetail}"
+                Visibility="{Binding HaveShowtime, Converter={StaticResource VisibleConverter}, ConverterParameter=false}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50" />
                     <RowDefinition Height="100" />
@@ -805,25 +835,26 @@
                 <StackPanel
                     Name="ShowtimeIfo"
                     Grid.Row="1"
+                    Spacing="15"
                     Style="{StaticResource InfoBlock}">
                     <TextBlock
                         FontSize="20"
                         FontWeight="Bold"
-                        Text="{Binding movie.Title}" />
+                        Text="{Binding CurrMovie.Title}" />
                     <StackPanel
-                        HorizontalAlignment="Stretch"
+                        Height="30"
                         Orientation="Horizontal"
                         Spacing="12">
                         <TextBlock FontWeight="Bold" Text="Date" />
-                        <TextBlock HorizontalAlignment="Stretch" Text="20/03/2024" />
+                        <TextBlock FontSize="13" Text="{Binding DisplayingShowTime.ShowDate}" />
                     </StackPanel>
-                    <StackPanel
+                    <!--<StackPanel
                         HorizontalAlignment="Stretch"
                         Orientation="Horizontal"
                         Spacing="12">
                         <TextBlock FontWeight="Bold" Text="Time" />
                         <TextBlock HorizontalAlignment="Stretch" Text="10:00 AM" />
-                    </StackPanel>
+                    </StackPanel>-->
                 </StackPanel>
                 <StackPanel
                     Name="SeatList"
@@ -900,13 +931,22 @@
                         Name="Confirm"
                         Grid.Row="5"
                         Margin="0,12,0,0"
+                        HorizontalAlignment="Center"
                         Orientation="Vertical">
                         <Button
                             Width="300"
                             Padding="12"
                             HorizontalAlignment="Center"
+                            Command="{Binding BookTicket}"
                             Content="Book"
+                            IsEnabled="{Binding IsAuthenticated}"
                             Style="{StaticResource AccentButtonStyle}" />
+                        <TextBlock Text="You need to authenticate before booking ticket!" Visibility="{Binding IsAuthenticated, Converter={StaticResource VisibleConverter}, ConverterParameter=true}" />
+                        <HyperlinkButton
+                            HorizontalAlignment="Center"
+                            Command="{Binding Authenticate}"
+                            Content="Authenticate!"
+                            Visibility="{Binding IsAuthenticated, Converter={StaticResource VisibleConverter}, ConverterParameter=true}" />
                     </StackPanel>
                 </StackPanel>
             </Grid>

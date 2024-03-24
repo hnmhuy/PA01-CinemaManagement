@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CinemaManagement.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace CinemaManagement.ViewModels
 {
     public class MoviePageViewModel : INotifyPropertyChanged
     {
+        private readonly DbCinemaManagementContext _context;
         private MovieViewModel _moviesList;
         public MovieViewModel MoviesList
         {
@@ -31,10 +33,23 @@ namespace CinemaManagement.ViewModels
             }
         }
 
+        public MoviePageViewModel(MovieViewModel movieViewModel, GenreViewModel genreViewModel)
+        {
+            MoviesList = movieViewModel;
+            GenresList = genreViewModel;
+        }
+        
+        public MoviePageViewModel(DbCinemaManagementContext context)
+        {
+            _context = context;
+
+        }
+
         public MoviePageViewModel()
         {
-            MoviesList = new MovieViewModel();
-            GenresList = new GenreViewModel();
+            //var context = new DbCinemaManagementContext();
+            //MoviesList = new MovieViewModel(context);
+            ////GenresList = new GenreViewModel();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

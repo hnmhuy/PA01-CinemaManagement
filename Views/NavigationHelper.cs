@@ -142,10 +142,17 @@ namespace CinemaManagement.Views
 
         private void On_Navigated(object sender, NavigationEventArgs e)
         {
-            NavView.IsBackEnabled = ContentFrame.CanGoBack;
-            NavView.IsBackButtonVisible = ContentFrame.CanGoBack ?
-                NavigationViewBackButtonVisible.Visible :
-                NavigationViewBackButtonVisible.Collapsed;
+            try
+            {
+                NavView.IsBackEnabled = ContentFrame.CanGoBack;
+                NavView.IsBackButtonVisible = ContentFrame.CanGoBack ?
+                    NavigationViewBackButtonVisible.Visible :
+                    NavigationViewBackButtonVisible.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
 
             if (ContentFrame.SourcePageType == settingPage)
             {

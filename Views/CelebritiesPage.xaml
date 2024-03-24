@@ -122,7 +122,7 @@
             QueryIcon="Find"/>
 
         <Pivot Grid.Row="1" x:Name="rootPivot" ItemContainerStyle="{StaticResource PivotItemStyle}">
-            <PivotItem Header="Actors">
+            <PivotItem Header="Actors" DataContext="{x:Bind personViewModel}">
                 <!--Pivot content goes here-->
 
                 <Grid Margin="0" Padding="0">
@@ -131,9 +131,9 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <Grid.DataContext>
+                    <!--<Grid.DataContext>
                         <vm:PersonViewModel/>
-                    </Grid.DataContext>
+                    </Grid.DataContext>-->
 
                     <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
                         <TextBlock Text="{Binding PeopleList, Converter={StaticResource ResourceKey=TotalPeopleConverter}}" Style="{StaticResource totalAmount}"/>
@@ -149,6 +149,7 @@
                     <Border Grid.Row="1" BorderThickness="1" BorderBrush="Black" CornerRadius="12" Background="#efefef">
 
                         <controls:DataGrid
+                            SelectionChanged="PersonDataGrid_SelectionChanged"
                          GridLinesVisibility="Horizontal"
                          CanUserReorderColumns="False" CanUserResizeColumns="False"
                          x:Name="PeopleDataGrid" Grid.Row="1"
@@ -187,9 +188,9 @@
                                         <DataTemplate>
                                             <StackPanel Style="{StaticResource stackContent}" Padding="30">
                                                 <Border Style="{StaticResource posterBorder}">
-                                                    <Image Source="{Binding AvatarPath}" Width="50" Height="50" Stretch="UniformToFill"/>
+                                                    <Image Source="{Binding Person.AvatarPath}" Width="50" Height="50" Stretch="UniformToFill"/>
                                                 </Border>
-                                                <TextBlock Text="{Binding Fullname}" VerticalAlignment="Center" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding Person.Fullname}" VerticalAlignment="Center" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
@@ -198,7 +199,7 @@
                                 <controls:DataGridTemplateColumn Header="PersonID" Width="0.5*">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding PersonId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Person.PersonId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
@@ -206,7 +207,7 @@
                                 <controls:DataGridTemplateColumn Header="Biography" Width="2.5*">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Biography}" TextWrapping="Wrap" Padding="10"/>
+                                            <TextBlock Text="{Binding Person.Biography}" TextWrapping="Wrap" Padding="10"/>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
@@ -219,9 +220,8 @@
                                                     <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                 </Button>
                                                 <Button Style="{StaticResource AccentButtonStyle}" Padding="10" 
-                                             DataContext="{Binding DataContext, ElementName=CelebrityViewModel}"
-                                             Command="{Binding DeleteCommand}"
-                                             CommandParameter="{Binding}"
+                                                        Command="{Binding DeleteCommand}"
+                                                        CommandParameter="{Binding}"
                                             >
                                                     <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                 </Button>
@@ -238,7 +238,7 @@
             </PivotItem>
 
 
-            <PivotItem Header="Role">
+            <PivotItem Header="Role" DataContext="{x:Bind roleViewModel}">
                 <!--Pivot content goes here-->
                 <Grid Margin="0" Padding="0">
                     <Grid.RowDefinitions>
@@ -246,9 +246,9 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <Grid.DataContext>
+                    <!--<Grid.DataContext>
                         <vm:RoleViewModel/>
-                    </Grid.DataContext>
+                    </Grid.DataContext>-->
 
                     <StackPanel Style="{StaticResource stackContent}" Grid.Row="0">
                         <TextBlock Text="{Binding RolesList, Converter={StaticResource ResourceKey=TotalRoleConverter}}" Style="{StaticResource totalAmount}"/>
@@ -264,6 +264,7 @@
                     <Border Grid.Row="1" BorderThickness="1" BorderBrush="Black" CornerRadius="12" Background="#efefef">
 
                         <controls:DataGrid
+                            SelectionChanged="RoleDataGrid_SelectionChanged"
                             GridLinesVisibility="Horizontal"
                             CanUserReorderColumns="False" CanUserResizeColumns="False"
                             x:Name="GenreDataGrid" Grid.Row="1"
@@ -301,7 +302,7 @@
                                 <controls:DataGridTemplateColumn Header="RoleID" Width="*">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding RoleId}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="15"/>
+                                            <TextBlock Text="{Binding Role.RoleId}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="15"/>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
@@ -309,7 +310,7 @@
                                 <controls:DataGridTemplateColumn Header="Name" Width="*">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding RoleName}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Role.RoleName}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
@@ -322,7 +323,6 @@
                                                     <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                 </Button>
                                                 <Button Style="{StaticResource AccentButtonStyle}" Padding="8" 
-                                            DataContext="{Binding DataContext, ElementName=MovieViewModel}"
                                             Command="{Binding DeleteCommand}"
                                             CommandParameter="{Binding}"
                                            >
