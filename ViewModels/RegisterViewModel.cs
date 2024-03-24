@@ -104,7 +104,7 @@ namespace CinemaManagement.ViewModels
 );
                 return;
             }
-            Regex rx1 = new Regex(@"^(?=(.*[0-9]))((?=.*[A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z]))^.{8,}$", RegexOptions.Compiled);
+            Regex rx1 = new Regex(@"^[a-zA-Z0-9_-]{3,16}$", RegexOptions.Compiled);
             MatchCollection matches2 = rx1.Matches(Password);
             if (matches2.Count <= 0)
             {
