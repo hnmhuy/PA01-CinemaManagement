@@ -18,6 +18,9 @@ using Microsoft.UI.Windowing;
 using CinemaManagement.Models;
 using CinemaManagement.ViewModels;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using Button = Microsoft.UI.Xaml.Controls.Button;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,7 +32,7 @@ namespace CinemaManagement.WindowViews
     /// </summary>
     public sealed partial class AuthenticateWindow : Window
     {
-        public TextBox userName;
+        public Microsoft.UI.Xaml.Controls.TextBox userName;
         public PasswordBox password;
         public Button LoginButton;
         public HyperlinkButton HyperlinkButton;
