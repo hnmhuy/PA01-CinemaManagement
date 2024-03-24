@@ -95,13 +95,20 @@ namespace CinemaManagement.ViewModels
 
         public void Register()
         {
-            Regex rx = new Regex(@"^[a-zA-Z0-9_-]{3,30}$", RegexOptions.Compiled);
+            Regex rx = new Regex(@"^[a-zA-Z0-9_-]{3,16}$", RegexOptions.Compiled);
             MatchCollection matches1 = rx.Matches(UserName);
 
             if (matches1.Count <= 0 )
             {
                 this.value = (false, null, "Invalid username. Usernames must be 3-30 characters long and can only include alphanumeric characters, underscores, and hyphens."
 );
+                return;
+            }
+            Regex rx1 = new Regex(@"^(?=(.*[0-9]))((?=.*[A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z]))^.{8,}$", RegexOptions.Compiled);
+            MatchCollection matches2 = rx1.Matches(Password);
+            if (matches2.Count <= 0)
+            {
+                this.value = (false, null, "Should have 1 lowercase letter, 1 uppercase\r\nletter, 1 number, and be at least 8 characters long.");
                 return;
             }
             if (!Validate())
