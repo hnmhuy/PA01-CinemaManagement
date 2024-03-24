@@ -95,7 +95,7 @@ namespace CinemaManagement.ViewModels
                     new Ticket { TicketId = 1, IsAvailable = true, Price = 10, ShowTimeId = 1 },
                     new Ticket { TicketId = 2, IsAvailable = false, Price = 10, ShowTimeId = 1 },
                     new Ticket { TicketId = 3, IsAvailable = true, Price = 10, ShowTimeId = 1 },
-                    // Add more tickets for ShowTime 1 as needed
+                    // Add more tickets for displayingShowtime 1 as needed
                 }
             };
             res.Add(showTime1);
@@ -112,11 +112,11 @@ namespace CinemaManagement.ViewModels
                 {
                     new Ticket { TicketId = 4, IsAvailable = true, Price = 10, ShowTimeId = 2 },
                     new Ticket { TicketId = 5, IsAvailable = true, Price = 10, ShowTimeId = 2 },
-                    // Add more tickets for ShowTime 2 as needed
+                    // Add more tickets for displayingShowtime 2 as needed
                 }
             };
 
-            // Add ShowTime 2 to the result list
+            // Add displayingShowtime 2 to the result list
             res.Add(showTime2);
 
 
@@ -136,11 +136,11 @@ namespace CinemaManagement.ViewModels
                     new Ticket { TicketId = 8, IsAvailable = true, Price = 15, ShowTimeId = 3 },
                     new Ticket { TicketId = 9, IsAvailable = false, Price = 20, ShowTimeId = 3 },
                     new Ticket { TicketId = 10, IsAvailable = true, Price = 10, ShowTimeId = 3 },
-                    // Add more tickets for ShowTime 3 as needed
+                    // Add more tickets for displayingShowtime 3 as needed
                 }
             };
 
-            // Add ShowTime 3 to the result list
+            // Add displayingShowtime 3 to the result list
             res.Add(showTime3);
 
 

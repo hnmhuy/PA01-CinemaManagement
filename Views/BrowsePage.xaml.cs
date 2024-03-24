@@ -40,6 +40,7 @@ namespace CinemaManagement.Views
 
         private DispatcherTimer dispatcherTimer;
         private FrameworkElement displayTarget;
+        private DispatcherTimer loadingDeleyTimer;
         private Flyout flyoutCard;
         private MediaPlayer mediaPlayer;
         public BrowseViewModel viewModel { get; set; } = new BrowseViewModel();
@@ -52,10 +53,23 @@ namespace CinemaManagement.Views
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Interval = TimeSpan.FromSeconds(1);
-            DataContext = viewModel;
 
-            Debug.WriteLine("CurrentWindows: " + Window.Current);
-            Debug.WriteLine("CurrentWindows: ");
+            loadingDeleyTimer = new DispatcherTimer();
+            loadingDeleyTimer.Tick += LoadingDelayTimer_Tick;
+            loadingDeleyTimer.Interval = TimeSpan.FromSeconds(1);
+            DataContext = viewModel;
+        }
+
+        private void LoadingDelayTimer_Tick(object sender, object e)
+        {
+            loadingDeleyTimer.Stop();
+            viewModel.LoadData();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            loadingDeleyTimer.Start();
         }
 
         private void DispatcherTimer_Tick(object sender, object e)
@@ -64,7 +78,7 @@ namespace CinemaManagement.Views
             dispatcherTimer.Stop();
             
 
-            // There are two kinds of DataContext in the flyout, one is RankMovie, the other is Movie
+            // There are two kinds of DataContext in the flyout, one is RankMovie, the other is CurrMovie
             if (displayTarget.DataContext is RankMovie)
             {
                 viewModel.HighlightingMovie = (displayTarget.DataContext as RankMovie).Movie;
@@ -130,7 +144,8 @@ namespace CinemaManagement.Views
             // Update video source
             if (temp != null)
             {
-                temp.Source = MediaSource.CreateFromUri(new Uri("ms-appx://" + viewModel.HighlightingMovie.TrailerPath));
+                Debug.Write("Get trailer path: " + viewModel.HighlightingMovie.TrailerPath);
+                temp.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Videos/" + viewModel.HighlightingMovie.TrailerPath));
                 mediaPlayer = temp.MediaPlayer;
                 mediaPlayer.Play();
                 mediaPlayer.Position = TimeSpan.FromSeconds(0);
@@ -181,13 +196,31 @@ namespace CinemaManagement.Views
 
         private void NavigateToDetailPage()
         {
-            NavigationTransitionInfo transitionInfo = new DrillInNavigationTransitionInfo();
-            (this.Parent as Frame).Navigate(typeof(MovieDetailPage),null, transitionInfo);
+            // Prevent the timer from ticking
+            dispatcherTimer.Stop();
+            MovieDetailPage.movieId = viewModel.HighlightingMovie.MovieId;
+            (this.Parent as Frame).Navigate(typeof(MovieDetailPage));
         }
 
         private void MovieCardButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToDetailPage();
+            dispatcherTimer.Stop();
+            try
+            {
+                if ((sender as Button).DataContext is Movie movie)
+                {
+                    viewModel.HighlightingMovie = movie;
+                }
+                else if ((sender as Button).DataContext is RankMovie rankMovie)
+                {
+                    viewModel.HighlightingMovie = rankMovie.Movie;
+                }
+                Debug.WriteLine("Try to navigate to MovieDetailPage with MovieId=" + viewModel.HighlightingMovie.MovieId.ToString());
+                NavigateToDetailPage();
+            } catch (Exception ex)
+            {
+                Debug.WriteLine("Error: " + ex.Message);
+            }
         }
 
         private void HighlightMovieCardCover_Tapped(object sender, TappedRoutedEventArgs e)

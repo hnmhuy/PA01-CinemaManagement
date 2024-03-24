@@ -15,7 +15,7 @@ public partial class Ticket
 
     public double Price { get; set; }
 
-    public int BillId { get; set; }
+    public int? BillId { get; set; } = null!;
 
     public int ShowTimeId { get; set; }
 

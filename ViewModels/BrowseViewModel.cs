@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -22,13 +23,34 @@ namespace CinemaManagement.ViewModels
         }
     }
 
-    public class BrowseViewModel
+    public class BrowseViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Movie> GoldenHours { get; set; }
+        public ObservableCollection<Movie> NewRelease { get; set; }
         public ObservableCollection<Movie> BlockBuster { get; set; }
         public ObservableCollection<RankMovie> TopTen { get; set; }
+        public DbCinemaManagementContext db = new DbCinemaManagementContext();
+        private bool _isLoaded = false;
+        public bool IsLoaded
+        {
+            get { return _isLoaded; }
+            set
+            {
+                _isLoaded = value;
+                OnPropertyChanged(nameof(IsLoaded));
+            }
+        }
+        
 
         public Movie HighlightingMovie = null;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // Override the OnPropertyChanged method
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private ICollection<Genre> GenreList { get; set; }
 
@@ -36,11 +58,11 @@ namespace CinemaManagement.ViewModels
 
         public BrowseViewModel()
         {
-            GenerateAgeCertificate();
-            GenerateGenreData();
-            GoldenHours = GenerateSampleData();
-            BlockBuster = GenerateSampleData();
-            TopTen = GenerateTopTen();
+            GoldenHours = new ObservableCollection<Movie>();
+            NewRelease = new ObservableCollection<Movie>();
+            BlockBuster = new ObservableCollection<Movie>();
+            TopTen = new ObservableCollection<RankMovie>();
+            IsLoaded = false;
         }
 
         private void GenerateGenreData()
@@ -121,6 +143,67 @@ namespace CinemaManagement.ViewModels
 
             return res;
         }
+
+        public void LoadData()
+        {
+            IsLoaded = false;
+            // Await to load data from database
+            
+            LoadGoldenHours();
+            LoadBlockBuster();
+            LoadTopTen();
+            IsLoaded = true;
+        }   
+
+        private void LoadTopTen()
+        {
+            // Load top ten movies from database
+            if (TopTen == null)
+            {
+                TopTen = new ObservableCollection<RankMovie>();
+            }
+            var temp = db.Movies.OrderByDescending(m => m.Imdbrating).Take(10).ToList();
+            for (int i = 0; i < temp.Count; i++)
+            {
+                // Update the AgeCertificate
+                temp[i].AgeCertificate = db.AgeCertificates.Find(temp[i].AgeCertificateId);
+                TopTen.Add(new RankMovie(i + 1, temp[i]));
+               
+            }
+        }
+
+        private void LoadGoldenHours()
+        {
+            var temp = db.Movies.Where(m => m.IsGoldenHour == true).OrderBy(m => m.PublishYear).Take(15).ToList();
+            if (GoldenHours == null)
+            {
+                GoldenHours = new ObservableCollection<Movie>();
+            }
+            ConvertFromListToObservableCollection(temp, GoldenHours);
+            
+        }
+
+        private void LoadBlockBuster()
+        {
+            // Load blockbuster movies from database
+            if (BlockBuster == null)
+            {
+                BlockBuster = new ObservableCollection<Movie>();
+            }
+            var temp = db.Movies.Where(m => m.IsBlockbuster == true).OrderBy(m => m.PublishYear).Take(15).ToList();
+            ConvertFromListToObservableCollection(temp, BlockBuster);
+        }
+
+        private void ConvertFromListToObservableCollection(List<Movie> src, ObservableCollection<Movie> des)
+        {
+            // Convert list to observable collection
+            for (int i = 0; i < src.Count; i++)
+            {
+                src[i].AgeCertificate = db.AgeCertificates.Find(src[i].AgeCertificateId);
+                des.Add(src[i]);
+            }
+        }
+
     }
 
 
@@ -149,6 +232,25 @@ namespace CinemaManagement.ViewModels
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ConvertFullPath : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            // Project path
+            string refix = parameter as string;
+            Debug.WriteLine("refix: " + refix);
+
+            string res =  "ms-appx:///" + refix + value;
+            Debug.WriteLine("res: " + res);
+            return res;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

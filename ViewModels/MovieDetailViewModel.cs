@@ -1,4 +1,7 @@
 ﻿using CinemaManagement.Models;
+using CinemaManagement.WindowViews;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
@@ -93,6 +96,8 @@ namespace CinemaManagement.ViewModels
     public class CheckBoxVoucher : INotifyPropertyChanged
     {
         private bool _isAvailable;
+        private bool _isChecked;
+
         public Voucher Voucher { get; set; }
         public bool IsAvailable
         {
@@ -100,7 +105,17 @@ namespace CinemaManagement.ViewModels
             set
             {
                 _isAvailable = value;
-                OnPropertyChanged("IsAvailable");
+                OnPropertyChanged(nameof(IsAvailable));
+            }
+        }
+
+        public bool IsChecked
+        {
+            get => this._isChecked;
+            set
+            {
+                this._isChecked = value;
+                OnPropertyChanged(nameof(IsChecked));
             }
         }
 
@@ -113,27 +128,90 @@ namespace CinemaManagement.ViewModels
 
     public class MovieDetailViewModel : INotifyPropertyChanged
     {
-        public const string VIP_TICKET = "VIP Ticket";
-        public const string NORMAL_TICKET = "Normal Ticket";
+        public static string VIPTICKET = "VIP Ticket";
+        public static string NORMAL_TICKET = "Normal Ticket";
+        public static int BOOKING_SUCCESS = 1;
+        public static int BOOKING_FAIL = 0;
 
+       
         // INotifyPropertyChanged Interface implementation
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        public ICollection<Ticket> ticketList { get; set; }
-        public ObservableCollection<Ticket> selectedTickets { get; set; }
+        private int movieId;
+        private DbCinemaManagementContext db = new DbCinemaManagementContext(); 
+        public ObservableCollection<Ticket> ticketList { get; set; }
+        public ObservableCollection<Ticket> selectedTickets { get; set; } = new ObservableCollection<Ticket>();
         public ObservableCollection<Voucher> vouchers { get; set; }
-        public ObservableCollection<CheckBoxVoucher> checkBoxVouchers { get; set; }
-        public ObservableCollection<BillRow> billRowList { get; set; }
-        public Movie movie { get; set; }
-        public ShowTime ShowTime { get; set; }
-        public List<string> rowList { get; set; }
-        public int seatMapWidth { get; set; }
-        public int seatMapHeight { get; set; }
-        public List<GroupContributor> contributorList { get; set; }
+        public ObservableCollection<CheckBoxVoucher> checkBoxVouchers { get; set; } = new ObservableCollection<CheckBoxVoucher>();
+        public ObservableCollection<BillRow> billRowList { get; set; } = new ObservableCollection<BillRow>();
+        private Movie movie { get; set; }
+        public Movie CurrMovie
+        {
+            get => movie;
+            set
+            {
+                movie = value;
+                OnPropertyChanged(nameof(CurrMovie));
+            }
+        }
+        private ShowTime displayingShowtime { get; set; }
+        public ShowTime DisplayingShowTime
+        {
+            get => displayingShowtime;
+            set
+            {
+                displayingShowtime = value;
+                OnPropertyChanged(nameof(DisplayingShowTime));
+            }
+        }
+        public List<ShowTime> showTimes { get; set; }
+        public ObservableCollection<string> rowList { get; set; }
+        private int seatMapWidth { get; set; }
+        private int seatMapHeight { get; set; }
+        public bool allowDialog { get; set; }
+        private bool haveShowtime { get; set; }
+        public bool HaveShowtime
+        {
+            get => haveShowtime;
+            set
+            {
+                haveShowtime = value;
+                OnPropertyChanged(nameof(HaveShowtime));
+            }
+        }
+        public int SeatMapWidth
+        {
+            get => seatMapWidth;
+            set
+            {
+                seatMapWidth = value;
+                OnPropertyChanged(nameof(SeatMapWidth));
+            }
+        }
+        public int SeatMapHeight
+        {
+            get => seatMapHeight;
+            set
+            {
+                seatMapHeight = value;
+                OnPropertyChanged(nameof(SeatMapHeight));
+            }
+        }
+        private int maxCol { get; set; }
+        public int MaxCol
+        {
+            get => maxCol;
+            set
+            {
+                maxCol = value;
+                OnPropertyChanged(nameof(MaxCol));
+            }
+        }
+        public ObservableCollection<GroupContributor> contributorList { get; set; }
+        public ObservableCollection<string> showHours { get; set; }  = new ObservableCollection<string>();
         public List<Genre> genreList { get; set; }
         private double _currentTotalBill;
         public double currentTotalBill
@@ -146,47 +224,71 @@ namespace CinemaManagement.ViewModels
             }
         }
         private double _totalTicketPrice;
-        public MovieDetailViewModel()
+        private DateTime _selectedDate;
+        public DateTime selectedDate
         {
-            selectedTickets = new ObservableCollection<Ticket>();
-            vouchers = new ObservableCollection<Voucher>();
-            billRowList = new ObservableCollection<BillRow>();
-            checkBoxVouchers = new ObservableCollection<CheckBoxVoucher>();
-
-            ShowTime = new ShowTime()
+            get => _selectedDate;
+            set
             {
-                ShowTimeId = 1,
-                ShowDate = DateTime.Now,
-                MaxRow = 8,
-                MaxCol = 18,
-                MovieId = 1,
-                Movie = movie,
-            };
-
-            GenerateTicketList();
-            ConvertRowListToStringList((int)ShowTime.MaxRow);
-
-            genreList = new List<Genre>();
-            genreList.Add(new Genre() { GenreId = 1, GenreName = "Action" });
-            genreList.Add(new Genre() { GenreId = 2, GenreName = "Adventure" });
-            genreList.Add(new Genre() { GenreId = 3, GenreName = "Comedy" });
-            AgeCertificate ageCertificate = new AgeCertificate { AgeCertificateId = 1, DisplayContent = "C13", RequireAge = 13, ForegroundColor = "Orange", BackgroundColor = "Transparent" };
-            GenerateContributorList();
-            this.movie = new Movie
+                _selectedDate = value;
+                Debug.WriteLine("Selected date: " + value.ToString());
+                FindShowTimeByDate();
+                OnPropertyChanged(nameof(selectedDate));
+            }
+        }
+        private int selectedShowTimeIndex {  get; set; }
+        public int SelectedShowTimeIndex
+        {
+            get => selectedShowTimeIndex;
+            set
             {
-                Title = "Dune Part Two",
-                Duration = 120,
-                PublishYear = 2022,
-                Imdbrating = 7.8,
-                AgeCertificateId = 2,
-                AgeCertificate = ageCertificate,
-                PosterPath = "/Assets/Images/Poster/dune2.jpg",
-                Description = "Dune 2 is the sequel to Dune (2021)1. It is the second of a two-part adaptation of the 1965 novel Dune by Frank Herbert1. The movie follows Paul Atreides as he unites with the Fremen people of the desert planet Arrakis to wage war against House Harkonnen1",
-                TrailerPath = "/Assets/Videos/dune2.mp4"
-            };
+                selectedShowTimeIndex = value;
+                Debug.WriteLine("Showtime index: " + value);
+                SelectShowTime(value);
+                OnPropertyChanged(nameof(selectedShowTimeIndex));
+            }
+        }
+        private bool isAuthenticated { get; set; }
+        public bool IsAuthenticated
+        {
+            get => isAuthenticated;
+            set
+            {
+                isAuthenticated = value;
+                OnPropertyChanged(nameof(IsAuthenticated));
+            }
+        }
 
-            GenerateVoucherList();
-            GenerateCheckboxVouchers(); 
+        public RelayCommand BookTicket { get; set; }
+        public RelayCommand Authenticate { get; set; }
+
+        private int _notifyCode;
+        public int NotifyCode
+        {
+            get => _notifyCode;
+            set
+            {
+                _notifyCode = value;
+                OnPropertyChanged(nameof(NotifyCode));
+            }
+        }
+
+        private bool isDataLoaded = false;
+
+        public string NotifyMessage { get; set; }
+        
+        public MovieDetailViewModel(int id)
+        {
+            this.movieId = id;
+            LoadData();
+            showHours = new ObservableCollection<string>();
+            allowDialog = true;
+            haveShowtime = false;
+            var session = AuthenticationControl.RestoreSession();
+            IsAuthenticated = session.Item1 && session.Item2 != -1;
+            Authenticate = new RelayCommand(OnAuthenticate);
+            BookTicket = new RelayCommand(OnBookTicket);
+
         }
 
         // Utils
@@ -202,7 +304,7 @@ namespace CinemaManagement.ViewModels
             }
             foreach(Voucher voucher in vouchers)
             {
-                checkBoxVouchers.Add(new CheckBoxVoucher() { Voucher = voucher, IsAvailable = true });
+                checkBoxVouchers.Add(new CheckBoxVoucher() { Voucher = voucher, IsAvailable = true, IsChecked = false });
             }
 
         }
@@ -214,7 +316,7 @@ namespace CinemaManagement.ViewModels
         {
             if (rowList == null)
             {
-                rowList = new List<string>();
+                rowList = new ObservableCollection<string>();
             }
             else
             {
@@ -226,89 +328,136 @@ namespace CinemaManagement.ViewModels
                 rowList.Add(ConvertRowToString(i));
             }
         }
+        public void LoadData()
+        {            
 
-        // Testing UI function
-        public void GenerateTicketList()
+            CurrMovie = (Movie)db.Movies.Where(m => m.MovieId == movieId).FirstOrDefault();
+            CurrMovie.AgeCertificate = db.Movies.Where(m => m.MovieId == movieId).Select(m => m.AgeCertificate).FirstOrDefault();
+            genreList = db.Movies.Where(m => m.MovieId == movieId).SelectMany(m => m.Genres).ToList();
+            LoadContributors();
+            LoadVouchers();
+            isDataLoaded = true;
+        }
+        private void LoadVouchers()
         {
-            // Generate ticket list
-            if (ticketList == null)
+            var temp = db.Vouchers.Where(v => !v.IsExpired && v.VoucherAmount > 0).ToList();
+            if (this.vouchers == null)
             {
-                ticketList = new List<Ticket>();
+                this.vouchers = new ObservableCollection<Voucher>();
             }
             else
             {
-                ticketList.Clear();
+                this.vouchers.Clear();
+            }
+            foreach (Voucher voucher in temp)
+            {
+                this.vouchers.Add(voucher);
+            }
+            GenerateCheckboxVouchers();
+        }
+        private void LoadContributors()
+        {
+            var contributorsInMovie = db.Movies
+                .Include(m => m.Contributors)
+                .ThenInclude(c => c.Person)
+                .Include(m => m.Contributors)
+                .ThenInclude(c => c.Role)
+                .Where(m => m.MovieId == movieId).FirstOrDefault().Contributors;
+
+            var groupContributors = contributorsInMovie.GroupBy(c => c.Role.RoleName);
+            if (this.contributorList != null) this.contributorList.Clear(); else this.contributorList = new ObservableCollection<GroupContributor>();
+            foreach (var group in groupContributors)
+            {
+                List<ContributorAndSeparator> contributors = new List<ContributorAndSeparator>();
+                foreach (var contributor in group)
+                {
+                    if (contributor == group.Last())
+                    {
+                        contributors.Add(new ContributorAndSeparator(contributor.Person.Fullname, false));
+                    }
+                    else
+                        contributors.Add(new ContributorAndSeparator(contributor.Person.Fullname));
+                }
+                this.contributorList.Add(new GroupContributor(group.Key, contributors));
+            }
+            
+        }
+        private void FindShowTimeByDate()
+        {
+            // Extract the date from selectedDate
+            if (showTimes == null) showTimes = new List<ShowTime>(); else showTimes.Clear();
+            showTimes = db.ShowTimes.Where(s => s.MovieId == movieId && s.ShowDate.Date == selectedDate.Date).ToList();
+
+            showHours.Clear();
+            foreach (ShowTime showTime in showTimes)
+            {
+                // Convert to 24 hour format and add to showHour
+                showHours.Add(showTime.ShowDate.ToString("HH:mm"));
+                Debug.WriteLine("Showtime: " + showTime.ShowDate.ToString() + " - " + showTime.MovieId);
             }
 
-            for (int i = 0; i < ShowTime.MaxRow; i++)
+            if (showHours.Count > 0)
             {
-                for (int j = 0; j < ShowTime.MaxCol; j++)
+                SelectedShowTimeIndex = 0;
+                HaveShowtime = true;
+            }
+            else
+            {
+                HaveShowtime = false;
+            }
+        
+        }    
+        private void CalculateSeatMapSize()
+        {
+            SeatMapWidth = (int)displayingShowtime.MaxCol * 50 + ((int)displayingShowtime.MaxCol - 1) * 12;
+            SeatMapHeight = (int)displayingShowtime.MaxRow * 50 + ((int)displayingShowtime.MaxRow - 1) * 12;
+        }
+        private void LoadTicket()
+        {
+            if (displayingShowtime != null)
+            {
+                var tickets = db.Tickets.Where(t => t.ShowTimeId == displayingShowtime.ShowTimeId)
+                    .OrderBy(t => t.Row).ThenBy(t => t.Col).ToList();
+                if (this.ticketList != null) ticketList.Clear();
+                else this.ticketList = new ObservableCollection<Ticket>();
+                foreach (Ticket t in tickets)
                 {
-                    ticketList.Add(new Ticket()
-                    {
-                        IsAvailable = true,
-                        IsVip = i % 2 == 0,
-                        Price = i % 2 == 0 ? 90000 : 60000,
-                        TicketId = 001,
-                        Col = j,
-                        Row = ConvertRowToString(i),
-                    });
+                    //Debug.WriteLine(t.TicketId);
+                    ticketList.Add(t);
                 }
             }
-
-            seatMapWidth = (int)ShowTime.MaxCol * 50 + ((int)ShowTime.MaxCol - 1) * 12;
-            seatMapHeight = (int)ShowTime.MaxRow * 50 + ((int)ShowTime.MaxRow - 1) * 12;
-
-            // Randomly set some tickets to unavailable
-            Random random = new Random();
-            for (int i = 0; i < 10; i++)
-            {
-                int randomRow = random.Next(0, (int)ShowTime.MaxRow);
-                int randomCol = random.Next(0, (int)ShowTime.MaxCol);
-                ticketList.ElementAt(randomRow * (int)ShowTime.MaxCol + randomCol).IsAvailable = false;
-            }
         }
-        public void GenerateContributorList()
+        public void SelectShowTime(int index)
         {
-            if (contributorList == null)
-            {
-                contributorList = new List<GroupContributor>();
-            }
-            else
-            {
-                contributorList.Clear();
-            }
-            // Director 
-            List<ContributorAndSeparator> directorList = new List<ContributorAndSeparator>();
-            directorList.Add(new ContributorAndSeparator("Director 1"));
-            directorList.Add(new ContributorAndSeparator("Director 2", false));
-            contributorList.Add(new GroupContributor("Director", directorList));
-            // Writers
-            List<ContributorAndSeparator> writerList = new List<ContributorAndSeparator>();
-            writerList.Add(new ContributorAndSeparator("Writer 1"));
-            writerList.Add(new ContributorAndSeparator("Writer 2", false));
-            contributorList.Add(new GroupContributor("Writer", writerList));
-            // Stars
-            List<ContributorAndSeparator> starList = new List<ContributorAndSeparator>();
-            starList.Add(new ContributorAndSeparator("Star 1"));
-            starList.Add(new ContributorAndSeparator("Star 2", false));
-            contributorList.Add(new GroupContributor("Star", starList));
+            if (isDataLoaded && this.showTimes.Count <= 0) return;
+            allowDialog = false;
+            selectedTickets.Clear();
+            billRowList.Clear();
+            DisplayingShowTime = showTimes[index];
+            CalculateSeatMapSize();
+            //GenerateTicketList();
+            LoadTicket();
+            this.MaxCol = DisplayingShowTime.MaxCol;
+            ConvertRowListToStringList(DisplayingShowTime.MaxRow);
+            RemoveAllVoucher();
+            CalculateTotalBill();
+            allowDialog = true;
         }
-        public void GenerateVoucherList()
+        public void RemoveAllVoucher()
         {
-            vouchers.Add(new Voucher() { VoucherId = 1, VoucherCode = "VOUCHER1", VoucherAmount = 10, DiscountAmount = 12000, IsPercentageDiscount = false, IsExpired = false, RequirementAmount=100000 });
-            vouchers.Add(new Voucher() { VoucherId = 2, VoucherCode = "VOUCHER2", VoucherAmount = 12, DiscountAmount = 15, IsPercentageDiscount = true, IsExpired = false, RequirementAmount= 100000 });
-            vouchers.Add(new Voucher() { VoucherId = 3, VoucherCode = "VOUCHER3", VoucherAmount = 15, DiscountAmount = 20, IsPercentageDiscount = true, IsExpired = false, RequirementAmount= 100000 });
+            foreach (var item in checkBoxVouchers)
+            {
+                item.IsChecked = false;
+            }
         }
-
         // Commands
         public void AddTicket(Ticket ticket)
         {
             selectedTickets.Add(ticket);
-            var billRow = billRowList.FirstOrDefault(x => x.content == ((bool)ticket.IsVip ? VIP_TICKET : NORMAL_TICKET));
+            var billRow = billRowList.FirstOrDefault(x => x.content == ((bool)ticket.IsVip ? VIPTICKET : NORMAL_TICKET));
             if (billRow == null)
             {
-                billRowList.Add(new BillRow(1, (double)ticket.Price, (bool)ticket.IsVip ? VIP_TICKET : NORMAL_TICKET));
+                billRowList.Add(new BillRow(1, (double)ticket.Price, (bool)ticket.IsVip ? VIPTICKET : NORMAL_TICKET));
             } else
             {
                 billRow.AddTicket((double)ticket.Price);
@@ -318,8 +467,9 @@ namespace CinemaManagement.ViewModels
         }
         public void RemoveTicket(Ticket ticket)
         {
+            if (ticket == null) return;
             selectedTickets.Remove(ticket);
-            var billRow = billRowList.FirstOrDefault(x => x.content == ((bool)ticket.IsVip ? VIP_TICKET : NORMAL_TICKET));
+            var billRow = billRowList.FirstOrDefault(x => x.content == ((bool)ticket.IsVip ? VIPTICKET : NORMAL_TICKET));
             if (billRow != null)
             {
                 billRow.RemoveTicket((double)ticket.Price);
@@ -331,7 +481,6 @@ namespace CinemaManagement.ViewModels
             _totalTicketPrice -= (double)ticket.Price;
             CalculateTotalBill();
         }
-
         private (bool, string) CanAddVoucher(Voucher v)
         {
             if (v == null) return (false, "Null voucher");
@@ -339,7 +488,6 @@ namespace CinemaManagement.ViewModels
             if (this._totalTicketPrice < v.RequirementAmount) return (false, "Total bill is not enough. This requires at lease " + ((double)v.RequirementAmount).ToString("C0", new System.Globalization.CultureInfo("vi-VN")));
             return (true, "Added successfully");
         }
-
         public (bool, string) AddVoucher(CheckBoxVoucher v)
         {
             var (canAdd, message) = CanAddVoucher(v.Voucher);
@@ -372,7 +520,6 @@ namespace CinemaManagement.ViewModels
                 return (false, "Voucher not found");
             }
         }
-
         private double CalculateVoucherDiscount(Voucher voucher)
         {
             if (voucher == null) return 0;
@@ -382,7 +529,6 @@ namespace CinemaManagement.ViewModels
             }
             return (double)voucher.DiscountAmount * -1;
         }
-
         public void UpdateVouchersValue()
         {
             foreach (BillRow voucherRow in billRowList)
@@ -409,7 +555,6 @@ namespace CinemaManagement.ViewModels
                 }
             }
         }
-
         public void CalculateTotalBill()
         {
             UpdateVouchersValue();
@@ -421,6 +566,66 @@ namespace CinemaManagement.ViewModels
             if(total < 0) total = 0;    
             currentTotalBill = total;
         }
+
+        public void OnAuthenticate(object obj)
+        {
+            AuthenticateWindow authenticateWindow = new AuthenticateWindow();
+            authenticateWindow.Activate();
+            authenticateWindow.Closed += AuthenticateWindow_Closed;
+        }
+
+        private void AuthenticateWindow_Closed(object sender, WindowEventArgs args)
+        {
+            var returnValue = (sender as AuthenticateWindow).returnValue;   
+            IsAuthenticated = returnValue.Item1;
+        }
+
+        public bool CanBookTicket(object obj)
+        {
+            Debug.WriteLine(IsAuthenticated + " - " + this.selectedTickets.Count);
+            return IsAuthenticated && this.selectedTickets.Count > 0;
+        }
+
+        public void OnBookTicket(object obj)
+        {
+            if (db.Database.CanConnect())
+            {
+                int tempTotal = 0;
+                Bill bill = new Bill() { AccountId = AuthenticationControl.RestoreSession().Item2, BookingTime = DateTime.Now, Total = 0};
+                foreach(Ticket ticket in selectedTickets)
+                {
+                    var ticketEntity = db.Tickets.Where(t => t.TicketId == ticket.TicketId).FirstOrDefault();
+                    ticketEntity.IsAvailable = false;
+                    ticketEntity.Bill = bill;
+                    db.Update(ticketEntity);                    
+                    tempTotal += (int)ticket.Price;
+                }
+                foreach(BillRow billRow in billRowList)
+                {
+                    if (billRow.Voucher != null)
+                    {
+                        db.Vouchers.Where(v => v.VoucherId == billRow.Voucher.VoucherId).FirstOrDefault().VoucherAmount -= 1;
+                        db.BillVouchers.Add(new BillVoucher() { Bill = bill, Voucher = billRow.Voucher, AppliedTime = DateTime.Now });
+                        tempTotal += (int)billRow.price;
+                    }
+                }
+                bill.Total = tempTotal;
+                db.Bills.Add(bill);
+                try
+                {
+                    db.SaveChanges();
+                    SelectShowTime(SelectedShowTimeIndex);
+                    NotifyCode = BOOKING_SUCCESS;
+                    NotifyMessage = "Booking successfully";
+                } catch (Exception e)
+                {
+                    NotifyCode = BOOKING_FAIL;
+                    NotifyMessage = "Booking failed";
+                    Debug.WriteLine(e.Message);
+                }
+            }
+        }
+
     }
     
 }
