@@ -56,6 +56,32 @@ namespace CinemaManagement.WindowViews
                 }
             }
         }
+        private ObservableCollection<Person> _selectedCebritiesList;
+        public ObservableCollection<Person> SelectedCelebritiesList
+        {
+            get { return _selectedCebritiesList; }
+            set
+            {
+                if (_selectedCebritiesList != value)
+                {
+                    _selectedCebritiesList = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private ObservableCollection<Role> _selectedRolesList;
+        public ObservableCollection<Role> SelectedRolesList
+        {
+            get { return _selectedRolesList; }
+            set
+            {
+                if (_selectedRolesList != value)
+                {
+                    _selectedRolesList = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -69,6 +95,8 @@ namespace CinemaManagement.WindowViews
         {
             this.InitializeComponent();
             SelectedGenreList = new ObservableCollection<Genre>();
+            SelectedRolesList = new ObservableCollection<Role>();
+            SelectedCelebritiesList = new ObservableCollection<Person>();
 
         }
 
@@ -212,9 +240,94 @@ namespace CinemaManagement.WindowViews
 
         }
 
+        private void ChooseCelebrity_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
 
+        private void CelebritySelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                Person selectedPerson = e.AddedItems[0] as Person; // Assuming 'Person' is the type of items in your GridView
+                if (selectedPerson != null)
+                {
+                    // Add the selected person to the SelectedCelebritiesList
+                    SelectedCelebritiesList.Add(selectedPerson);
+                    Debug.WriteLine(SelectedCelebritiesList.Count);
+                    foreach (var item in SelectedCelebritiesList)
+                    {
+                        Debug.WriteLine(item.Fullname + " " + item.PersonId + " " + item.AvatarPath);
+                    }    
+                }
+            }
+        }
+        private void AddCelebrityToList()
+        {
 
+        }
+
+        private void RoleDropdown_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RoleSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                Role selectedRole = e.AddedItems[0] as Role; // Assuming 'Role' is the type of items in your GridView
+                if (selectedRole != null)
+                {
+                    // Add the selected person to the SelectedCelebritiesList
+                    SelectedRolesList.Add(selectedRole);
+                    Debug.WriteLine(SelectedRolesList.Count);
+                    foreach (var item in SelectedRolesList)
+                    {
+                        Debug.WriteLine(item.RoleName + " " + item.RoleId);
+                    }
+                }
+            }
+        }
+
+        private void DeleteSelectedCelebrity_Click(object sender, RoutedEventArgs e)
+        {
+            Button deleteButton = sender as Button;
+
+            // Get the corresponding celebrity from the DataContext of the button
+            Person selectedPerson = deleteButton.DataContext as Person;
+
+            // Remove the selected celebrity from the SelectedCelebritiesList
+            if (selectedPerson != null)
+            {
+                SelectedCelebritiesList.Remove(selectedPerson);
+            }
+                Debug.WriteLine(SelectedRolesList.Count);
+            foreach (var item in SelectedCelebritiesList)
+            {
+
+                Debug.WriteLine(item.Fullname + " " + item.PersonId + " " + item.AvatarPath);
+            }
+        }
+
+        private void DeleteSelectedRole_Click(object sender, RoutedEventArgs e)
+        {
+            Button deleteButton = sender as Button;
+
+            // Get the corresponding celebrity from the DataContext of the button
+            Role selectedRole= deleteButton.DataContext as Role;
+
+            // Remove the selected celebrity from the SelectedCelebritiesList
+            if (selectedRole != null)
+            {
+                SelectedRolesList.Remove(selectedRole);
+            }
+                Debug.WriteLine(SelectedRolesList.Count);
+            foreach (var item in SelectedRolesList)
+            {
+                Debug.WriteLine(item.RoleName + " " + item.RoleId);
+            }
+        }
     }
 
     public class GenreViewCheckBoxConverter : IValueConverter

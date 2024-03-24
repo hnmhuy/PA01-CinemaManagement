@@ -54,16 +54,22 @@ namespace CinemaManagement
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            //m_window = new MainWindow(role);
+            //var m_window = new MainWindow(1);
             //authenticateWindow = new AuthenticateWindow(); 
             //// Set the size of the window
             //authenticateWindow.Activate();
+
+            //AddMOvie 
+
+            //var m_windown = new AddMovieWindows();
+            //m_window.Activate();
+
 
             // For debugging
             AuthenticationControl.DestroySession();
 
             formerData = AuthenticationControl.RestoreSession();
-            EnsureWindow();           
+            EnsureWindow();
             _mainWindow.Closed += (sender, e) =>
             {
                 if (IsClosedFromAuthenticateWindow)
@@ -74,7 +80,7 @@ namespace CinemaManagement
                     IsClosedFromAuthenticateWindow = false;
                 }
             };
-            
+
         }
 
         private void EnsureWindow()

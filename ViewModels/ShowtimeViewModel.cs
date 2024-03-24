@@ -1,4 +1,5 @@
 ﻿using CinemaManagement.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,36 @@ using System.Threading.Tasks;
 
 namespace CinemaManagement.ViewModels
 {
+
+    public class ShowtimeCommand : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public RelayCommand DeleteCommand { get; set; }
+        public ShowTime Showtime { get; set; }
+
+        public ShowtimeCommand(ShowTime _Showtime, RelayCommand _deleteCommand)
+        {
+            this.Showtime = _Showtime;
+            this.DeleteCommand = _deleteCommand;
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+    }
     public class ShowtimeViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public ObservableCollection<ShowTime> ShowtimesList { get; set; }
+        public ObservableCollection<ShowtimeCommand> ShowtimesList { get; set; }
+        public RelayCommand DeleteCommand { get; set; }
+        private readonly DbCinemaManagementContext _context;
         private ICollection<Ticket> TicketsList { get; set; }
         public List<Movie> MoviesList { get; set; }
 
-        public ShowTime SelectedShowtime { get; set; }
+        public ShowtimeCommand SelectedShowtime { get; set; }
 
         private int _totalTickets;
         public int TotalTickets
@@ -41,13 +64,68 @@ namespace CinemaManagement.ViewModels
             }
         }
 
+        public ShowtimeViewModel(DbCinemaManagementContext context)
+        {
+            _context = context;
+            //MoviesList = GenerateMovieListData();
+            //ShowtimesList = GenerateSampleData();
+            DeleteCommand = new RelayCommand(OnDelete, CanDelete);
+            ShowtimesList = GenerateSampleData(DeleteCommand);
+            SelectedShowtime = ShowtimesList[0];
+            TotalTickets = CalculateTotalTickets();
+            TotalSaleTickets = CalculateTotalSaleTickets();
+        }
 
         public ShowtimeViewModel()
         {
-            MoviesList = GenerateMovieListData();
-            ShowtimesList = GenerateSampleData();
-            TotalTickets = CalculateTotalTickets();
-            TotalSaleTickets = CalculateTotalSaleTickets();
+            //MoviesList = GenerateMovieListData();
+            //ShowtimesList = GenerateSampleData();
+            //TotalTickets = CalculateTotalTickets();
+            //TotalSaleTickets = CalculateTotalSaleTickets();
+        }
+
+        private async Task DeleteShowtimeAsync(ShowTime showTime)
+        {
+            try
+            {
+                _context.Tickets.RemoveRange(showTime.Tickets);
+                _context.ShowTimes.Remove(showTime);
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error deleting genre: {ex.Message}");
+            }
+        }
+
+        private bool CanDelete(object parameter)
+        {
+
+            return SelectedShowtime != null;
+        }
+
+        private void OnDelete(object obj)
+        {
+            // Print a debug message to indicate that the OnDelete method is being called
+            Debug.WriteLine("OnDelete method called.");
+
+            // Check if SelectedGenre is correctly set
+            if (SelectedShowtime != null)
+            {
+                Debug.WriteLine($"Deleting Genre: {SelectedShowtime.Showtime.ShowTimeId}");
+
+                DeleteShowtimeAsync(SelectedShowtime.Showtime); // Call the method to delete from the database
+
+                ShowtimesList.Remove(SelectedShowtime);
+            }
+            else
+            {
+                // Print a debug message if SelectedGenre is null
+                Debug.WriteLine("SelectedGenre is null. Cannot delete.");
+            }
+
         }
 
         //private void GenerateTicketsData()
@@ -78,73 +156,83 @@ namespace CinemaManagement.ViewModels
         //    }
         //}
 
-        private ObservableCollection<ShowTime> GenerateSampleData()
+        private ObservableCollection<ShowtimeCommand> GenerateSampleData(RelayCommand DeleteCommand)
         {
             // Generate sample data for G
-            ObservableCollection<ShowTime> res = new ObservableCollection<ShowTime>();
-            var showTime1 = new ShowTime
+            ObservableCollection<ShowtimeCommand> res = new ObservableCollection<ShowtimeCommand>();
+            var ShowTimes = _context.ShowTimes
+                .Include(m => m.Tickets)
+                .Include(m => m.Movie).ToList();
+
+            foreach (var show in ShowTimes)
             {
-                ShowTimeId = 1,
-                MovieId = 1,
-                ShowDate = DateTime.Parse("2024-03-19 10:30:00"),
-                MaxRow = 12,
-                MaxCol = 10,
-                Movie = GetMovieById(1),
-                Tickets = new List<Ticket>
-                {
-                    new Ticket { TicketId = 1, IsAvailable = true, Price = 10, ShowTimeId = 1 },
-                    new Ticket { TicketId = 2, IsAvailable = false, Price = 10, ShowTimeId = 1 },
-                    new Ticket { TicketId = 3, IsAvailable = true, Price = 10, ShowTimeId = 1 },
-                    // Add more tickets for displayingShowtime 1 as needed
-                }
-            };
-            res.Add(showTime1);
-
-            var showTime2 = new ShowTime
-            {
-                ShowTimeId = 2,
-                MovieId = 2,
-                ShowDate = DateTime.Parse("2024-02-15 10:30:00"),
-                MaxRow = 12,
-                MaxCol = 10,
-                Movie = GetMovieById(2),
-                Tickets = new List<Ticket>
-                {
-                    new Ticket { TicketId = 4, IsAvailable = true, Price = 10, ShowTimeId = 2 },
-                    new Ticket { TicketId = 5, IsAvailable = true, Price = 10, ShowTimeId = 2 },
-                    // Add more tickets for displayingShowtime 2 as needed
-                }
-            };
-
-            // Add displayingShowtime 2 to the result list
-            res.Add(showTime2);
-
-
-
-            var showTime3 = new ShowTime
-            {
-                ShowTimeId = 3,
-                MovieId = 3,
-                ShowDate = DateTime.Parse("2024-03-20 15:30:00"),
-                MaxRow = 12,
-                MaxCol = 10,
-                Movie = GetMovieById(3),
-                Tickets = new List<Ticket>
-                {
-                    new Ticket { TicketId = 6, IsAvailable = true, Price = 10, ShowTimeId = 3 },
-                    new Ticket { TicketId = 7, IsAvailable = false, Price = 10, ShowTimeId = 3 },
-                    new Ticket { TicketId = 8, IsAvailable = true, Price = 15, ShowTimeId = 3 },
-                    new Ticket { TicketId = 9, IsAvailable = false, Price = 20, ShowTimeId = 3 },
-                    new Ticket { TicketId = 10, IsAvailable = true, Price = 10, ShowTimeId = 3 },
-                    // Add more tickets for displayingShowtime 3 as needed
-                }
-            };
-
-            // Add displayingShowtime 3 to the result list
-            res.Add(showTime3);
-
-
+                res.Add(new ShowtimeCommand(show, DeleteCommand));
+            }    
             return res;
+
+            //var showTime1 = new ShowTime
+            //{
+            //    ShowTimeId = 1,
+            //    MovieId = 1,
+            //    ShowDate = DateTime.Parse("2024-03-19 10:30:00"),
+            //    MaxRow = 12,
+            //    MaxCol = 10,
+            //    Movie = GetMovieById(1),
+            //    Tickets = new List<Ticket>
+            //    {
+            //        new Ticket { TicketId = 1, IsAvailable = true, Price = 10, ShowTimeId = 1 },
+            //        new Ticket { TicketId = 2, IsAvailable = false, Price = 10, ShowTimeId = 1 },
+            //        new Ticket { TicketId = 3, IsAvailable = true, Price = 10, ShowTimeId = 1 },
+            //        // Add more tickets for ShowTime 1 as needed
+            //    }
+            //};
+            //res.Add(showTime1);
+
+            //var showTime2 = new ShowTime
+            //{
+            //    ShowTimeId = 2,
+            //    MovieId = 2,
+            //    ShowDate = DateTime.Parse("2024-02-15 10:30:00"),
+            //    MaxRow = 12,
+            //    MaxCol = 10,
+            //    Movie = GetMovieById(2),
+            //    Tickets = new List<Ticket>
+            //    {
+            //        new Ticket { TicketId = 4, IsAvailable = true, Price = 10, ShowTimeId = 2 },
+            //        new Ticket { TicketId = 5, IsAvailable = true, Price = 10, ShowTimeId = 2 },
+            //        // Add more tickets for ShowTime 2 as needed
+            //    }
+            //};
+
+            //// Add ShowTime 2 to the result list
+            //res.Add(showTime2);
+
+
+
+            //var showTime3 = new ShowTime
+            //{
+            //    ShowTimeId = 3,
+            //    MovieId = 3,
+            //    ShowDate = DateTime.Parse("2024-03-20 15:30:00"),
+            //    MaxRow = 12,
+            //    MaxCol = 10,
+            //    Movie = GetMovieById(3),
+            //    Tickets = new List<Ticket>
+            //    {
+            //        new Ticket { TicketId = 6, IsAvailable = true, Price = 10, ShowTimeId = 3 },
+            //        new Ticket { TicketId = 7, IsAvailable = false, Price = 10, ShowTimeId = 3 },
+            //        new Ticket { TicketId = 8, IsAvailable = true, Price = 15, ShowTimeId = 3 },
+            //        new Ticket { TicketId = 9, IsAvailable = false, Price = 20, ShowTimeId = 3 },
+            //        new Ticket { TicketId = 10, IsAvailable = true, Price = 10, ShowTimeId = 3 },
+            //        // Add more tickets for ShowTime 3 as needed
+            //    }
+            //};
+
+            //// Add ShowTime 3 to the result list
+            //res.Add(showTime3);
+
+
+            //return res;
         }
 
         private Movie GetMovieById(int movieId)
@@ -208,7 +296,7 @@ namespace CinemaManagement.ViewModels
             int totalTickets = 0;
             foreach (var showtime in ShowtimesList)
             {
-                totalTickets = (showtime?.MaxRow ?? 0) * (showtime?.MaxCol ?? 0);
+                totalTickets = (showtime.Showtime?.MaxRow ?? 0) * (showtime.Showtime?.MaxCol ?? 0);
                 Debug.WriteLine("Total: " + totalTickets.ToString());
             }
             return totalTickets;
@@ -219,9 +307,9 @@ namespace CinemaManagement.ViewModels
             foreach (var showTime in ShowtimesList)
             {
                 totalSaleTickets = 0;
-                if (showTime.Tickets != null)
+                if (showTime.Showtime.Tickets != null)
                 {
-                    totalSaleTickets += showTime.Tickets.Count(ticket => !ticket?.IsAvailable ?? false);
+                    totalSaleTickets += showTime.Showtime.Tickets.Count(ticket => !ticket?.IsAvailable ?? false);
                 }
             }
             return totalSaleTickets;
@@ -232,7 +320,7 @@ namespace CinemaManagement.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is ObservableCollection<ShowTime> showtimes)
+            if (value is ObservableCollection<ShowtimeCommand> showtimes)
             {
                 int total = 0;
                 total = showtimes.Count;
@@ -288,12 +376,12 @@ namespace CinemaManagement.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is ShowTime showtime)
+            if (value is ShowtimeCommand showtime)
             {
 
                 int totalTickets = 0;
 
-                totalTickets = (showtime?.MaxRow ?? 0) * (showtime?.MaxCol ?? 0);
+                totalTickets = (showtime.Showtime?.MaxRow ?? 0) * (showtime.Showtime?.MaxCol ?? 0);
 
                 return totalTickets;
             }
@@ -311,13 +399,13 @@ namespace CinemaManagement.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is ShowTime showTime)
+            if (value is ShowtimeCommand showTime)
             {
                 int totalSaleTickets = 0;
 
-                if (showTime.Tickets != null)
+                if (showTime.Showtime.Tickets != null)
                 {
-                    totalSaleTickets = showTime.Tickets.Count(ticket => !ticket?.IsAvailable ?? false);
+                    totalSaleTickets = showTime.Showtime.Tickets.Count(ticket => !ticket?.IsAvailable ?? false);
                 }
 
                 return totalSaleTickets;

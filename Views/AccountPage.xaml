@@ -74,7 +74,7 @@
                         Width="100"
                         Height="100"
                         Source="/Assets/Man.png" />
-
+                    <Button x:Name="resetPasswordBtn" Click="resetPasswordBtn_Click" HorizontalAlignment="Center" Margin="0,10,0,0" Foreground="White" Background="#ff7186" Content="Reset Password"/>
                     <TextBlock
                         Margin="0,35,0,0"
                         FontFamily="Montserrat"
@@ -122,12 +122,62 @@
                         <x:String>Male</x:String>
                         <x:String>Female</x:String>
                     </ComboBox>
-                    <Button
-                        x:Name="EditBtn"
-                        Margin="0,30,0,0"
-                        HorizontalAlignment="Center"
-                        Command="{Binding SaveChanges}"
-                        Content="Save Changes" />
+                    <Button x:Name="EditBtn" HorizontalAlignment="Center" Margin="0,30,0,0" Foreground="White" Background="#ff7186" Command="{Binding SaveChanges}" Content="Save Changes"/>
+                </StackPanel>
+                <StackPanel
+                    x:Name="ResetPasswordPage"
+                    Visibility="Collapsed"
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    Width="220"
+                    Margin="0,35,0,0"
+                    Orientation="Vertical">
+                    <Image
+                         Width="100"
+                         Height="100"
+                         Source="/Assets/Man.png" />
+                    <Button x:Name="backBtn" Click="backBtn_Click" HorizontalAlignment="Center" Margin="0,10,0,0" Foreground="White" Background="#ff7186" Content="Back"/>
+                    <TextBlock
+                        Margin="0,35,0,0"
+                        FontFamily="Montserrat"
+                        FontSize="12"
+                        FontWeight="Medium"
+                        Foreground="#ff104a"
+                        Text="Current Password" />
+                    
+                    <PasswordBox 
+                        Password="{Binding CurrentPassword, Mode=TwoWay}"
+                        x:Name="CurrentPassword"
+                        Margin="0,5,0,0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="White"/>
+                    <TextBlock
+                        Margin="0,15,0,0"
+                        FontFamily="Montserrat"
+                        FontSize="12"
+                        FontWeight="Medium"
+                        Foreground="#ff104a"
+                        Text="New Password" />
+                    <PasswordBox 
+                        Password="{Binding NewPassword, Mode=TwoWay}"
+                        x:Name="NewPassword"
+                        Margin="0,5,0,0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="White"/>   
+                    <TextBlock
+                        Margin="0,15,0,0"
+                        FontFamily="Montserrat"
+                        FontSize="12"
+                        FontWeight="Medium"
+                        Foreground="#ff104a"
+                        Text="Confirm New Password" />
+                    <PasswordBox 
+                        Password="{Binding ConfirmNewPassword, Mode=TwoWay}"
+                        x:Name="ConfirmNewPassword"
+                        Margin="0,5,0,0"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="White"/>
+                    <Button x:Name="savePasswordBtn" Click="savePasswordBtn_Click" HorizontalAlignment="Center" Margin="0,30,0,0" Background="#ff7186" Foreground="White" Command="{Binding ResetPassword}" Content="Save Changes"/>
                 </StackPanel>
             </Grid>
         </Border>
