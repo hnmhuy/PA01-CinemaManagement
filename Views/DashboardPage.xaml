@@ -117,7 +117,7 @@
                     FontSize="35"
                     FontWeight="Bold"
                     Foreground="#11297e"
-                    Text="6" />
+                    Text="{Binding MovieOnSale}" />
                 <TextBlock
                     FontSize="12"
                     FontWeight="Medium"
@@ -149,7 +149,7 @@
                     FontSize="35"
                     FontWeight="Bold"
                     Foreground="#11297e"
-                    Text="6" />
+                    Text="{Binding ShowTimesToday}" />
                 <TextBlock
                     FontSize="12"
                     FontWeight="Medium"
@@ -181,7 +181,7 @@
                     FontSize="35"
                     FontWeight="Bold"
                     Foreground="#11297e"
-                    Text="6" />
+                    Text="{Binding ShowTimesThisWeek}" />
                 <TextBlock
                     FontSize="12"
                     FontWeight="Medium"
@@ -212,7 +212,7 @@
                     FontSize="35"
                     FontWeight="Bold"
                     Foreground="#11297e"
-                    Text="6" />
+                    Text="{Binding ShowTimesThisMonth}" />
                 <TextBlock
                     FontSize="12"
                     FontWeight="Medium"
@@ -243,7 +243,7 @@
                 CanUserReorderColumns="False"
                 CanUserResizeColumns="False"
                 GridLinesVisibility="Horizontal"
-                ItemsSource="{Binding MoviesList}">
+                ItemsSource="{Binding TopHighestGrossingMovies}">
 
                 <controls:DataGrid.Resources>
 
@@ -272,13 +272,7 @@
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel HorizontalAlignment="Center" Style="{StaticResource stackContent}">
-                                    <Border  Style="{StaticResource posterBorder}" CornerRadius="50">
-                                        <Image
-                                            
-                                            Width="50"
-                                            Height="50"
-                                            Source="{Binding Rank}"/>
-                                    </Border>
+                                    <TextBlock Text="{Binding Rank}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </controls:DataGridTemplateColumn.CellTemplate>

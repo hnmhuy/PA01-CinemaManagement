@@ -9,126 +9,173 @@ using CinemaManagement.ViewModels;
 using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.UI.Xaml.Data;
+using Microsoft.EntityFrameworkCore;
 namespace CinemaManagement.ViewModels
 {
     class DashboardViewModel
     {
         public class MovieWrapper
         {
-            public String Rank { get; set; }
+            public int Rank { get; set; }
+            public double revenue { get; set; }
             public Movie Movie { get; set; }
 
-            public MovieWrapper(Movie movie, String rank)
+            public MovieWrapper(Movie movie, int rank, double revenue)
             {
                 this.Movie = movie;
                 this.Rank = rank;
+                this.revenue = revenue;
             }
         }
+        public ObservableCollection<MovieWrapper> TopHighestGrossingMovies { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public int _movieOnSale;
+        public int MovieOnSale
+        {
+            get { return _movieOnSale; }
+            set 
+            { 
+                _movieOnSale = value;
+                OnPropertyChanged(nameof(MovieOnSale));
+            }
+        }
+
+        public int _showTimesToday;
+        public int ShowTimesToday
+        {
+            get { return _showTimesToday; }
+            set
+            {
+                _showTimesToday = value;
+                OnPropertyChanged(nameof(ShowTimesToday));
+            }
+        }
+
+        public int _showTimesThisWeek;
+        public int ShowTimesThisWeek
+        {
+            get { return _showTimesThisWeek; }
+            set
+            {
+                _showTimesThisWeek = value;
+                OnPropertyChanged(nameof(ShowTimesThisWeek));
+            }
+        }
+
+        public int _showTimesThisMonth;
+        public int ShowTimesThisMonth
+        {
+            get { return _showTimesThisMonth; }
+            set
+            {
+                _showTimesThisMonth = value;
+                OnPropertyChanged(nameof(ShowTimesThisMonth));
+            }
+        }
+
         public ObservableCollection<MovieWrapper> MoviesList { get; set; }
         private ICollection<Genre> GenreList { get; set; }
         private ICollection<AgeCertificate> ageCertificates { get; set; }
 
         private ICollection<String> Rank { get; set; }
+        public DbCinemaManagementContext db = new DbCinemaManagementContext();
         public DashboardViewModel()
         {
-            GenerateGenreData();
-            GenerateAgeCertificate();
-            MoviesList = GenerateSampleData();
+            MovieOnSale= CountMovieOnSale();
+            ShowTimesToday = CountShowTimesToday();
+            ShowTimesThisWeek = CountShowTimesThisWeek();
+            ShowTimesThisMonth = CountShowTimesThisMonth();
         }
-        private void GenerateGenreData()
+
+        private void TopHighestGrossing()
         {
-            if (GenreList == null)
+            if(TopHighestGrossingMovies == null)
             {
-                GenreList = new List<Genre>
-                {
-                    new Genre { GenreId = 1, GenreName = "Action" },
-                    new Genre { GenreId = 2, GenreName = "Adventure" },
-                    new Genre { GenreId = 3, GenreName = "Comedy" },
-                };
+                TopHighestGrossingMovies = new ObservableCollection<MovieWrapper>();
+            }
+            var topMovies = db.ShowTimes
+                           .Include(st => st.Movie)
+                           .Include(st => st.Tickets)
+                           .GroupBy(st => new { st.MovieId, st.Movie.Title, st.Movie.Duration, st.Movie.PublishYear, st.Movie.PosterPath, st.Movie.Genres, st.Movie.Imdbrating })
+                           .Select(g => new
+                           {
+                               g.Key.MovieId,
+                               g.Key.Title,
+                               g.Key.PosterPath,
+                               g.Key.Duration,
+                               g.Key.PublishYear,
+                               g.Key.Genres,
+                               g.Key.Imdbrating,
+                               Revenue = g.Sum(st => st.Tickets.Where(t => t.IsAvailable == false).Sum(t => t.Price))
+                           })
+                           .OrderByDescending(m => m.Revenue)
+                           .Take(10)
+                           .ToList();
+            for(int i = 0; i < topMovies.Count; i++)
+            {
+                TopHighestGrossingMovies.Add(
+                    new MovieWrapper(
+                        new Movie { 
+                            Title = topMovies[i].Title,
+                            Duration = topMovies[i].Duration,
+                            PublishYear = topMovies[i].PublishYear,
+                            Imdbrating = topMovies[i].Imdbrating,
+                            PosterPath = topMovies[i].PosterPath,
+                    }
+                ,i + 1, topMovies[i].Revenue));
             }
         }
-        private void GenerateAgeCertificate()
+
+        private int CountShowTimesThisMonth()
         {
-            if (ageCertificates == null)
+            DateTime startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+            var count = db.ShowTimes
+                               .Where(st => st.ShowDate >= startOfMonth && st.ShowDate <= DateTime.Now)
+                               .Count();
+            return count;
+        }
+
+        private int CountShowTimesToday()
+        {
+            DateTime today = DateTime.Today;
+            DateTime tomorrow = today.AddDays(1);
+
+            var count = db.ShowTimes
+                               .Where(st => st.ShowDate >= today && st.ShowDate < tomorrow)
+                               .Count();
+            return count;
+        }
+
+        private int CountShowTimesThisWeek()
+        {
+            DateTime selectedDate = DateTime.Now;
+            int daysUntilMonday = (int)selectedDate.DayOfWeek - (int)DayOfWeek.Monday;
+            if (daysUntilMonday < 0)
             {
-                ageCertificates = new List<AgeCertificate>
-                {
-                    new AgeCertificate { AgeCertificateId = 1, DisplayContent = "C13", RequireAge = 13, ForegroundColor = "Orange", BackgroundColor = "Transparent"},
-                    new AgeCertificate { AgeCertificateId = 2, DisplayContent = "C18", RequireAge = 18, ForegroundColor = "Red", BackgroundColor = "Transparent"},
-                    new AgeCertificate { AgeCertificateId = 3, DisplayContent = "P", RequireAge = 0, ForegroundColor = "Green", BackgroundColor = "Transparent"},
-                };
+                daysUntilMonday += 7;
             }
+
+            DateTime startDate = selectedDate.AddDays(-daysUntilMonday);
+
+            var count = db.ShowTimes
+                               .Where(st => st.ShowDate >= startDate && st.ShowDate <= DateTime.Now)
+                               .Count();
+            return count;
         }
 
-        private ObservableCollection<MovieWrapper> GenerateSampleData()
+        private int CountMovieOnSale()
         {
-
-            List<Genre> avatarGenres = new List<Genre>
-            {
-                GenreList.FirstOrDefault(g => g.GenreId == 1), // Action
-                GenreList.FirstOrDefault(g => g.GenreId == 2), // Adventure
-                GenreList.FirstOrDefault(g => g.GenreId == 3)  // Comedy
-            };
-
-            List<Genre> duneGenres = new List<Genre>
-            {
-                GenreList.FirstOrDefault(g => g.GenreId == 1), // Action
-                GenreList.FirstOrDefault(g => g.GenreId == 2), // Adventure
-            };
-            List<Genre> pandaGenres = new List<Genre>
-            {
-                GenreList.FirstOrDefault(g => g.GenreId == 2), // Adventure
-            };
-
-            // Generate sample data for G
-            ObservableCollection<MovieWrapper> res = new ObservableCollection<MovieWrapper>();
-            res.Add(new MovieWrapper(new Movie
-            {
-                Title = "Avatar: The way of water",
-                Duration = 120,
-                PublishYear = 2022,
-                Imdbrating = 7.8,
-                AgeCertificateId = 1,
-                AgeCertificate = ageCertificates.ElementAt(0),
-                PosterPath = "/Assets/Images/Poster/avatar_the_way_of_water.jpg",
-                Description = "\"Avatar: The Way of Water\" is a sequel to the first \"Avatar\" film, set more than a decade after the events of the first film1. The story follows the Sully family (Jake, Neytiri, and their kids) as they seek refuge with the aquatic Metkayina clan of Pandora, a habitable exomoon on which they live2",
-                TrailerPath = "/Assets/Videos/avatar.mp4",
-                Genres = avatarGenres
-            }, "/Assets/Icons/Rank01.png"));
-            res.Add(new MovieWrapper(new Movie
-            {
-                Title = "Dune Part Two",
-                Duration = 120,
-                PublishYear = 2022,
-                Imdbrating = 7.8,
-                AgeCertificateId = 2,
-                AgeCertificate = ageCertificates.ElementAt(1),
-                PosterPath = "/Assets/Images/Poster/dune2.jpg",
-                Description = "Dune 2 is the sequel to Dune (2021)1. It is the second of a two-part adaptation of the 1965 novel Dune by Frank Herbert1. The movie follows Paul Atreides as he unites with the Fremen people of the desert planet Arrakis to wage war against House Harkonnen1",
-                TrailerPath = "/Assets/Videos/dune2.mp4",
-                Genres = duneGenres
-
-            }, "/Assets/Icons/Rank02.png"));
-            res.Add(new MovieWrapper(new Movie
-            {
-                Title = "Avatar: The way of water",
-                Duration = 120,
-                PublishYear = 2022,
-                Imdbrating = 7.8,
-                AgeCertificateId = 1,
-                AgeCertificate = ageCertificates.ElementAt(0),
-                PosterPath = "/Assets/Images/Poster/avatar_the_way_of_water.jpg",
-                Description = "\"Avatar: The Way of Water\" is a sequel to the first \"Avatar\" film, set more than a decade after the events of the first film1. The story follows the Sully family (Jake, Neytiri, and their kids) as they seek refuge with the aquatic Metkayina clan of Pandora, a habitable exomoon on which they live2",
-                TrailerPath = "/Assets/Videos/avatar.mp4",
-                Genres = pandaGenres
-
-            }, "/Assets/Icons/Rank03.png"));
-            Console.WriteLine(res);
-            return res;
+            int count = db.ShowTimes
+                       .Where(st => st.ShowDate >= DateTime.Now)
+                       .Select(st => st.MovieId)
+                       .Distinct()
+                       .Count();
+            return count;
         }
-    
-
-
     }
-
 }
