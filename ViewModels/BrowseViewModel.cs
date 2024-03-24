@@ -41,7 +41,6 @@ namespace CinemaManagement.ViewModels
             }
         }
         
-
         public Movie HighlightingMovie = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
