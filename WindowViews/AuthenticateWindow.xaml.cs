@@ -49,6 +49,7 @@ namespace CinemaManagement.WindowViews
             MainContent.Navigated += MainContent_Navigated;
             MainContent.Navigate(typeof(LoginPage));
             CurrPage = MainContent.Content as Page;
+            this.returnValue = (false, null, "");
         }
 
         private void MainContent_Navigated(object sender, NavigationEventArgs e)

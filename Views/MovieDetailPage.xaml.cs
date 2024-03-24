@@ -72,7 +72,7 @@ namespace CinemaManagement.Views
                 ContentDialog dialog = new ContentDialog
                 {
                     Title = title,
-                    Content = viewModel.NotifyMessage,
+                    Content = viewModel.NotifyCode == MovieDetailViewModel.BOOKING_SUCCESS ? "Book succesfull" : "Book failed",
                     CloseButtonText = "OK"
                 };
                 dialog.XamlRoot = this.XamlRoot;

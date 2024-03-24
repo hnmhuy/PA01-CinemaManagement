@@ -66,7 +66,7 @@ namespace CinemaManagement
 
 
             // For debugging
-            AuthenticationControl.DestroySession();
+            //AuthenticationControl.DestroySession();
 
             formerData = AuthenticationControl.RestoreSession();
             EnsureWindow();

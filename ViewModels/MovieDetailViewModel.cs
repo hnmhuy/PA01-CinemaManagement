@@ -392,6 +392,7 @@ namespace CinemaManagement.ViewModels
             foreach (ShowTime showTime in showTimes)
             {
                 // Convert to 24 hour format and add to showHour
+                if (showTime.ShowDate < DateTime.Now) continue;
                 showHours.Add(showTime.ShowDate.ToString("HH:mm"));
                 Debug.WriteLine("Showtime: " + showTime.ShowDate.ToString() + " - " + showTime.MovieId);
             }
