@@ -68,6 +68,7 @@ namespace CinemaManagement.ViewModels
             _context = context;
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
             PeopleList = GeneratePersonSampleData(DeleteCommand);
+            if (PeopleList.Count > 0)
             SelectedPerson = PeopleList[0];
         }
 

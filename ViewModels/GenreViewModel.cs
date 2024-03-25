@@ -24,7 +24,20 @@ namespace CinemaManagement.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public RelayCommand DeleteCommand { get; set; }
-        public Genre Genre { get; set; }
+        private Genre _genre { get; set; }
+
+        public Genre Genre
+        {
+            get => _genre;
+            set
+            {
+                if (_genre != value)
+                {
+                    _genre = value;
+                    OnPropertyChanged(nameof(Genre));
+                }
+            }
+        }
 
         public GenreCommand(Genre _Genre, RelayCommand _deleteCommand)
         {
@@ -68,7 +81,8 @@ namespace CinemaManagement.ViewModels
             _context = context;
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
             GenresList = GenerateGenreSampleData(DeleteCommand);
-            SelectedGenre = GenresList[0];
+            if (GenresList.Count > 0)
+                SelectedGenre = GenresList[0];
         }
 
         public GenreViewModel()
@@ -147,6 +161,18 @@ namespace CinemaManagement.ViewModels
             }
 
             return genres;
+        }
+
+        public void UpdateGenre(string newName)
+        {
+            var index = GenresList.IndexOf(SelectedGenre);
+            var id = SelectedGenre.Genre.GenreId;
+            SelectedGenre.Genre.GenreName = newName;
+            _context.SaveChanges();
+            // Remove and re-add the genre to the list to trigger the UI update
+            GenresList.RemoveAt(index);
+            var newGenre = _context.Genres.Find(id);    
+            GenresList.Insert(index, new GenreCommand(newGenre, DeleteCommand));
         }
 
 

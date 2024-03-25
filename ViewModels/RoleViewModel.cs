@@ -66,7 +66,8 @@ namespace CinemaManagement.ViewModels
             _context = context;
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
             RolesList = GenerateRoleSampleData();
-            SelectedRole = RolesList[0];
+            if (RolesList.Count > 0)
+                SelectedRole = RolesList[0];
         }
 
         private async Task DeleteRoleAsync(Role role)
@@ -179,6 +180,30 @@ namespace CinemaManagement.ViewModels
             //return roles;
         }
 
+        public void AddNewRole(string roleName)
+        {
+            Role role = new Role
+            {
+                RoleName = roleName
+            };
+
+            _context.Roles.Add(role);
+            _context.SaveChanges();
+            RolesList.Add(new RoleCommand(role, DeleteCommand));
+        }
+
+        public void UpdateRole(string roleName)
+        {
+            int id = SelectedRole.Role.RoleId;
+            int index = RolesList.IndexOf(SelectedRole);
+            Role role = _context.Roles.Find(id);
+            role.RoleName = roleName;
+            _context.Roles.Update(role);
+            _context.SaveChanges();
+            // Delete and re-add the updated role to the RolesList
+            RolesList.RemoveAt(index);
+            RolesList.Insert(index, new RoleCommand(role, DeleteCommand));
+        }
 
     }
     public class TotalRoleConverter : IValueConverter

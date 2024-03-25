@@ -50,5 +50,41 @@ namespace CinemaManagement.Views
             Debug.WriteLine(sender);
             Debug.WriteLine(e);
         }
+
+        private void AddVoucherBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog();
+            dialog.Title = "Add Voucher";
+            dialog.Content = new VoucherDialogContent(null);
+            dialog.PrimaryButtonText = "Add";
+            dialog.SecondaryButtonText = "Cancel";
+            dialog.PrimaryButtonClick += AddVoucherDialog_PrimaryButtonClick;
+            dialog.XamlRoot = this.XamlRoot;
+            _ = dialog.ShowAsync();
+        }
+
+        private void AddVoucherDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var dialogContent = sender.Content as VoucherDialogContent;
+            ViewModel.AddVoucher(dialogContent.Voucher);
+        }
+
+        private void EditVoucher_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog(); 
+            dialog.Title = "Edit Voucher";
+            dialog.Content = new VoucherDialogContent(ViewModel.SelectedVoucher.Voucher);
+            dialog.PrimaryButtonText = "Edit";
+            dialog.SecondaryButtonText = "Cancel";
+            dialog.PrimaryButtonClick += EditVoucherDialog_PrimaryButtonClick;
+            dialog.XamlRoot = this.XamlRoot;
+            _ = dialog.ShowAsync();
+        }
+
+        private void EditVoucherDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var dialogContent = sender.Content as VoucherDialogContent;
+            ViewModel.EditVoucher(dialogContent.Voucher);
+        }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace CinemaManagement.ViewModels
     public class MoviePageViewModel : INotifyPropertyChanged
     {
         private readonly DbCinemaManagementContext _context;
+
         private MovieViewModel _moviesList;
         public MovieViewModel MoviesList
         {
@@ -20,7 +22,7 @@ namespace CinemaManagement.ViewModels
             set
             {
                 _moviesList = value;
-                RaisePropertyChanged("MoviesList");
+                RaisePropertyChanged(nameof(MoviesList));
             }
         }
 
@@ -31,7 +33,7 @@ namespace CinemaManagement.ViewModels
             set
             {
                 _genresList = value;
-                RaisePropertyChanged("GenresList");
+                RaisePropertyChanged(nameof(GenresList));
             }
         }
 
@@ -70,6 +72,21 @@ namespace CinemaManagement.ViewModels
             MoviesList.RefreshDataAsync();
         }
 
-
+        public bool CreateGenre(string newName)
+        {
+            var db = new DbCinemaManagementContext();   
+            var genre = new Genre { GenreName = newName };
+            db.Genres.Add(genre);
+            try
+            {
+                db.SaveChanges();
+                this.GenresList.GenresList.Add(new GenreCommand(genre, this.GenresList.DeleteCommand));
+                return true;
+            } catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                return false;
+            }
+        }
     }
 }

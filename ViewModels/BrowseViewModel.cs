@@ -245,10 +245,7 @@ namespace CinemaManagement.ViewModels
         {
             // Project path
             string refix = parameter as string;
-            Debug.WriteLine("refix: " + refix);
-
-            string res =  "ms-appx:///" + refix + value;
-            Debug.WriteLine("res: " + res);
+            string res =  "ms-appx://"  + value;
             return res;
         }
 

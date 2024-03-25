@@ -11,7 +11,7 @@ public partial class Movie
 
     public int PublishYear { get; set; }
 
-    public double? Imdbrating { get; set; }
+    public double Imdbrating { get; set; }
 
     public int? AgeCertificateId { get; set; }
 

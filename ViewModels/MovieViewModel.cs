@@ -43,7 +43,7 @@ namespace CinemaManagement.ViewModels
 
         public double IMDbRating
         {
-            get { return _movie.Imdbrating?? 0.0; }
+            get { return _movie.Imdbrating; }
         }
         public RelayCommand DeleteCommand { get; set; }
 
@@ -110,9 +110,10 @@ namespace CinemaManagement.ViewModels
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
             MoviesList = GenerateSampleData(DeleteCommand);
             //LoadMovies(_context);
+            if (MoviesList.Count > 0)
             SelectedMovie = MoviesList[0];
-            Debug.WriteLine(MoviesList[0].movie.Title);
-            Debug.WriteLine(MoviesList[0].movie.PosterPath);
+            //Debug.WriteLine(MoviesList[0].movie.Title);
+            //Debug.WriteLine(MoviesList[0].movie.PosterPath);
             
 
         }
@@ -177,7 +178,6 @@ namespace CinemaManagement.ViewModels
                 _context.Movies.Remove(movie);
                 await _context.SaveChangesAsync();
 
-             
             }
             catch (Exception ex)
             {

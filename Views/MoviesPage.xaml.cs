@@ -162,6 +162,51 @@ namespace CinemaManagement.Views
             //ViewModel.RefreshData();
         }
 
+        private void AddGenre_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog();
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "Create new genre";
+            dialog.PrimaryButtonText = "Save";
+            dialog.CloseButtonText = "Cancel";
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Content = new GenreDialogContent("");
+            dialog.PrimaryButtonClick += Dialog_PrimaryButtonClick;
+            _ = dialog.ShowAsync();
+        }
+
+        private void Dialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            Debug.WriteLine("Primary button clicked");
+            var dialog = sender as ContentDialog;
+            var dialogContent = dialog.Content as GenreDialogContent;
+            Debug.WriteLine(dialogContent.GenreName);
+            ViewModel.CreateGenre(dialogContent.GenreName);
+        }
+
+        private void EditGenreBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog();
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "Create new genre";
+            dialog.PrimaryButtonText = "Save";
+            dialog.CloseButtonText = "Cancel";
+            dialog.DefaultButton = ContentDialogButton.Primary;            
+            dialog.Content = new GenreDialogContent(ViewModel.GenresList.SelectedGenre.Genre.GenreName);
+            dialog.PrimaryButtonClick += Dialog_ConfirmEdit;
+            _ = dialog.ShowAsync();
+        }
+
+        private void Dialog_ConfirmEdit(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var dialog = sender as ContentDialog;
+            var dialogContent = dialog.Content as GenreDialogContent;
+            string newName = dialogContent.GenreName;
+            ViewModel.GenresList.UpdateGenre(newName);
+        }
+
         //protected override void OnNavigatedTo(NavigationEventArgs e)
         //{
         //   base.OnNavigatedTo(e);
