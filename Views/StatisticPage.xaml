@@ -14,7 +14,7 @@
     <Page.DataContext>
         <vm:StatisticViewModel x:Name="StatisticViewModel" />
     </Page.DataContext>
-    <Grid Padding="20" Background="White">
+    <Grid Padding="20" Background="#d9e1f3">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="120" />
@@ -25,55 +25,73 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <AutoSuggestBox Grid.Row="0" PlaceholderText="Type a Movie Name" HorizontalAlignment="Left" Height="35" x:Name="SuggestionOutput" Text="{x:Bind StatisticViewModel.SearchText, Mode=TwoWay}"
-            ItemsSource="{x:Bind StatisticViewModel.FilteredCats}"
+        <StackPanel Orientation="Horizontal">
+            <AutoSuggestBox Grid.Row="0" PlaceholderText="Type a Movie Name" HorizontalAlignment="Left" Height="35" x:Name="SuggestionOutput" Text="{x:Bind StatisticViewModel.SearchText, Mode=TwoWay}"
+            ItemsSource="{x:Bind StatisticViewModel._filteredMovies}"
             SuggestionChosen="AutoSuggestBox_SuggestionChosen"
             Width="300" AutomationProperties.Name="Basic AutoSuggestBox" />
-        <StackPanel CornerRadius="12" Background="#29cecece" Width="auto" VerticalAlignment="Center" Orientation="Horizontal"  Grid.Row="1" Grid.ColumnSpan="2" Padding="30">
-            <Button Content="x" Padding="10,4,10,4" Background="#f55762" Margin="0,0,18,0"/>
-            <Border Width="50" Height="50" CornerRadius="8" >
+            <Button Command="{Binding Search}" Margin="5,0,0,0" Background="#2196f3" Foreground="White" FontWeight="SemiBold" Height="35" Content="Tìm kiếm">
+                
+            </Button>
+        </StackPanel>
+
+        <StackPanel Margin="10" CornerRadius="20" Background="White" Width="auto" Height="120" VerticalAlignment="Center" Orientation="Horizontal"  Grid.Row="1" Grid.Column="0"  Padding="0,20,0,20">
+            <Button Command="{Binding Clear}" Content="x" Padding="10,4,10,4" Background="#f55762" Margin="10,0,10,0"/>
+            <Border Background="AntiqueWhite" Width="50" Height="50" CornerRadius="8" >
                 <Image Source="{Binding MovieResult.PosterPath}" Width="50" Height="50" Stretch="UniformToFill"/>
             </Border>
-            <TextBlock Text="{Binding MovieResult.Title}" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
-            <Border Width="auto" CornerRadius="8" Margin="20,0,20,0" BorderBrush="Gray" BorderThickness="2,0,0,0">
-            </Border>
-
-            <ItemsControl ItemsSource="{Binding ShowTimeList}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ToggleButton Margin="0,0,5,0" Content="{Binding ShowDate}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <TextBlock Text="{Binding MovieResult.Title}" VerticalAlignment="Center" FontSize="15" Margin="10 0 0 0" FontWeight="SemiBold"/>
         </StackPanel>
-        <Grid Grid.Row="2" Grid.Column="0">
+        <StackPanel CornerRadius="20" Height="120" Padding="20,20,0,20" Margin="10" Background="White" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Showtimes: " FontWeight="SemiBold" Margin="0,0,0,3"/>
+                <!--<ScrollViewer HorizontalAlignment="Left" HorizontalScrollBarVisibility="Auto" Height="50" Width="700">
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding ShowTimeList}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton Margin="0,0,5,0" Content="{Binding ShowDate}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>-->
+                <ComboBox 
+                x:Name="ModeComboBox"
+                ItemsSource="{Binding ShowTimeDate}" 
+                SelectedItem="{Binding SelectedShowTime, Mode=TwoWay}" 
+                Margin="20,8,0,0"
+                />
+            </StackPanel>
+        </StackPanel>
+        <Grid Background="White" CornerRadius="20" Margin="10" Grid.Row="3" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel   Orientation="Horizontal" Margin="0,0,40,0">
                 <TextBlock VerticalAlignment="Center" Text="Choose a specific year:" Margin="20,0,20,0"/>
-                <DatePicker HorizontalAlignment="Right"  Grid.Row="0" x:Name="MonthDatePicker" DayFormat="{}{day.integer} ({dayofweek.abbreviated})" MonthVisible="False" DayVisible="False"/>
+                <DatePicker Date="{Binding SelectedYear, Mode=TwoWay}" HorizontalAlignment="Right"  Grid.Row="0" x:Name="MonthDatePicker" DayFormat="{}{day.integer} ({dayofweek.abbreviated})" MonthVisible="False" DayVisible="False"/>
             </StackPanel>
             
-            <lvc:PolarChart Grid.Row="1" Background="White" Series="{Binding MonthSeries}" AngleAxes="{Binding MonthAxes}" />
+            <lvc:PolarChart Grid.Row="1" Background="White" Series="{Binding SeriesMonth, Mode=TwoWay}" AngleAxes="{Binding MonthAxes}" />
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="1">
+        <Grid Background="White" CornerRadius="20" Margin="10" Grid.Row="2" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Margin="0,0,50,0" HorizontalAlignment="Right" x:Name="DayDatePicker" Orientation="Horizontal">
                 <TextBlock Text="from" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                <CalendarDatePicker x:Name="DayFrom" PlaceholderText="From" Margin="0,0,20,0"/>
+                <CalendarDatePicker Date="{Binding SelectedDayFrom, Mode=TwoWay}" x:Name="DayFrom" PlaceholderText="From" Margin="0,0,20,0"/>
                 <TextBlock Text="to" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                <CalendarDatePicker x:Name="DayTo" PlaceholderText="To" />
+                <CalendarDatePicker Date="{Binding SelectedDayTo, Mode=TwoWay}" x:Name="DayTo" PlaceholderText="To" />
             </StackPanel>
             
             <lvc:CartesianChart
@@ -84,14 +102,14 @@
             </lvc:CartesianChart>
         </Grid>
 
-        <Grid Grid.Row="3" Grid.Column="0">
+        <Grid Background="White" CornerRadius="20" Margin="10" Grid.Row="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel  HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,0,40,0">
                 <TextBlock VerticalAlignment="Center" Text="Choose a specific week:" Margin="0,0,20,0"/>
-                <CalendarDatePicker HorizontalAlignment="Right" x:Name="WeekDatePicker" PlaceholderText="From" Margin="0,0,20,0"/>
+                <CalendarDatePicker Date="{Binding SelectedWeek, Mode=TwoWay}" HorizontalAlignment="Right" x:Name="WeekDatePicker" PlaceholderText="From" Margin="0,0,20,0"/>
             </StackPanel>
             <lvc:CartesianChart
                 Grid.Row="1"
@@ -101,16 +119,12 @@
             </lvc:CartesianChart>
         </Grid>
 
-        <Grid Grid.Row="3" Grid.Column="1">
+        <Grid Background="White" CornerRadius="20" Margin="10" Grid.Row="3" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <StackPanel  HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,0,40,0">
-                <TextBlock VerticalAlignment="Center" Text="Choose a specific year:" Margin="0,0,20,0"/>
-                <DatePicker HorizontalAlignment="Right"  Grid.Row="0" x:Name="YearDatePicker" DayFormat="{}{day.integer} ({dayofweek.abbreviated})" MonthVisible="False" DayVisible="False"/>
-            </StackPanel>
-            
+
             <lvc:CartesianChart
                 Grid.Row="1"
                 Title="{Binding TitleYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

@@ -1,3 +1,4 @@
+using CinemaManagement.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -21,15 +22,18 @@ namespace CinemaManagement.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    /// 
     public sealed partial class StatisticPage : Page
     {
+        //internal StatisticViewModel ViewModel { get; set; }
         public StatisticPage()
         {
             this.InitializeComponent();
+            //this.DataContext = new StatisticViewModel();
         }
         private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            SuggestionOutput.Text = args.SelectedItem.ToString();
+            
         }
     }
 }
