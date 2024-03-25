@@ -18,6 +18,7 @@ using Windows.UI.Popups;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml;
 using Syncfusion.UI.Xaml.Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace CinemaManagement.ViewModels
 {
@@ -75,9 +76,8 @@ namespace CinemaManagement.ViewModels
             try
             {
                 // Remove all contributors associated with the movie
-                _context.Contributors.RemoveRange(role.Contributors);
-                
-
+                var roleToDelete = _context.Roles.Include(r => r.Contributors).FirstOrDefault(r => r.RoleId == role.RoleId);
+                roleToDelete.Contributors.Clear();
                 // Save changes to the database
                 _context.Roles.Remove(role);
                 await _context.SaveChangesAsync();

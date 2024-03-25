@@ -1,574 +1,810 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Window
     x:Class="CinemaManagement.WindowViews.AddMovieWindows"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:CinemaManagement.WindowViews"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:editors="using:Syncfusion.UI.Xaml.Editors"
+    xmlns:local="using:CinemaManagement.WindowViews"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:CinemaManagement.ViewModels"
     mc:Ignorable="d">
-    
 
-    <Grid HorizontalAlignment="Stretch" 
-          VerticalAlignment="Stretch" 
-          Margin="30 30 30 20">
-        <Grid.Resources>
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Auto"
+        HorizontalScrollMode="Enabled"
+        VerticalScrollBarVisibility="Auto"
+        VerticalScrollMode="Enabled">
+        <Grid
+            Margin="30,30,30,20"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+            <Grid.Resources>
 
-            <local:GenreViewCheckBoxConverter x:Key="GenreViewCheckBoxConverter"/>
+                <local:GenreViewCheckBoxConverter x:Key="GenreViewCheckBoxConverter" />
 
 
 
-            <Style x:Key="Title" TargetType="TextBlock">
-                    <Setter Property="FontSize" Value="24"/>
+                <Style x:Key="Title" TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="24" />
                 </Style>
                 <Style x:Key="SubTitle" TargetType="TextBlock">
-                    <Setter Property="Margin" Value="0 0 0 5"/>
-                    <Setter Property="FontSize" Value="18"/>
-                    <Setter Property="Foreground" Value="LightGray"/>
+                    <Setter Property="Margin" Value="0,0,0,5" />
+                    <Setter Property="FontSize" Value="18" />
+                    <Setter Property="Foreground" Value="LightGray" />
                 </Style>
                 <Style x:Key="BoundBorder" TargetType="Border">
-                    <Setter Property="Background" Value="#eeeeee"/>
+                    <Setter Property="Background" Value="#eeeeee" />
                     <Setter Property="BorderThickness" Value="1" />
                     <Setter Property="BorderBrush" Value="LightGray" />
-                    <Setter Property="CornerRadius" Value="8"/>
+                    <Setter Property="CornerRadius" Value="8" />
                 </Style>
                 <Style x:Key="InputStackPanel" TargetType="StackPanel">
-                    <Setter Property="Orientation" Value="Vertical"/>   
-                    <Setter Property="HorizontalAlignment" Value="Left"/>
-                    <Setter Property="Padding" Value="0 0 30 15"/>
+                    <Setter Property="Orientation" Value="Vertical" />
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                    <Setter Property="Padding" Value="0,0,30,15" />
                 </Style>
-            <Style x:Key="inputTextBox" TargetType="TextBox">
-                <Setter Property="Height" Value="50"/>
-                <Setter Property="Padding" Value="15"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="VerticalContentAlignment" Value="Center"/>
-            </Style>
-            <Style x:Key="stackContent" TargetType="StackPanel">
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Orientation" Value="Horizontal"/>
-                <Setter Property="Padding" Value="10"/>
-            </Style>
+                <Style x:Key="inputTextBox" TargetType="TextBox">
+                    <Setter Property="Height" Value="50" />
+                    <Setter Property="Padding" Value="15" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                </Style>
+                <Style x:Key="stackContent" TargetType="StackPanel">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Orientation" Value="Horizontal" />
+                    <Setter Property="Padding" Value="10" />
+                </Style>
 
-        </Grid.Resources>
+            </Grid.Resources>
 
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <TextBlock 
-            Text="Add Movie" Grid.Row="0" Grid.Column="0"
-            FontSize="50"/>
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                FontSize="50"
+                Text="Add Movie" />
 
-        <TextBlock Text="Movie Information" Grid.Row="1" Grid.Column="0"
-                   Style="{StaticResource ResourceKey=Title}"/>
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                Style="{StaticResource ResourceKey=Title}"
+                Text="Movie Information" />
 
-        <Border Grid.Row="2" Grid.Column="0" Padding="10 10"
+            <Border
+                Grid.Row="2"
+                Grid.Column="0"
+                Padding="10,10"
                 Style="{StaticResource ResourceKey=BoundBorder}">
 
-            <Grid Grid.Row="2" Grid.Column="0" Margin="30 10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel 
-                    Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch"
-                    Style="{StaticResource ResourceKey=InputStackPanel}">
-                    <TextBlock Text="Title" Style="{StaticResource ResourceKey=SubTitle}"/>
-                    <TextBox x:Name="inputMovieTitle" PlaceholderText="Movie Title" Style="{StaticResource ResourceKey=inputTextBox}" />
-                </StackPanel>
-
-                <Grid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" >
+                <Grid
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="30,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-
-                    <StackPanel Grid.Column="0" 
-                               HorizontalAlignment="Stretch"
-                                
-                                   Style="{StaticResource ResourceKey=InputStackPanel}">
-                        <TextBlock Text="Duration" Style="{StaticResource ResourceKey=SubTitle}"/>
-                        <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Center">-->
-                        <NumberBox x:Name="inputMovieDuration" HorizontalAlignment="Stretch" Height="40" Padding="10"
-                        Value="1"
-                        PlaceholderText="Minutes"
-                        SpinButtonPlacementMode="Compact"
-                        SmallChange="10"
-                        LargeChange="100" />
-
-                        <!--</StackPanel>-->
-                    </StackPanel>
-
-                    <StackPanel 
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="0"
                         HorizontalAlignment="Stretch"
-                    Grid.Column="1"
-                    Style="{StaticResource ResourceKey=InputStackPanel}" >
-                        <TextBlock Text="Age Certificate" Style="{StaticResource ResourceKey=SubTitle}"/>
-
-                        <DropDownButton Content="Age" x:Name="inputMovieAge" HorizontalAlignment="Stretch" Height="40">
-                            <DropDownButton.Flyout>
-                                <Flyout>
-                                    <GridView ItemsSource="{x:Bind AgeCertificateList}"
-                                          SingleSelectionFollowsFocus="False"
-                                          HorizontalAlignment="Stretch"
-                                            SelectionChanged="AgeGridView_SelectionChanged"
-                                        SelectedIndex="-1" Padding="0">
-                                        <GridView.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <ItemsWrapGrid 
-                                                   MaximumRowsOrColumns="1"
-                                                    HorizontalAlignment="Stretch"
-                                                    Width="250"
-                                                   Orientation="Horizontal"/>       
-                                            </ItemsPanelTemplate>
-                                        </GridView.ItemsPanel>
-                                        <GridView.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding RequireAge}" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap" Height="Auto" Width="200"/>
-                                            </DataTemplate>
-                                        </GridView.ItemTemplate>
-                                    </GridView>
-                                </Flyout>
-                            </DropDownButton.Flyout>
-                        </DropDownButton>
-
+                        Style="{StaticResource ResourceKey=InputStackPanel}">
+                        <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="Title" />
+                        <TextBox
+                            x:Name="inputMovieTitle"
+                            PlaceholderText="Movie Title"
+                            Style="{StaticResource ResourceKey=inputTextBox}" />
                     </StackPanel>
 
+                    <Grid
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
 
-                </Grid>
+                        <StackPanel
+                            Grid.Column="0"
+                            HorizontalAlignment="Stretch"
+                            Style="{StaticResource ResourceKey=InputStackPanel}">
+                            <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="Duration" />
+                            <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Center">-->
+                            <NumberBox
+                                x:Name="inputMovieDuration"
+                                Height="40"
+                                Padding="10"
+                                HorizontalAlignment="Stretch"
+                                LargeChange="100"
+                                PlaceholderText="Minutes"
+                                SmallChange="10"
+                                SpinButtonPlacementMode="Compact"
+                                Value="1" />
+
+                            <!--</StackPanel>-->
+                        </StackPanel>
+
+                        <StackPanel
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            Style="{StaticResource ResourceKey=InputStackPanel}">
+                            <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="Age Certificate" />
+
+                            <DropDownButton
+                                x:Name="inputMovieAge"
+                                Height="40"
+                                HorizontalAlignment="Stretch"
+                                Content="Age">
+                                <DropDownButton.Flyout>
+                                    <Flyout>
+                                        <GridView
+                                            Padding="0"
+                                            HorizontalAlignment="Stretch"
+                                            ItemsSource="{x:Bind AgeCertificateList}"
+                                            SelectedIndex="-1"
+                                            SelectionChanged="AgeGridView_SelectionChanged"
+                                            SingleSelectionFollowsFocus="False">
+                                            <GridView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <ItemsWrapGrid
+                                                        Width="250"
+                                                        HorizontalAlignment="Stretch"
+                                                        MaximumRowsOrColumns="1"
+                                                        Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </GridView.ItemsPanel>
+                                            <GridView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock
+                                                        Width="200"
+                                                        Height="Auto"
+                                                        Margin="10,0,0,0"
+                                                        VerticalAlignment="Center"
+                                                        Text="{Binding RequireAge}"
+                                                        TextWrapping="Wrap" />
+                                                </DataTemplate>
+                                            </GridView.ItemTemplate>
+                                        </GridView>
+                                    </Flyout>
+                                </DropDownButton.Flyout>
+                            </DropDownButton>
+
+                        </StackPanel>
 
 
-                <!--<Grid Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" >
+
+                    </Grid>
+
+
+                    <!--<Grid Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>-->
-                    <StackPanel 
-                         HorizontalAlignment="Stretch"
-                         Grid.Row="3" Grid.Column="0"
-                         Style="{StaticResource ResourceKey=InputStackPanel}">          
-                    <TextBlock Text="Choose Special Types" Style="{StaticResource ResourceKey=SubTitle}"/>
+                    <StackPanel
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource ResourceKey=InputStackPanel}">
+                        <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="Choose Special Types" />
 
-                    <StackPanel Style="{StaticResource InputStackPanel}" Padding="0 0 0 0" Spacing="10">
+                        <StackPanel
+                            Padding="0,0,0,0"
+                            Spacing="10"
+                            Style="{StaticResource InputStackPanel}">
 
                             <StackPanel Orientation="Horizontal" Spacing="60">
-                                <CheckBox Content="Blockbuster" x:Name="checkboxBlock"
-                                        Click="blockGoldenCheckbox_Click"/>
-                                <CheckBox Content="Golden Hour" x:Name="checkboxGolden"
-                                    Click="blockGoldenCheckbox_Click"/>
+                                <CheckBox
+                                    x:Name="checkboxBlock"
+                                    Click="blockGoldenCheckbox_Click"
+                                    Content="Blockbuster" />
+                                <CheckBox
+                                    x:Name="checkboxGolden"
+                                    Click="blockGoldenCheckbox_Click"
+                                    Content="Golden Hour" />
 
 
-                                <!-- Display the selected toppings. -->
+                                <!--  Display the selected toppings.  -->
                             </StackPanel>
 
-                            <TextBlock x:Name="typesList" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="typesList" TextWrapping="Wrap" />
 
                         </StackPanel>
                     </StackPanel>
 
-                <StackPanel Grid.Row="2" Grid.Column="0"
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource InputStackPanel}">
+                        <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="Publish Year" />
 
-                           Style="{StaticResource InputStackPanel}"
-                            VerticalAlignment="Center"
-                            >       
-                        <TextBlock Text="Publish Year" Style="{StaticResource ResourceKey=SubTitle}"/>
-
-                        <DatePicker x:Name="inputMoviePublishYear" MonthVisible="False" DayVisible="False"/>
+                        <DatePicker
+                            x:Name="inputMoviePublishYear"
+                            DayVisible="False"
+                            MonthVisible="False" />
 
                     </StackPanel>
 
 
 
 
-                <!--</Grid>-->
+                    <!--</Grid>-->
 
 
 
-                <StackPanel 
-                    Grid.Row="0" Grid.Column="1"
-                    HorizontalAlignment="Stretch"
-                    Style="{StaticResource ResourceKey=InputStackPanel}">
-                    <TextBlock Text="IMDB Rating" Style="{StaticResource ResourceKey=SubTitle}"/>
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource ResourceKey=InputStackPanel}">
+                        <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="IMDB Rating" />
 
-                    <TextBox x:Name="inputMovieImdb" PlaceholderText="Imdb Rating" Style="{StaticResource ResourceKey=inputTextBox}"/>
+                        <TextBox
+                            x:Name="inputMovieImdb"
+                            PlaceholderText="Imdb Rating"
+                            Style="{StaticResource ResourceKey=inputTextBox}" />
 
 
-                </StackPanel>
-
-
-   
-
-                <Grid
-                    Padding="0 0 30 15"
-                    HorizontalAlignment="Stretch"
-                    Grid.Row="1" Grid.Column="1" Grid.RowSpan="3"
-                    >
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Text="Genre" Style="{StaticResource ResourceKey=SubTitle}"/>
+                    </StackPanel>
 
 
 
-                    <DropDownButton x:Name="colorComboBox" HorizontalAlignment="Stretch" Grid.Row="1" Content="Choose Genres" DataContext="{x:Bind genreViewModel}">
-                        <!--<DropDownButton.DataContext>
+
+                    <Grid
+                        Grid.Row="1"
+                        Grid.RowSpan="3"
+                        Grid.Column="1"
+                        Padding="0,0,30,15"
+                        HorizontalAlignment="Stretch">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="*" />
+
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Style="{StaticResource ResourceKey=SubTitle}"
+                            Text="Genre" />
+
+
+
+                        <DropDownButton
+                            x:Name="colorComboBox"
+                            Grid.Row="1"
+                            HorizontalAlignment="Stretch"
+                            Content="Choose Genres"
+                            DataContext="{x:Bind genreViewModel}">
+                            <!--<DropDownButton.DataContext>
                             <vm:GenreViewModel/>
                         </DropDownButton.DataContext>-->
-                        <!--<DropDownButton.ItemTemplate>
+                            <!--<DropDownButton.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding GenreName}" Checked="GenreCheckBox_Check" Unchecked="GenreCheckBox_UnCheck"/>
                             </DataTemplate>
                         </DropDownButton.ItemTemplate>-->
-                        <DropDownButton.Flyout>
-                            <Flyout>
-                                <GridView ItemsSource="{Binding GenresList}"
-                                  SelectedIndex="-1" Padding="0">
+                            <DropDownButton.Flyout>
+                                <Flyout>
+                                    <GridView
+                                        Padding="0"
+                                        ItemsSource="{Binding GenresList}"
+                                        SelectedIndex="-1">
+                                        <GridView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ItemsWrapGrid
+                                                    HorizontalAlignment="Stretch"
+                                                    MaximumRowsOrColumns="2"
+                                                    Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </GridView.ItemsPanel>
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox
+                                                    Checked="GenreCheckBox_Check"
+                                                    Content="{Binding Genre.GenreName}"
+                                                    Unchecked="GenreCheckBox_UnCheck" />
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                    </GridView>
+                                </Flyout>
+
+
+                            </DropDownButton.Flyout>
+
+                        </DropDownButton>
+
+                        <Border
+                            Grid.Row="3"
+                            Height="auto"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource ResourceKey=BoundBorder}">
+                            <ScrollView
+                                Width="Auto"
+                                Height="210"
+                                HorizontalAlignment="Stretch">
+                                <GridView
+                                    x:Name="GenreGridView"
+                                    Grid.Row="3"
+                                    HorizontalAlignment="Stretch"
+                                    ItemsSource="{x:Bind SelectedGenreList}">
+
+                                    <GridView.ItemContainerStyle>
+                                        <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+                                            <Setter Property="Margin" Value="20,10,25,10" />
+                                        </Style>
+                                    </GridView.ItemContainerStyle>
+
                                     <GridView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <ItemsWrapGrid 
-                                               MaximumRowsOrColumns="2"
-                                                HorizontalAlignment="Stretch"
-                                               Orientation="Horizontal"/>
+                                            <ItemsWrapGrid
+                                                x:Name="MaxItemsWrapGrid"
+                                                MaximumRowsOrColumns="3"
+                                                Orientation="Horizontal" />
                                         </ItemsPanelTemplate>
                                     </GridView.ItemsPanel>
+
+
                                     <GridView.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Content="{Binding Genre.GenreName}" Checked="GenreCheckBox_Check" Unchecked="GenreCheckBox_UnCheck"/>
+                                            <Border
+                                                Width="Auto"
+                                                Padding="5,5"
+                                                BorderThickness="1"
+                                                CornerRadius="10">
+                                                <Border.Background>
+                                                    <StaticResource ResourceKey="CategorieCard_Background" />
+                                                </Border.Background>
+                                                <Grid Width="100" HorizontalAlignment="Stretch">
+                                                    <TextBlock
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{Binding GenreName}"
+                                                        TextWrapping="Wrap" />
+                                                </Grid>
+                                            </Border>
                                         </DataTemplate>
                                     </GridView.ItemTemplate>
+
+
                                 </GridView>
-                            </Flyout>
-                            
-                            
-                        </DropDownButton.Flyout>
+                            </ScrollView>
+                        </Border>
 
-                    </DropDownButton>
-
-                    <Border Grid.Row="3" Margin="0 10 0 0"
-                            Height="auto" 
-                                Style="{StaticResource ResourceKey=BoundBorder}">
-                        <ScrollView Width="Auto" Height="210" HorizontalAlignment="Stretch">
-                        <GridView Grid.Row="3" HorizontalAlignment="Stretch"  
-                        x:Name="GenreGridView" ItemsSource="{x:Bind SelectedGenreList}">
-
-                            <GridView.ItemContainerStyle>
-                                <Style TargetType="GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
-                                    <Setter Property="Margin" Value="20, 10, 25, 10"/>
-                                </Style>
-                            </GridView.ItemContainerStyle>
-
-                            <GridView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsWrapGrid x:Name="MaxItemsWrapGrid"
-                               MaximumRowsOrColumns="3"
-                               Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </GridView.ItemsPanel>
-
-
-                            <GridView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderThickness="1" CornerRadius="10" Width="Auto" Padding="5 5">
-                                        <Border.Background>
-                                            <StaticResource ResourceKey="CategorieCard_Background" />
-                                        </Border.Background>
-                                        <Grid Width="100" HorizontalAlignment="Stretch" >
-                                            <TextBlock Text="{Binding GenreName}" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </GridView.ItemTemplate>
-
-
-                        </GridView>
-                        </ScrollView>
-                    </Border>
+                    </Grid>
 
                 </Grid>
 
-            </Grid>
-            
-        </Border>
+            </Border>
 
-        <TextBlock Text="Movie Description" Grid.Row="3" Grid.Column="0"
-             Style="{StaticResource ResourceKey=Title}"/>
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                Style="{StaticResource ResourceKey=Title}"
+                Text="Movie Description" />
 
-        <Border Grid.Row="4" Grid.Column="0" Padding="10"
-          Style="{StaticResource ResourceKey=BoundBorder}">
+            <Border
+                Grid.Row="4"
+                Grid.Column="0"
+                Padding="10"
+                Style="{StaticResource ResourceKey=BoundBorder}">
 
-            <StackPanel 
-                    Grid.Row="4" Grid.Column="0" HorizontalAlignment="Stretch"
-                    Style="{StaticResource ResourceKey=InputStackPanel}">
-                <TextBlock Text="Descripton" Style="{StaticResource ResourceKey=SubTitle}"/>
-                <RichEditBox x:Name="REBCustom"
-                             Height="150"
-                AutomationProperties.Name="editor with custom menu"
-                Loaded="REBCustom_Loaded"
-                Unloaded="REBCustom_Unloaded"/>
-            </StackPanel>
-
-
-        </Border>
-
-
-
-        <TextBlock Text="Contributors" Grid.Row="1" Grid.Column="1" Margin="30 0 0 0"
-      Style="{StaticResource ResourceKey=Title}"/>
-
-        <Border Grid.Row="2" Grid.Column="1" Padding="10"
-            Style="{StaticResource ResourceKey=BoundBorder}" Margin="30 0 0 0" >
-
-            <Grid HorizontalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.5*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-
-                <TextBlock Text="Choose Celebritie" Grid.Row="0" Grid.Column="0"
-                           Style="{StaticResource ResourceKey=SubTitle}"/>
-
-                <StackPanel Style="{StaticResource InputStackPanel}" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch">
-                    <DropDownButton x:Name="CelebrityDropdown" HorizontalAlignment="Stretch" Content="Choose Celebrities" Click="ChooseCelebrity_Click" DataContext="{x:Bind personViewModel}">
-                        <DropDownButton.Flyout>
-                            <Flyout>
-                                <GridView ItemsSource="{Binding PeopleList}"
-                                          SingleSelectionFollowsFocus="False"
-                                          SelectionChanged="CelebritySelectionChanged"
-                                          HorizontalAlignment="Stretch"
-                                          SelectedIndex="-1" Padding="0">
-                                    <GridView.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <ItemsWrapGrid 
-                                               MaximumRowsOrColumns="1"
-                                                HorizontalAlignment="Stretch"
-                                                Width="350"
-                                               Orientation="Horizontal"/>
-                                        </ItemsPanelTemplate>
-                                    </GridView.ItemsPanel>
-                                    <GridView.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch" Width="300"> 
-                                                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="30" Width="32" Height="32">
-                                                    <Image  Source="{Binding Person.AvatarPath}" 
-                                                            Width="32" Height="32" 
-                                                            HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="UniformToFill"/>
-                                                </Border>
-                                                <TextBlock Text="{Binding Person.Fullname}" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap"/>
-                                            </StackPanel>
-                                            
-                                        </DataTemplate>
-                                    </GridView.ItemTemplate>
-                                </GridView>
-                            </Flyout>
-
-                        </DropDownButton.Flyout>
-
-                    </DropDownButton>
-
-                    <Border Margin="0 10 0 0"
-                            Height="auto" 
-                            Style="{StaticResource ResourceKey=BoundBorder}">
-
-
-                        <ListView HorizontalAlignment="Stretch"
-                            SelectionMode="Single"
-                            ItemsSource="{x:Bind SelectedCelebritiesList}"
-                            Height="350">
-                            <ListView.ItemTemplate>
-
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="30" Width="20" Height="20">
-                                            <Image Grid.Column="0"
-                                                Source="{Binding AvatarPath}" 
-                                                Width="20" Height="20" 
-                                                Stretch="UniformToFill"
-                                                HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <TextBlock Text="{Binding Fullname}" Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap"/>
-
-                                        <Button Background="Transparent" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" BorderBrush="Transparent" Padding="5" Click="DeleteSelectedCelebrity_Click">
-                                            <FontIcon Glyph="&#xE711;" FontFamily="{StaticResource FIcon}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                        </Button>
-
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-
-                    </Border>
-
-
-                </StackPanel>
-
-                <TextBlock Text="Choose Role" Grid.Row="0" Grid.Column="1"
-                           Style="{StaticResource ResourceKey=SubTitle}"/>
-
-                <StackPanel Style="{StaticResource InputStackPanel}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
-                    <DropDownButton x:Name="RoleDropdown" HorizontalAlignment="Stretch" Content="Choose Roles" Click="RoleDropdown_Click" DataContext="{x:Bind roleViewModel}">
-                       
-                        <DropDownButton.Flyout>
-                            <Flyout>
-                                <GridView ItemsSource="{Binding RolesList}"
-                                          SingleSelectionFollowsFocus="False"
-                                           SelectionChanged="RoleSelectionChanged"
-                                          HorizontalAlignment="Stretch"
-                                  SelectedIndex="-1" Padding="0">
-                                    <GridView.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <ItemsWrapGrid 
-                                               MaximumRowsOrColumns="1"
-                                                HorizontalAlignment="Stretch"
-                                                Width="250"
-                                               Orientation="Horizontal"/>
-                                        </ItemsPanelTemplate>
-                                    </GridView.ItemsPanel>
-                                    <GridView.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Role.RoleName}" VerticalAlignment="Center" Margin="10 0 0 0" TextWrapping="Wrap" Height="Auto" Width="200"/>
-                                        </DataTemplate>
-                                    </GridView.ItemTemplate>
-                                </GridView>
-                            </Flyout>
-
-                        </DropDownButton.Flyout>
-
-                    </DropDownButton>
-
-                    <Border Margin="0 10 0 0"
-                            Height="auto" 
-                            Style="{StaticResource ResourceKey=BoundBorder}">
-
-
-                        <ListView HorizontalAlignment="Stretch"
-                            SelectionMode="Single"
-                            ItemsSource="{x:Bind SelectedRolesList}"
-                            Height="350">
-                            <ListView.ItemTemplate>
-
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                       
-                                        <TextBlock Text="{Binding RoleName}" Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap"/>
-
-                                        <Button Background="Transparent" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" BorderBrush="Transparent" Padding="5" Click="DeleteSelectedRole_Click">
-                                            <FontIcon Glyph="&#xE711;" FontFamily="{StaticResource FIcon}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                        </Button>
-
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-
-                    </Border>
-
-
-                </StackPanel>
-
-            </Grid>
-            
-
-        </Border>
-
-
-
-        <TextBlock Text="Upload Poster and Trailer" Grid.Row="3" Grid.Column="1" Margin="30 0 0 0"
-             Style="{StaticResource ResourceKey=Title}"/>
-
-        <Border Grid.Row="4" Grid.Column="1" Padding="10"
-          Style="{StaticResource ResourceKey=BoundBorder}" Margin="30 0 0 0">
-            <StackPanel Style="{StaticResource InputStackPanel}">
-
-            <StackPanel 
+                <StackPanel
+                    Grid.Row="4"
+                    Grid.Column="0"
                     HorizontalAlignment="Stretch"
-                    Grid.Row="0" Grid.Column="1"
                     Style="{StaticResource ResourceKey=InputStackPanel}">
-                <TextBlock Text="Upload Poster" Style="{StaticResource ResourceKey=SubTitle}"/>
-
-                <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
-                    <Button x:Name="PickAPhotoButton" Content="Open a picture"
-                            Click="PickAPhotoButton_Click" Margin="0,0,0,10"/>
-                        <TextBlock Text="Picked Photo " FontWeight="SemiBold"/>
-                        <TextBlock x:Name="PickAPhotoOutputTextBlock" TextWrapping="Wrap" Padding="20,5,0,0"/>
+                    <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="Descripton" />
+                    <RichEditBox
+                        x:Name="REBCustom"
+                        Height="150"
+                        AutomationProperties.Name="editor with custom menu"
+                        Loaded="REBCustom_Loaded"
+                        Unloaded="REBCustom_Unloaded" />
                 </StackPanel>
 
-            </StackPanel>
 
-            <StackPanel 
-         HorizontalAlignment="Stretch"
-         Grid.Row="0" Grid.Column="1"
-         Style="{StaticResource ResourceKey=InputStackPanel}">
-                <TextBlock Text="Upload Poster" Style="{StaticResource ResourceKey=SubTitle}"/>
+            </Border>
 
-                <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
-                    <Button x:Name="PickATrailerButton" Content="Open a picture"
-                 Click="PickAPhotoButton_Click" Margin="0,0,0,10"/>
-                        <TextBlock Text="Picked Trailer " FontWeight="SemiBold"/>
-                        <TextBlock x:Name="PickATrailerOutputTextBlock" TextWrapping="Wrap" Padding="20,5,0,0"/>
+
+
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="30,0,0,0"
+                Style="{StaticResource ResourceKey=Title}"
+                Text="Contributors" />
+
+            <Border
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="30,0,0,0"
+                Padding="10"
+                Style="{StaticResource ResourceKey=BoundBorder}">
+
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.5*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Style="{StaticResource ResourceKey=SubTitle}"
+                        Text="Choose Celebritie" />
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource InputStackPanel}">
+                        <DropDownButton
+                            x:Name="CelebrityDropdown"
+                            HorizontalAlignment="Stretch"
+                            Click="ChooseCelebrity_Click"
+                            Content="Choose Celebrities"
+                            DataContext="{x:Bind personViewModel}">
+                            <DropDownButton.Flyout>
+                                <Flyout>
+                                    <GridView
+                                        Padding="0"
+                                        HorizontalAlignment="Stretch"
+                                        ItemsSource="{Binding PeopleList}"
+                                        SelectedIndex="-1"
+                                        SelectionChanged="CelebritySelectionChanged"
+                                        SingleSelectionFollowsFocus="False">
+                                        <GridView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ItemsWrapGrid
+                                                    Width="350"
+                                                    HorizontalAlignment="Stretch"
+                                                    MaximumRowsOrColumns="1"
+                                                    Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </GridView.ItemsPanel>
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel
+                                                    Width="300"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Center"
+                                                    Orientation="Horizontal">
+                                                    <Border
+                                                        Width="32"
+                                                        Height="32"
+                                                        BorderBrush="LightGray"
+                                                        BorderThickness="1"
+                                                        CornerRadius="30">
+                                                        <Image
+                                                            Width="32"
+                                                            Height="32"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center"
+                                                            Source="{Binding Person.AvatarPath}"
+                                                            Stretch="UniformToFill" />
+                                                    </Border>
+                                                    <TextBlock
+                                                        Margin="10,0,0,0"
+                                                        VerticalAlignment="Center"
+                                                        Text="{Binding Person.Fullname}"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                    </GridView>
+                                </Flyout>
+
+                            </DropDownButton.Flyout>
+
+                        </DropDownButton>
+
+                        <Border
+                            Height="auto"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource ResourceKey=BoundBorder}">
+
+
+                            <ListView
+                                Height="350"
+                                HorizontalAlignment="Stretch"
+                                ItemsSource="{x:Bind SelectedCelebritiesList}"
+                                SelectionMode="Single">
+                                <ListView.ItemTemplate>
+
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                Width="20"
+                                                Height="20"
+                                                BorderBrush="LightGray"
+                                                BorderThickness="1"
+                                                CornerRadius="30">
+                                                <Image
+                                                    Grid.Column="0"
+                                                    Width="20"
+                                                    Height="20"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    Source="{Binding AvatarPath}"
+                                                    Stretch="UniformToFill" />
+                                            </Border>
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                Margin="10,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding Fullname}"
+                                                TextWrapping="Wrap" />
+
+                                            <Button
+                                                Grid.Column="2"
+                                                Padding="5"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                Click="DeleteSelectedCelebrity_Click">
+                                                <FontIcon
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{StaticResource FIcon}"
+                                                    FontSize="10"
+                                                    Glyph="&#xE711;" />
+                                            </Button>
+
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                        </Border>
+
+
+                    </StackPanel>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Style="{StaticResource ResourceKey=SubTitle}"
+                        Text="Choose Role" />
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource InputStackPanel}">
+                        <DropDownButton
+                            x:Name="RoleDropdown"
+                            HorizontalAlignment="Stretch"
+                            Click="RoleDropdown_Click"
+                            Content="Choose Roles"
+                            DataContext="{x:Bind roleViewModel}">
+
+                            <DropDownButton.Flyout>
+                                <Flyout>
+                                    <GridView
+                                        Padding="0"
+                                        HorizontalAlignment="Stretch"
+                                        ItemsSource="{Binding RolesList}"
+                                        SelectedIndex="-1"
+                                        SelectionChanged="RoleSelectionChanged"
+                                        SingleSelectionFollowsFocus="False">
+                                        <GridView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ItemsWrapGrid
+                                                    Width="250"
+                                                    HorizontalAlignment="Stretch"
+                                                    MaximumRowsOrColumns="1"
+                                                    Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </GridView.ItemsPanel>
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Width="200"
+                                                    Height="Auto"
+                                                    Margin="10,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding Role.RoleName}"
+                                                    TextWrapping="Wrap" />
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                    </GridView>
+                                </Flyout>
+
+                            </DropDownButton.Flyout>
+
+                        </DropDownButton>
+
+                        <Border
+                            Height="auto"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource ResourceKey=BoundBorder}">
+
+
+                            <ListView
+                                Height="350"
+                                HorizontalAlignment="Stretch"
+                                ItemsSource="{x:Bind SelectedRolesList}"
+                                SelectionMode="Single">
+                                <ListView.ItemTemplate>
+
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding RoleName}"
+                                                TextWrapping="Wrap" />
+
+                                            <Button
+                                                Grid.Column="2"
+                                                Padding="5"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                Click="DeleteSelectedRole_Click">
+                                                <FontIcon
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{StaticResource FIcon}"
+                                                    FontSize="10"
+                                                    Glyph="&#xE711;" />
+                                            </Button>
+
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                        </Border>
+
+
+                    </StackPanel>
+
+                </Grid>
+
+
+            </Border>
+
+
+
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="1"
+                Margin="30,0,0,0"
+                Style="{StaticResource ResourceKey=Title}"
+                Text="Upload Poster and Trailer" />
+
+            <Border
+                Grid.Row="4"
+                Grid.Column="1"
+                Margin="30,0,0,0"
+                Padding="10"
+                Style="{StaticResource ResourceKey=BoundBorder}">
+                <StackPanel Style="{StaticResource InputStackPanel}">
+
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource ResourceKey=InputStackPanel}">
+                        <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="Upload Poster" />
+
+                        <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+                            <Button
+                                x:Name="PickAPhotoButton"
+                                Margin="0,0,0,10"
+                                Click="PickAPhotoButton_Click"
+                                Content="Open a picture" />
+                            <TextBlock FontWeight="SemiBold" Text="Picked Photo " />
+                            <TextBlock
+                                x:Name="PickAPhotoOutputTextBlock"
+                                Padding="20,5,0,0"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource ResourceKey=InputStackPanel}">
+                        <TextBlock Style="{StaticResource ResourceKey=SubTitle}" Text="Upload Trailer" />
+
+                        <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+                            <Button
+                                x:Name="PickATrailerButton"
+                                Margin="0,0,0,10"
+                                Click="PickATrailerButton_Click"
+                                Content="Open a picture"
+                                IsEnabled="False" />
+                            <TextBlock FontWeight="SemiBold" Text="Picked Trailer " />
+                            <TextBlock
+                                x:Name="PickATrailerOutputTextBlock"
+                                Padding="20,5,0,0"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+
+                    </StackPanel>
                 </StackPanel>
 
+
+
+            </Border>
+
+
+            <StackPanel
+                Grid.Row="5"
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="20">
+                <Button
+                    x:Name="CancelBtn"
+                    HorizontalAlignment="Right"
+                    Style="{StaticResource AccentButtonStyle}">
+                    <TextBlock Text="Cancel" />
+                </Button>
+
+                <Button
+                    x:Name="SaveBtn"
+                    HorizontalAlignment="Right"
+                    Click="SaveMovie_Click"
+                    Style="{StaticResource AccentButtonStyle}">
+                    <TextBlock Text="Add" />
+                </Button>
             </StackPanel>
-        </StackPanel>
 
 
 
-        </Border>
 
 
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1" Grid.Row="5" Spacing="20" HorizontalAlignment="Right">
-            <Button  HorizontalAlignment="Right" x:Name="CancelBtn" Style="{StaticResource AccentButtonStyle}">
-                <TextBlock Text="Cancel"/>
-            </Button>
-
-            <Button HorizontalAlignment="Right" x:Name="SaveBtn" Style="{StaticResource AccentButtonStyle}" Click="SaveMovie_Click">
-                <TextBlock Text="Add"/>
-            </Button>
-        </StackPanel>
-
-        
-
-
-
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </Window>

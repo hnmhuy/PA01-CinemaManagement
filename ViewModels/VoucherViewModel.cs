@@ -54,9 +54,9 @@ namespace CinemaManagement.ViewModels
         {
             try
             {
-                _context.BillVouchers.RemoveRange(voucher.BillVouchers);
-                _context.Vouchers.Remove(voucher);
-
+                var voucherToDelete = await _context.Vouchers.Include(m => m.BillVouchers).FirstOrDefaultAsync(m => m.VoucherId == voucher.VoucherId);
+                voucherToDelete.BillVouchers.Clear();
+                _context.Vouchers.Remove(voucherToDelete);
                 // Save changes to the database
                 await _context.SaveChangesAsync();
             }

@@ -145,7 +145,7 @@ namespace CinemaManagement.Views
             if (temp != null)
             {
                 Debug.Write("Get trailer path: " + viewModel.HighlightingMovie.TrailerPath);
-                temp.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Videos/" + viewModel.HighlightingMovie.TrailerPath));
+                temp.Source = MediaSource.CreateFromUri(new Uri("ms-appx://" + viewModel.HighlightingMovie.TrailerPath));
                 mediaPlayer = temp.MediaPlayer;
                 mediaPlayer.Play();
                 mediaPlayer.Position = TimeSpan.FromSeconds(0);

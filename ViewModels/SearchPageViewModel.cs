@@ -101,14 +101,15 @@ namespace CinemaManagement.ViewModels
                 }
             }
 
-            // Try to search by genres
-            var moviesByGenres = db.Genres.Where(g => g.GenreName.Contains(SearchText)).SelectMany(g => g.Movies).ToList();
-            foreach (var movie in moviesByGenres)
-            {
-                movie.AgeCertificate = db.AgeCertificates.Find(movie.AgeCertificateId);
-                if (!SearchResults.Contains(movie))
-                    SearchResults.Add(movie);
-            }
+            //// Try to search by genres
+            
+
+            //foreach (var movie in moviesByGenres)
+            //{
+            //    movie.AgeCertificate = db.AgeCertificates.Find(movie.AgeCertificateId);
+            //    if (!SearchResults.Contains(movie))
+            //        SearchResults.Add(movie);
+            //}
 
             IsSearching = false;
             if (SearchResults.Count == 0)

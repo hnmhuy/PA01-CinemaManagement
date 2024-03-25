@@ -210,6 +210,8 @@ namespace CinemaManagement.ViewModels
 
         public void Change(object obj)
         {
+            if (FullName == null) { return; }
+
             Regex rx = new Regex(@"^(?![ .]+$)[a-zA-Z .]*$", RegexOptions.Compiled);
             MatchCollection matches1 = rx.Matches(FullName);
 

@@ -123,9 +123,7 @@ namespace CinemaManagement.ViewModels
             try
             {
                 // Fetch the movies from the database again
-                var movies = await _context.Movies
-                    .Include(m => m.Genres)
-                    .ToListAsync();
+                var movies = await _context.Movies.Include(m => m.Genres).ToListAsync();
 
                 foreach (var movie in movies)
                 {
@@ -178,16 +176,22 @@ namespace CinemaManagement.ViewModels
                 //_context.Movies.Remove(movie);
                 //await _context.SaveChangesAsync();
 
-                var movieToDelete = await _context.Movies.Include(m => m.Genres).Include(m => m.ShowTimes).FirstOrDefaultAsync(m => m.MovieId == movie.MovieId);
-                if (movieToDelete !=null)
+                var movieToDelete = await _context.Movies.Include(m => m.Genres)
+                    .Include(m => m.Contributors)
+                    .Include(m => m.ShowTimes)
+                    .Include(m => m.AgeCertificate).Where(m => m.MovieId == movie.MovieId).FirstOrDefaultAsync();
+
+                if (movieToDelete != null)
                 {
-                    var genresToDelete = movieToDelete.Genres.ToList();
-                    var showTimesToDelete = movieToDelete.ShowTimes.ToList();
-                    _context.Genres.RemoveRange(genresToDelete);
-                    _context.ShowTimes.RemoveRange(showTimesToDelete);
+                    movieToDelete.Genres.Clear();
+                    movieToDelete.Contributors.Clear();
+                    movieToDelete.ShowTimes.Clear();
                     _context.Movies.Remove(movieToDelete);
+
                     await _context.SaveChangesAsync();
                 }
+
+
 
             }
             catch (Exception ex)

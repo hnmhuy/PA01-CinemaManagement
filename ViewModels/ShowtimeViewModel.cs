@@ -118,9 +118,17 @@ namespace CinemaManagement.ViewModels
         {
             try
             {
-                _context.Tickets.RemoveRange(showTime.Tickets);
-                _context.ShowTimes.Remove(showTime);
-
+                var showTimeToDelete = _context.ShowTimes.Include(st => st.Tickets).FirstOrDefault(st => st.ShowTimeId == showTime.ShowTimeId);
+                // Remove the available tickets
+                for (int i = 0; i < showTimeToDelete.Tickets.Count; i++)
+                {
+                    if (showTimeToDelete.Tickets.ElementAt(i).IsAvailable == true)
+                    {
+                        _context.Tickets.Remove(showTimeToDelete.Tickets.ElementAt(i));
+                    }
+                }
+                // Remove the showtime
+                _context.ShowTimes.Remove(showTimeToDelete);
                 // Save changes to the database
                 await _context.SaveChangesAsync();
             }

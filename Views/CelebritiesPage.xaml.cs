@@ -132,6 +132,44 @@ namespace CinemaManagement.Views
             Debug.WriteLine(roleName);
             ViewModel.RolesList.UpdateRole(roleName);
         }
+
+        private void AddPerson_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog();
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "Create new person";
+            dialog.PrimaryButtonText = "Save";
+            dialog.CloseButtonText = "Cancel";
+            dialog.Content = new PersonDialogContent(null);
+            dialog.PrimaryButtonClick += Dialog_AddPerson;
+            _= dialog.ShowAsync();
+        }
+
+        private void Dialog_AddPerson(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var dialogContent = (sender as ContentDialog).Content as PersonDialogContent;
+            ViewModel.PeopleList.CreatePerson(dialogContent.person);
+        }
+
+        private void EditPerson_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog();
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "Create new person";
+            dialog.PrimaryButtonText = "Save";
+            dialog.CloseButtonText = "Cancel";
+            dialog.Content = new PersonDialogContent(ViewModel.PeopleList.SelectedPerson.Person);
+            dialog.PrimaryButtonClick += EditDialog_Click;
+            _ = dialog.ShowAsync();
+        }
+
+        private void EditDialog_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var dialogContent = (sender as ContentDialog).Content as PersonDialogContent;
+            ViewModel.PeopleList.UpdatePerson(dialogContent.person);
+        }
     }
 }
 

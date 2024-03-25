@@ -90,9 +90,8 @@ namespace CinemaManagement.ViewModels
             try
             {
                 // Remove all contributors associated with the movie
-                _context.Contributors.RemoveRange(person.Contributors);
-
-
+                var personToDelete = _context.People.Include(p => p.Contributors).FirstOrDefault(p => p.PersonId == person.PersonId);
+                personToDelete.Contributors.Clear();
                 // Clear the genres associated with the movie
 
                 // Save changes to the database
@@ -202,6 +201,24 @@ namespace CinemaManagement.ViewModels
             return peoples;
         }
 
+        public void CreatePerson(Person person)
+        {
+            this._context.People.Add(person);
+            this._context.SaveChanges();
+            this.PeopleList.Add(new PersonCommand(person, DeleteCommand));
+        }
+
+        public void UpdatePerson(Person newData)
+        {
+            var index = PeopleList.IndexOf(SelectedPerson);
+            var id = SelectedPerson.Person.PersonId;
+            SelectedPerson.Person = newData;
+            _context.SaveChanges();
+            // Remove and re-add to trigger UI
+            PeopleList.RemoveAt(index);
+            var newPerson = _context.People.Find(id);
+            PeopleList.Insert(index, new PersonCommand(newPerson, DeleteCommand));
+        }
 
     }
     public class TotalPeopleConverter : IValueConverter

@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using Windows.UI.Popups;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml;
+using Microsoft.EntityFrameworkCore;
 namespace CinemaManagement.ViewModels
 {
 
@@ -97,18 +98,26 @@ namespace CinemaManagement.ViewModels
             try
             {
                 // Retrieve all movies associated with the genre
-                var movies = _context.Movies.Where(m => m.Genres.Any(g => g.GenreId == genre.GenreId)).ToList();
+                //var movies = _context.Movies.Where(m => m.Genres.Any(g => g.GenreId == genre.GenreId)).ToList();
 
-                // Remove the genre from each movie's genre list
-                foreach (var movie in movies)
-                {
-                    movie.Genres.Remove(genre);
-                }
+                //// Remove the genre from each movie's genre list
+                //foreach (var movie in movies)
+                //{
+                //    movie.Genres.Remove(genre);
+                //}
 
-                // Remove the genre from the context
-                _context.Genres.Remove(genre);
+                //// Remove the genre from the context
+                //_context.Genres.Remove(genre);
 
-                // Save changes to the database
+                //// Save changes to the database
+                ///
+
+                var genreToDelete = _context.Genres.Include(g => g.Movies).FirstOrDefault(g => g.GenreId == genre.GenreId);
+
+                 genreToDelete.Movies.Clear();
+               
+                _context.Genres.Remove(genreToDelete);
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -112,9 +112,11 @@ namespace CinemaManagement.WindowViews
             }
         }
 
+        public int newMovieId { get; set; }
+
         public AddMovieWindows()
         {
-
+            newMovieId = -1;
             this.InitializeComponent();
             var context = new DbCinemaManagementContext();
             genreViewModel = new GenreViewModel(context);
@@ -436,6 +438,7 @@ namespace CinemaManagement.WindowViews
             string ageCertificate = inputMovieAge.Content.ToString();
             int publishYear = inputMoviePublishYear.Date.Year;
 
+
             string description = string.Empty;
             REBCustom.Document.GetText(Microsoft.UI.Text.TextGetOptions.None, out description);
 
@@ -449,93 +452,63 @@ namespace CinemaManagement.WindowViews
 
             }
 
-            string trailerPath = string.Empty;
-            if (PickATrailerOutputTextBlock.Text != null)
-            {
-                trailerPath = "/Assets/Videos/" + PickATrailerOutputTextBlock.Text;
-
-            }
-
-
-
-            // Filter the genres collection to include only the ones present in SelectedGenreList
-
-            //ICollection<Genre> selectedGenres;
-            //using (var context = new DbCinemaManagementContext())
+            string trailerPath = "/Assets/Videos/Videos/dune_part_two.mp4";
+            //if (PickATrailerOutputTextBlock.Text != null)
             //{
-            //    var allGenres = context.Genres.ToList();
-            //    selectedGenres = allGenres.Where(g => SelectedGenreList.Any(sg => sg.GenreId == g.GenreId)).ToList();
+            //    trailerPath = "/Assets/Videos/" + PickATrailerOutputTextBlock.Text;
+
             //}
 
-
-                // TODO: Save movie data to database or perform other operations
-                // For now, we'll just print the data
-            Console.WriteLine("Title: " + title);
-            Console.WriteLine("Duration: " + duration);
-            Console.WriteLine("Age Certificate: " + ageCertificate);
-            Console.WriteLine("Description: " + description);
-            Console.WriteLine("IMDB Rating: " + imdbRating);
-            //Console.WriteLine("Selected Genres: " + string.Join(", ", selectedGenres));
-            Console.WriteLine("Selected Celebrities: ");
-
-
             // Fetch genres from the database based on selected genre IDs
-
-           
-
-            
-
-            using (var context = new DbCinemaManagementContext())
+            Debug.WriteLine(SelectedAge.RequireAge + " - " + SelectedAge.AgeCertificateId);
+            var context = new DbCinemaManagementContext();
+            var ageCertificateId = context.AgeCertificates.Where(ag => ag.RequireAge == SelectedAge.RequireAge).FirstOrDefault().AgeCertificateId;
+            var allGenres = context.Genres.ToList();
+            var filteredGenres = allGenres.Where(g => SelectedGenreList.Any(sg => sg.GenreId == g.GenreId)).ToList();
+            Movie newMovie = new Movie
             {
-                var allGenres = context.Genres.ToList();
-                var filteredGenres = allGenres.Where(g => SelectedGenreList.Any(sg => sg.GenreId == g.GenreId)).ToList();
+                Title = title,
+                Duration = duration,
+                PublishYear = publishYear,
+                Imdbrating = imdbRating,
+                Description = description,
+                PosterPath = posterPath,
+                TrailerPath = trailerPath,
+                Genres = filteredGenres,
+                AgeCertificateId = ageCertificateId,
+                IsBlockbuster = checkboxBlock.IsChecked ?? false,
+                IsGoldenHour = checkboxGolden.IsChecked ?? false
+            };
+            context.Movies.Add(newMovie);
 
-                Movie newMovie = new Movie
+
+            if (SelectedCelebritiesList.Count == SelectedRolesList.Count)
+            {
+                // Iterate over the selected celebrities and roles to create contributors
+                for (int i = 0; i < SelectedCelebritiesList.Count; i++)
                 {
-                    Title = title,
-                    Duration = duration,
-                    PublishYear = publishYear,
-                    Imdbrating = imdbRating,
-                    Description = description,
-                    PosterPath = posterPath,
-                    TrailerPath = trailerPath,
-                    Genres = filteredGenres,
-                    IsBlockbuster = checkboxBlock.IsChecked ?? false,
-                    IsGoldenHour = checkboxGolden.IsChecked ?? false
-                };
-
-                context.Movies.Add(newMovie);
-
-                if (SelectedCelebritiesList.Count == SelectedRolesList.Count)
-                {
-                    // Iterate over the selected celebrities and roles to create contributors
-                    for (int i = 0; i < SelectedCelebritiesList.Count; i++)
+                    // Create a new Contributor object
+                    Contributor contributor = new Contributor
                     {
-                        // Create a new Contributor object
-                        Contributor contributor = new Contributor
-                        {
-                            Movie = newMovie,
-                            PersonId = SelectedCelebritiesList[i].PersonId,
-                            RoleId = SelectedRolesList[i].RoleId
-                        };
-                        // Add the contributor to the movie's contributors collection
-                        newMovie.Contributors.Add(contributor);
-                    }
+                        Movie = newMovie,
+                        PersonId = SelectedCelebritiesList[i].PersonId,
+                        RoleId = SelectedRolesList[i].RoleId
+                    };
+                    // Add the contributor to the movie's contributors collection
+                    newMovie.Contributors.Add(contributor);
                 }
-                else
-                {
-                    // Handle the case where the number of celebrities does not match the number of roles
-                    Console.WriteLine("Error: The number of celebrities does not match the number of roles.");
-                    return;
-                }
-                context.SaveChanges();
-
             }
+            else
+            {
+                // Handle the case where the number of celebrities does not match the number of roles
+                Console.WriteLine("Error: The number of celebrities does not match the number of roles.");
+                return;
+            }
+            context.SaveChanges();
 
+            newMovieId = newMovie.MovieId;
 
-            
-            Console.WriteLine("Movie saved successfully.");
-
+            this.Close();
 
         }
 

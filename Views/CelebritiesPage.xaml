@@ -38,7 +38,6 @@
             x:Key="addButton"
             BasedOn="{StaticResource AccentButtonStyle}"
             TargetType="Button">
-            <Setter Property="Background" Value="Beige" />
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
@@ -151,7 +150,11 @@
                             Style="{StaticResource totalAmount}"
                             Text=" People" />
                     </StackPanel>
-                    <Button Grid.Row="0" Style="{StaticResource addButton}">
+                    <Button
+                        Name="AddPerson"
+                        Grid.Row="0"
+                        Click="AddPerson_Click"
+                        Style="{StaticResource addButton}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Margin="0,0,5,0" Glyph="&#xE710;" />
                             <TextBlock Text="Add Person" />
@@ -251,7 +254,11 @@
                                                 HorizontalAlignment="Center"
                                                 Orientation="Horizontal"
                                                 Spacing="10">
-                                                <Button Padding="10" Style="{StaticResource AccentButtonStyle}">
+                                                <Button
+                                                    Name="EditPerson"
+                                                    Padding="10"
+                                                    Click="EditPerson_Click"
+                                                    Style="{StaticResource AccentButtonStyle}">
                                                     <FontIcon
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"

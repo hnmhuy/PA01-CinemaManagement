@@ -97,7 +97,7 @@ namespace CinemaManagement.Views
             }
             if (!isTrailerVisible && TrailerPlayer != null)
             {
-                TrailerPlayer.MediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Videos/" + (this.DataContext as MovieDetailViewModel).CurrMovie.TrailerPath));
+                TrailerPlayer.MediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx://" + (this.DataContext as MovieDetailViewModel).CurrMovie.TrailerPath));
                 TrailerContainer.Visibility = Visibility.Visible;
                 scrollPresenter.ScrollTo(0, 0, null);
                 TrailerPlayer.MediaPlayer.Play();

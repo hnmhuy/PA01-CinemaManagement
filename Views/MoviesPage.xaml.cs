@@ -20,6 +20,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using System.Threading.Tasks;
 using Windows.Media.Capture;
+using Microsoft.EntityFrameworkCore;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,6 +36,8 @@ namespace CinemaManagement.Views
         public MoviePageViewModel ViewModel { get; set; }
         public MovieViewModel movieViewModel { get; set; }
         public GenreViewModel genreViewModel { get; set; }
+
+        private AddMovieWindows AddMovieWindows;
         public MoviesPage()
         {
             this.InitializeComponent();
@@ -99,10 +102,25 @@ namespace CinemaManagement.Views
         {
 
             // Set the content of the window to the desired page
-            var addMoviePage = new AddMovieWindows(); // Assuming AddMoviePage is the desired page
+            AddMovieWindows = new AddMovieWindows(); // Assuming AddMoviePage is the desired page
             // Activate and show the new window
-            addMoviePage.Activate();
+            AddMovieWindows.Activate();
+
+            AddMovieWindows.Closed += AddMoviePage_Closed;
+
         }
+
+        private void AddMoviePage_Closed(object sender, WindowEventArgs args)
+        {
+            var newMovieId = AddMovieWindows.newMovieId;
+            if (newMovieId == -1) return;
+            var db = new DbCinemaManagementContext();
+            var newMovie = db.Movies.Find(newMovieId);
+            movieViewModel.MoviesList.Add(new MovieCommand(newMovie, movieViewModel.DeleteCommand));
+        }
+
+        private MovieCommand selectedMovie { get; set; }
+
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -113,7 +131,7 @@ namespace CinemaManagement.Views
             // Extract the DataContext 
             if (dataGridRow != null)
             {
-                var selectedMovie = dataGridRow.DataContext as MovieCommand;
+                selectedMovie = dataGridRow.DataContext as MovieCommand;
                 if (selectedMovie != null)
                 {
                     //Debug.WriteLine("Selected Movie: " + selectedMovie.movie.Title); // Debugging statement
@@ -126,6 +144,7 @@ namespace CinemaManagement.Views
                     //Frame.Navigate(typeof(EditMovieWindow), selectedMovie.movie);
                     
                     editMovieWindow.Activate();
+                    editMovieWindow.Closed += EditMovieWindow_Closed;
 
                 }
                 else
@@ -138,6 +157,18 @@ namespace CinemaManagement.Views
                 Debug.WriteLine("Parent DataGridRow not found."); // Debugging statement
             }
 
+        }
+
+        private void EditMovieWindow_Closed(object sender, WindowEventArgs args)
+        {
+            var movieId = selectedMovie.movie.MovieId;
+            var index = movieViewModel.MoviesList.IndexOf(selectedMovie);
+            var db = new DbCinemaManagementContext();
+            var updatedMovie = db.Movies.Include(m => m.Genres).FirstOrDefault(m => m.MovieId == movieId);
+            selectedMovie.movie = updatedMovie;
+            // Remove and re-add the updated movie to the MoviesList
+            ViewModel.MoviesList.MoviesList.RemoveAt(index);
+            ViewModel.MoviesList.MoviesList.Insert(index, selectedMovie);
         }
 
         // Helper method to find visual parent of a specific type
