@@ -146,8 +146,15 @@ namespace CinemaManagement.ViewModels
             {
                 var context = new DbCinemaManagementContext();
                 userData = context.Accounts.Where(a => a.AccountId == authenticateInfo.Item2).FirstOrDefault();
-                FullName = userData.Fullname;
-                Gender = userData.Gender;
+                if (userData == null)
+                {
+                    AuthenticationControl.DestroySession();
+                }
+                else
+                {
+                    FullName = userData.Fullname;
+                    Gender = userData.Gender;
+                }
             }
             IsAuthenticating = false;
             RequestAuthentication = new RelayCommand(OnRequestAuthentication, CanRequestAuthentication);

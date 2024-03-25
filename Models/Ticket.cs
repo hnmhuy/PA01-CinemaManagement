@@ -15,13 +15,13 @@ public partial class Ticket
 
     public double Price { get; set; }
 
-    public int? BillId { get; set; } = null!;
+    public int? BillId { get; set; }
 
-    public int ShowTimeId { get; set; }
+    public int? ShowTimeId { get; set; }
 
     public bool IsVip { get; set; }
 
-    public virtual Bill Bill { get; set; } = null!;
+    public virtual Bill? Bill { get; set; }
 
-    public virtual ShowTime ShowTime { get; set; } = null!;
+    public virtual ShowTime? ShowTime { get; set; }
 }

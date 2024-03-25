@@ -85,6 +85,53 @@ namespace CinemaManagement.Views
             Debug.WriteLine(e);
         }
 
+        private void AddNewRole_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog();
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "Create new role";
+            dialog.PrimaryButtonText = "Save";
+            dialog.CloseButtonText = "Cancel";
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Content = new RoleDialogContent("");
+            dialog.PrimaryButtonClick += Dialog_PrimaryButtonClick;
+            _ = dialog.ShowAsync();
+
+        }
+
+        private void Dialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var dialog = sender as ContentDialog;
+            var dialogContent = dialog.Content as RoleDialogContent;    
+            var roleName = dialogContent.RoleName;
+            Debug.WriteLine(roleName);
+            ViewModel.RolesList.AddNewRole(roleName);
+        }
+
+        private void EditRole_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog();
+            Debug.WriteLine(ViewModel.RolesList.SelectedRole.Role.RoleName);
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "Edit role";
+            dialog.PrimaryButtonText = "Save";
+            dialog.CloseButtonText = "Cancel";
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            dialog.Content = new RoleDialogContent(ViewModel.RolesList.SelectedRole.Role.RoleName);
+            dialog.PrimaryButtonClick += Dialog_EditRole;
+            _ = dialog.ShowAsync();
+        }
+
+        private void Dialog_EditRole(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var dialog = sender as ContentDialog;
+            var dialogContent = dialog.Content as RoleDialogContent;
+            var roleName = dialogContent.RoleName;
+            Debug.WriteLine(roleName);
+            ViewModel.RolesList.UpdateRole(roleName);
+        }
     }
 }
 

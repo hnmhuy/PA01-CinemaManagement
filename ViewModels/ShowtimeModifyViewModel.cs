@@ -368,7 +368,7 @@ namespace CinemaManagement.ViewModels
         public void OnCancle(object obj)
         {
             returnValue = (false, "Operation canceled", -1);
-            IsSaved = false;
+            IsSaved = true;
         }
     }
 

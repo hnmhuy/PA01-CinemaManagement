@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="CinemaManagement.ViewModels.VoucherDialogContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CinemaManagement.ViewModels"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="12">
+        <TextBlock Text="Voucher Code" />
+        <TextBox x:Name="VoucherCode" Text="{x:Bind Voucher.VoucherCode, Mode=TwoWay}" />
+        <TextBlock Text="Discount" />
+        <TextBox x:Name="Disocount" Text="{x:Bind Voucher.DiscountAmount, Mode=TwoWay}" />
+        <CheckBox
+            x:Name="PercentageDiscount"
+            Content="Percentage discout"
+            IsChecked="{x:Bind Voucher.IsPercentageDiscount, Mode=TwoWay}" />
+        <TextBlock Text="Number of voucher" />
+        <TextBox x:Name="VoucherAmount" Text="{x:Bind Voucher.VoucherAmount, Mode=TwoWay}" />
+        <!--<CheckBox x:Name="IsExpired" Content="IsExpired" />-->
+    </StackPanel>
+</Page>

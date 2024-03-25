@@ -45,7 +45,8 @@ namespace CinemaManagement.ViewModels
             _context = context;
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
             VouchersList = GenerateSampleData(DeleteCommand);
-            SelectedVoucher = VouchersList[0];
+            if (VouchersList.Count > 0)
+                SelectedVoucher = VouchersList[0];
 
         }
 
@@ -170,6 +171,27 @@ namespace CinemaManagement.ViewModels
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void AddVoucher(Voucher voucher)
+        {
+            var db = new DbCinemaManagementContext();
+            db.Vouchers.Add(voucher);
+            db.SaveChanges();
+            VouchersList.Add(new VoucherCommand(voucher, DeleteCommand));
+        }
+
+        public void EditVoucher(Voucher voucher)
+        {
+            int index = VouchersList.IndexOf(SelectedVoucher);
+            int id = SelectedVoucher.Voucher.VoucherId;
+            var db = new DbCinemaManagementContext();
+            db.Vouchers.Update(voucher);
+            db.SaveChanges();
+            var updatedVoucher = db.Vouchers.Find(id);
+            // Remove and re-add to trigger the update for UI
+            VouchersList.RemoveAt(index);
+            VouchersList.Insert(index, new VoucherCommand(updatedVoucher, DeleteCommand));
         }
 
     }

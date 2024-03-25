@@ -80,6 +80,7 @@ namespace CinemaManagement.ViewModels
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
             EditCommand = new RelayCommand(OnEdit, CanEdit);
             ShowtimesList = GenerateSampleData(DeleteCommand, EditCommand);
+            if (ShowtimesList.Count > 0)
             SelectedShowtime = ShowtimesList[0];
             TotalTickets = CalculateTotalTickets();
             TotalSaleTickets = CalculateTotalSaleTickets();

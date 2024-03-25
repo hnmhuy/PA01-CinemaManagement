@@ -439,7 +439,8 @@ namespace CinemaManagement.WindowViews
             string description = string.Empty;
             REBCustom.Document.GetText(Microsoft.UI.Text.TextGetOptions.None, out description);
 
-            double? imdbRating = string.IsNullOrEmpty(inputMovieImdb.Text) ? null : double.Parse(inputMovieImdb.Text);
+            //double imdbRating = string.IsNullOrEmpty(inputMovieImdb.Text) ? null : double.Parse(inputMovieImdb.Text);
+            double imdbRating = double.Parse(inputMovieImdb.Text);
 
             string posterPath = string.Empty;
             if (PickAPhotoOutputTextBlock.Text != null)
