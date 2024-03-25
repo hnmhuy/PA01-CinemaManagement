@@ -120,6 +120,7 @@
                         x:Name="DOBInput"
                         Width="220"
                         Margin="0,5,0,0"
+                        IsEnabled="False"
                         Date="{Binding SelectedDate, Mode=TwoWay}"
                         PlaceholderText="Date of Birth" />
                     <TextBlock
