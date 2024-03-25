@@ -164,19 +164,30 @@ namespace CinemaManagement.ViewModels
         {
             try
             {
-                // Remove all contributors associated with the movie
-                var contributorsToDelete = _context.Contributors.Where(c => c.MovieId == movie.MovieId);
-                _context.Contributors.RemoveRange(contributorsToDelete);
+                //// Remove all contributors associated with the movie
+                //var contributorsToDelete = _context.Contributors.Where(c => c.MovieId == movie.MovieId);
+                //_context.Contributors.RemoveRange(contributorsToDelete);
 
-                // Remove all show times associated with the movie
-                _context.ShowTimes.RemoveRange(movie.ShowTimes);
+                //// Remove all show times associated with the movie
+                //_context.ShowTimes.RemoveRange(movie.ShowTimes);
 
-                // Clear the genres associated with the movie
-                _context.Genres.RemoveRange(movie.Genres);
+                //// Clear the genres associated with the movie
+                //_context.Genres.RemoveRange(movie.Genres);
 
-                // Save changes to the database
-                _context.Movies.Remove(movie);
-                await _context.SaveChangesAsync();
+                //// Save changes to the database
+                //_context.Movies.Remove(movie);
+                //await _context.SaveChangesAsync();
+
+                var movieToDelete = await _context.Movies.Include(m => m.Genres).Include(m => m.ShowTimes).FirstOrDefaultAsync(m => m.MovieId == movie.MovieId);
+                if (movieToDelete !=null)
+                {
+                    var genresToDelete = movieToDelete.Genres.ToList();
+                    var showTimesToDelete = movieToDelete.ShowTimes.ToList();
+                    _context.Genres.RemoveRange(genresToDelete);
+                    _context.ShowTimes.RemoveRange(showTimesToDelete);
+                    _context.Movies.Remove(movieToDelete);
+                    await _context.SaveChangesAsync();
+                }
 
             }
             catch (Exception ex)
