@@ -31,6 +31,7 @@
     <None Remove="Views\NavBarLeft.xaml" />
     <None Remove="Views\NavBarTop.xaml" />
     <None Remove="Views\SearchPage.xaml" />
+    <None Remove="Views\ShowTimeModifierPage.xaml" />
     <None Remove="Views\ShowtimesPage.xaml" />
     <None Remove="Views\StatisticPage.xaml" />
     <None Remove="WindowViews\AdminWindow.xaml" />
@@ -38,7 +39,7 @@
     <None Remove="WindowViews\CustomerWindow.xaml" />
     <None Remove="WindowViews\AddMovieWindows.xaml" />
     <None Remove="WindowViews\AuthenticateWindow.xaml" />
-    <None Remove="WindowViews\EditMovieWindow.xaml" />
+    <None Remove="WindowViews\ShowTimeModifyWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -151,7 +152,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <Page Update="WindowViews\EditMovieWindow.xaml">
+    <Page Update="WindowViews\ShowTimeModifyWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\ShowTimeModifierPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

@@ -50,6 +50,15 @@ namespace CinemaManagement.Views
                     }
                 }
             }
+            else if (e.PropertyName == nameof(viewModel.IsLoggingOut))
+            {
+                if (viewModel.IsLoggingOut)
+                {
+                    var window = (Application.Current as App).MainWindow;
+                    (Application.Current as App).IsClosedFromAuthenticateWindow = true;
+                    window.Close();
+                }
+            }
         }
 
         private void resetPasswordBtn_Click(object sender, RoutedEventArgs e)

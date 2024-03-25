@@ -67,24 +67,13 @@ namespace CinemaManagement
 
             // For debugging
             // AuthenticationControl.DestroySession();
-
-            //formerData = AuthenticationControl.RestoreSession();
-            //EnsureWindow();
-            //_mainWindow.Closed += (sender, e) =>
-            //{
-            //    if (IsClosedFromAuthenticateWindow)
-            //    {
-            //        Debug.WriteLine("Closed from AuthenticateWindow");
-            //        formerData = AuthenticationControl.RestoreSession();
-            //        EnsureWindow();
-            //        IsClosedFromAuthenticateWindow = false;
-            //    }
-            //};
+            EnsureWindow();
 
         }
 
         private void EnsureWindow()
         {
+            formerData = AuthenticationControl.RestoreSession();
             if (formerData.Item1)
             {
                 var uid = formerData.Item2;
@@ -107,6 +96,17 @@ namespace CinemaManagement
             {
                 frameworkElement.RequestedTheme = _mainWindow is AdminWindow ? ElementTheme.Light : ElementTheme.Dark;
             }
+
+            _mainWindow.Closed += (sender, e) =>
+            {
+                if (IsClosedFromAuthenticateWindow)
+                {
+                    Debug.WriteLine("Closed from AuthenticateWindow");
+                    formerData = AuthenticationControl.RestoreSession();
+                    EnsureWindow();
+                    IsClosedFromAuthenticateWindow = false;
+                }
+            };
         }
 
     }
