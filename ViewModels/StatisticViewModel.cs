@@ -1041,6 +1041,9 @@ namespace CinemaManagement.ViewModels
             MovieResult = SelectedItem;
             if(MovieResult != null)
             {
+                ShowTimeList.Clear();
+                ShowTimeDate.Clear();
+                ShowTimeDate.Add("All");
                 var res = db.ShowTimes.Where(st => st.MovieId == MovieResult.MovieId).ToList();
                 foreach (var item in res)
                 {
