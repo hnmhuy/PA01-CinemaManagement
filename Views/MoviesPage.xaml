@@ -280,7 +280,7 @@
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-                                                    <Button Style="{StaticResource AccentButtonStyle}" Padding="10" >
+                                                <Button Style="{StaticResource AccentButtonStyle}" Padding="10" Click="EditButton_Click">
                                                         <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                     </Button>
                                                 <Button Style="{StaticResource AccentButtonStyle}" Padding="10" 
@@ -383,7 +383,7 @@
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-                                                <Button Style="{StaticResource AccentButtonStyle}" Padding="8" >
+                                                <Button Style="{StaticResource AccentButtonStyle}" Padding="8" Click="EditButton_Click">
                                                     <FontIcon Glyph="&#xE70F;" FontFamily="{StaticResource FIcon}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                 </Button>
                                                 <Button Style="{StaticResource AccentButtonStyle}" Padding="8" 
