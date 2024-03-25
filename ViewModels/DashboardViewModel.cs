@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.EntityFrameworkCore;
+using CinemaManagement.Views;
 namespace CinemaManagement.ViewModels
 {
     class DashboardViewModel
@@ -89,6 +90,7 @@ namespace CinemaManagement.ViewModels
             ShowTimesToday = CountShowTimesToday();
             ShowTimesThisWeek = CountShowTimesThisWeek();
             ShowTimesThisMonth = CountShowTimesThisMonth();
+            TopHighestGrossing();
         }
 
         private void TopHighestGrossing()
@@ -97,25 +99,30 @@ namespace CinemaManagement.ViewModels
             {
                 TopHighestGrossingMovies = new ObservableCollection<MovieWrapper>();
             }
-            var topMovies = db.ShowTimes
-                           .Include(st => st.Movie)
-                           .Include(st => st.Tickets)
-                           .GroupBy(st => new { st.MovieId, st.Movie.Title, st.Movie.Duration, st.Movie.PublishYear, st.Movie.PosterPath, st.Movie.Genres, st.Movie.Imdbrating })
-                           .Select(g => new
-                           {
-                               g.Key.MovieId,
-                               g.Key.Title,
-                               g.Key.PosterPath,
-                               g.Key.Duration,
-                               g.Key.PublishYear,
-                               g.Key.Genres,
-                               g.Key.Imdbrating,
-                               Revenue = g.Sum(st => st.Tickets.Where(t => t.IsAvailable == false).Sum(t => t.Price))
-                           })
-                           .OrderByDescending(m => m.Revenue)
-                           .Take(10)
-                           .ToList();
-            for(int i = 0; i < topMovies.Count; i++)
+
+            var showTimes = db.ShowTimes
+                   .Include(st => st.Movie)
+                   .Include(st => st.Tickets)
+                   .ToList();  // Load data into memory
+
+            var topMovies = showTimes
+                            .GroupBy(st => new { st.MovieId, st.Movie.Title, st.Movie.Duration, st.Movie.PublishYear, st.Movie.PosterPath, Genres = string.Join(", ", st.Movie.Genres.Select(g => g.GenreName)), st.Movie.Imdbrating })
+                            .Select(g => new
+                            {
+                                g.Key.MovieId,
+                                g.Key.Title,
+                                g.Key.PosterPath,
+                                g.Key.Duration,
+                                g.Key.PublishYear,
+                                g.Key.Genres,
+                                g.Key.Imdbrating,
+                                Revenue = g.Sum(st => st.Tickets.Where(t => t.IsAvailable == false).Sum(t => t.Price))
+                            })
+                            .OrderByDescending(m => m.Revenue)
+                            .Take(10)
+                            .ToList();
+
+            for (int i = 0; i < topMovies.Count; i++)
             {
                 TopHighestGrossingMovies.Add(
                     new MovieWrapper(
@@ -161,9 +168,10 @@ namespace CinemaManagement.ViewModels
             }
 
             DateTime startDate = selectedDate.AddDays(-daysUntilMonday);
+            DateTime endDate = selectedDate.AddDays(8);
 
             var count = db.ShowTimes
-                               .Where(st => st.ShowDate >= startDate && st.ShowDate <= DateTime.Now)
+                               .Where(st => st.ShowDate >= startDate && st.ShowDate < endDate)
                                .Count();
             return count;
         }
