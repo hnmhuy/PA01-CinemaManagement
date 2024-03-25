@@ -1,4 +1,6 @@
 ﻿using CinemaManagement.Models;
+using CinemaManagement.Views;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -63,5 +65,11 @@ namespace CinemaManagement.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
+        public void RefreshData()
+        {
+            MoviesList.RefreshDataAsync();
+        }
+
+
     }
 }

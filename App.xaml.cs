@@ -54,7 +54,7 @@ namespace CinemaManagement
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            //var m_window = new MainWindow(1);
+            var m_window = new MainWindow(1);
             //authenticateWindow = new AuthenticateWindow(); 
             //// Set the size of the window
             //authenticateWindow.Activate();
@@ -62,7 +62,7 @@ namespace CinemaManagement
             //AddMOvie 
 
             //var m_windown = new AddMovieWindows();
-            //m_window.Activate();
+            m_window.Activate();
 
 
             // For debugging

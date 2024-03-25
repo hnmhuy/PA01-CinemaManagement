@@ -14,21 +14,49 @@ namespace CinemaManagement.ViewModels
     public class MovieCommand : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public RelayCommand DeleteCommand { get; set; }
-        public Movie movie { get; set; }
 
-        public MovieCommand(Movie _movie, RelayCommand _deleteCommand)
+        private Movie _movie;
+
+        public Movie movie
+        {
+            get { return _movie; }
+            set
+            {
+                if (_movie != value)
+                {
+                    _movie = value;
+                    OnPropertyChanged(nameof(movie));
+                    OnPropertyChanged(nameof(Genre));
+                    OnPropertyChanged(nameof(IMDbRating));
+                }
+            }
+        }
+
+        public string Genre
+        {
+            get
+            {
+                // Combine genre names into a single string
+                return string.Join(", ", _movie?.Genres.Select(g => g.GenreName));
+            }
+        }
+
+        public double IMDbRating
+        {
+            get { return _movie.Imdbrating?? 0.0; }
+        }
+        public RelayCommand DeleteCommand { get; set; }
+
+        public MovieCommand(Movie _movie, RelayCommand DeleteCommand)
         {
             this.movie = _movie;
-            this.DeleteCommand = _deleteCommand;
+            this.DeleteCommand =DeleteCommand;
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-
     }
 
     public class MovieViewModel : INotifyPropertyChanged
@@ -81,10 +109,54 @@ namespace CinemaManagement.ViewModels
             _context = context;
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
             MoviesList = GenerateSampleData(DeleteCommand);
+            //LoadMovies(_context);
             SelectedMovie = MoviesList[0];
             Debug.WriteLine(MoviesList[0].movie.Title);
             Debug.WriteLine(MoviesList[0].movie.PosterPath);
+            
 
+        }
+
+        public async Task RefreshDataAsync()
+        {
+            try
+            {
+                // Fetch the movies from the database again
+                var movies = await _context.Movies
+                    .Include(m => m.Genres)
+                    .ToListAsync();
+
+                foreach (var movie in movies)
+                {
+                    var existingMovieCommand = MoviesList.FirstOrDefault(mc => mc.movie.MovieId == movie.MovieId);
+                    if (existingMovieCommand != null)
+                    {
+                        // Update the MovieCommand with the latest Movie object
+                        existingMovieCommand.movie = movie;
+                    }
+                    else
+                    {
+                        // If the MovieCommand doesn't exist, add a new one
+                        MoviesList.Add(new MovieCommand(movie, DeleteCommand));
+                    }
+                }
+
+                // Remove any MovieCommand instances that are not present in the fetched movies
+                var movieIds = movies.Select(m => m.MovieId).ToList();
+                var movieCommandsToRemove = MoviesList.Where(mc => !movieIds.Contains(mc.movie.MovieId)).ToList();
+                foreach (var movieCommandToRemove in movieCommandsToRemove)
+                {
+                    MoviesList.Remove(movieCommandToRemove);
+                }
+
+                // Notify property changed for any bound properties
+                OnPropertyChanged(nameof(MoviesList));
+                OnPropertyChanged(nameof(SelectedMovie)); // If you want to update bindings for SelectedMovie
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error refreshing data: {ex.Message}");
+            }
         }
 
         private async Task DeleteMovieAsync(Movie movie)
@@ -92,13 +164,14 @@ namespace CinemaManagement.ViewModels
             try
             {
                 // Remove all contributors associated with the movie
-                _context.Contributors.RemoveRange(movie.Contributors);
+                var contributorsToDelete = _context.Contributors.Where(c => c.MovieId == movie.MovieId);
+                _context.Contributors.RemoveRange(contributorsToDelete);
 
                 // Remove all show times associated with the movie
                 _context.ShowTimes.RemoveRange(movie.ShowTimes);
 
                 // Clear the genres associated with the movie
-                movie.Genres.Clear();
+                _context.Genres.RemoveRange(movie.Genres);
 
                 // Save changes to the database
                 _context.Movies.Remove(movie);
@@ -297,9 +370,7 @@ namespace CinemaManagement.ViewModels
         {
             if(value is ObservableCollection<MovieCommand> movies)
             {
-                int total = 0;
-                total = movies.Count;
-                return total;
+                return movies.Count;
             }
             return 0;
         }

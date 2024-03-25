@@ -18,6 +18,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using System.Threading.Tasks;
+using Windows.Media.Capture;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,6 +47,8 @@ namespace CinemaManagement.Views
             DataContext = ViewModel;
             //DataContext = movieViewModel; // Setting DataContext for movie-related elements
             //DataContext = genreViewModel; // Setting 
+
+            this.Loaded += MoviePage_Loaded;
 
         }
 
@@ -99,5 +103,74 @@ namespace CinemaManagement.Views
             // Activate and show the new window
             addMoviePage.Activate();
         }
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+
+            // Find the parent DataGridRow
+            var dataGridRow = FindVisualParent<DataGridRow>(button);
+
+            // Extract the DataContext 
+            if (dataGridRow != null)
+            {
+                var selectedMovie = dataGridRow.DataContext as MovieCommand;
+                if (selectedMovie != null)
+                {
+                    //Debug.WriteLine("Selected Movie: " + selectedMovie.movie.Title); // Debugging statement
+
+                    // Instantiate the EditMovieWindow
+                    EditMovieWindow editMovieWindow = new EditMovieWindow(selectedMovie.movie);
+                    //editMovieWindow.WindowClosed += EditMovieWindow_Closed;
+                    // Show the EditMovieWindow
+                    //this.Visibility = Visibility.Collapsed;
+                    //Frame.Navigate(typeof(EditMovieWindow), selectedMovie.movie);
+                    
+                    editMovieWindow.Activate();
+
+                }
+                else
+                {
+                    Debug.WriteLine("DataContext of DataGridRow is not a Movie object."); // Debugging statement
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Parent DataGridRow not found."); // Debugging statement
+            }
+
+        }
+
+        // Helper method to find visual parent of a specific type
+        public static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+
+            if (parentObject == null)
+                return null;
+
+            T parent = parentObject as T;
+            if (parent != null)
+                return parent;
+            else
+                return FindVisualParent<T>(parentObject);
+        
+        
+        }
+
+        private void MoviePage_Loaded(object sender, RoutedEventArgs e)
+        {
+            //ViewModel.RefreshData();
+        }
+
+        //protected override void OnNavigatedTo(NavigationEventArgs e)
+        //{
+        //   base.OnNavigatedTo(e);
+        //    ViewModel.RefreshData();
+        //}
+        //private void EditMovieWindow_Closed(object sender,EventArgs e)
+        //{
+        //    // Refresh data in the MoviesPage when the EditMovieWindow is closed
+        //    ViewModel.RefreshData();
+        //}
     }
 }
