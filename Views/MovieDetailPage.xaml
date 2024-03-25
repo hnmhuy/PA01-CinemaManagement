@@ -23,7 +23,9 @@
         <local:DiscountConverter x:Key="DiscountConverter" />
         <local:VisibleConverter x:Key="VisibleConverter" />
         <local:PercentConverter x:Key="PercentConverter" />
+        <vm:VIPBorderConverter x:Key="VipBorderConverter" />
         <vm:ConvertFullPath x:Key="ConvertFullPath" />
+        <vm:TicketTypeConverter x:Key="TicketTypeConverter" />
 
         <LinearGradientBrush x:Key="GradientBackground" StartPoint="0.5,0" EndPoint="0.5,1">
             <GradientStop Offset="0.0" Color="#99000000" />
@@ -171,33 +173,40 @@
         <!--  Data template  -->
 
         <DataTemplate x:Key="Seat" x:DataType="m:Ticket">
-            <ToggleButton
-                Name="InteractiveSeat"
-                Width="50"
-                Height="50"
-                Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
-                Checked="InteractiveSeat_Checked"
-                IsChecked="False"
-                IsEnabled="{Binding IsAvailable}"
-                Unchecked="InteractiveSeat_Unchecked">
-                <StackPanel Orientation="Vertical">
-                    <FontIcon
-                        FontFamily="{StaticResource FIcon}"
-                        FontSize="18"
-                        Glyph="&#xE747;" />
-                    <FontIcon
-                        Margin="0,-10,0,-8"
-                        FontFamily="{StaticResource FIcon}"
-                        FontSize="25"
-                        FontWeight="Bold"
-                        Glyph="&#xE75D;" />
+            <Border
+                Width="52"
+                Height="52"
+                BorderBrush="{StaticResource AccentAAFillColorDefaultBrush}"
+                BorderThickness="{Binding IsVip, Converter={StaticResource VipBorderConverter}}"
+                CornerRadius="5">
+                <ToggleButton
+                    Name="InteractiveSeat"
+                    Width="50"
+                    Height="50"
+                    Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
+                    Checked="InteractiveSeat_Checked"
+                    IsChecked="False"
+                    IsEnabled="{Binding IsAvailable}"
+                    Unchecked="InteractiveSeat_Unchecked">
+                    <StackPanel Orientation="Vertical">
+                        <FontIcon
+                            FontFamily="{StaticResource FIcon}"
+                            FontSize="18"
+                            Glyph="&#xE747;" />
+                        <FontIcon
+                            Margin="0,-10,0,-8"
+                            FontFamily="{StaticResource FIcon}"
+                            FontSize="25"
+                            FontWeight="Bold"
+                            Glyph="&#xE75D;" />
 
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock FontSize="10" Text="{Binding Row}" />
-                        <TextBlock FontSize="10" Text="{Binding Col}" />
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock FontSize="10" Text="{Binding Row}" />
+                            <TextBlock FontSize="10" Text="{Binding Col}" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </ToggleButton>
+                </ToggleButton>
+            </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="RowName" x:DataType="x:String">
@@ -297,7 +306,7 @@
                     Orientation="Vertical">
                     <TextBlock
                         FontSize="14"
-                        Text="Normal seat"
+                        Text="{Binding IsVip, Converter={StaticResource TicketTypeConverter}}"
                         TextAlignment="Left" />
                     <TextBlock FontSize="14" Text="{Binding Price, Converter={StaticResource VietnameseCurrencyConverter}}" />
                 </StackPanel>
@@ -710,10 +719,11 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel
                         Grid.Column="0"
-                        HorizontalAlignment="Right"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Spacing="4">
                         <Border
@@ -750,7 +760,38 @@
                         Spacing="4">
                         <Border
                             Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
-                            BorderBrush="{StaticResource ToggleButtonBorderThemeBrush}"
+                            BorderBrush="{StaticResource AccentAAFillColorDefaultBrush}"
+                            Style="{StaticResource SeatStyleBorder}">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <FontIcon
+                                    FontFamily="{StaticResource FIcon}"
+                                    FontSize="18"
+                                    Glyph="&#xE747;" />
+                                <FontIcon
+                                    Margin="0,-10,0,-8"
+                                    FontFamily="{StaticResource FIcon}"
+                                    FontSize="25"
+                                    FontWeight="Bold"
+                                    Glyph="&#xE75D;" />
+                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <TextBlock FontSize="10" Text="##" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Text="VIP Seat" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Column="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="4">
+                        <Border
+                            Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
+                            BorderBrush="LightGray"
                             Style="{StaticResource SeatStyleBorder}">
                             <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                                 <FontIcon
@@ -775,8 +816,8 @@
                     </StackPanel>
 
                     <StackPanel
-                        Grid.Column="2"
-                        HorizontalAlignment="Left"
+                        Grid.Column="3"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Spacing="4">
                         <Border

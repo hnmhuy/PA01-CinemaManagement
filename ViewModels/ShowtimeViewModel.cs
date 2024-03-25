@@ -18,12 +18,16 @@ namespace CinemaManagement.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public RelayCommand DeleteCommand { get; set; }
+        public RelayCommand EditCommand { get; set; }
         public ShowTime Showtime { get; set; }
 
-        public ShowtimeCommand(ShowTime _Showtime, RelayCommand _deleteCommand)
+        public int selectedIndex { get; set; }
+
+        public ShowtimeCommand(ShowTime _Showtime, RelayCommand _deleteCommand, RelayCommand editCommand)
         {
             this.Showtime = _Showtime;
             this.DeleteCommand = _deleteCommand;
+            this.EditCommand = editCommand;
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -31,13 +35,13 @@ namespace CinemaManagement.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
     }
     public class ShowtimeViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public ObservableCollection<ShowtimeCommand> ShowtimesList { get; set; }
         public RelayCommand DeleteCommand { get; set; }
+        public RelayCommand EditCommand { get; set; }
         private readonly DbCinemaManagementContext _context;
         private ICollection<Ticket> TicketsList { get; set; }
         public List<Movie> MoviesList { get; set; }
@@ -46,7 +50,6 @@ namespace CinemaManagement.ViewModels
         public RelayCommand AddNewShowtimeCommand { get; set; }
 
         private ShowTimeModifyWindow _showTimeModifyWindow;
-
 
         private int _totalTickets;
         public int TotalTickets
@@ -75,11 +78,31 @@ namespace CinemaManagement.ViewModels
             //MoviesList = GenerateMovieListData();
             //ShowtimesList = GenerateSampleData();
             DeleteCommand = new RelayCommand(OnDelete, CanDelete);
-            ShowtimesList = GenerateSampleData(DeleteCommand);
+            EditCommand = new RelayCommand(OnEdit, CanEdit);
+            ShowtimesList = GenerateSampleData(DeleteCommand, EditCommand);
             SelectedShowtime = ShowtimesList[0];
             TotalTickets = CalculateTotalTickets();
             TotalSaleTickets = CalculateTotalSaleTickets();
             AddNewShowtimeCommand = new RelayCommand(OnShowtimeModifyWindow);
+        }
+
+        private bool CanEdit(object arg)
+        {
+            return SelectedShowtime != null;
+        }
+
+        private void OnEdit(object obj)
+        {
+            if (_showTimeModifyWindow != null)
+            {
+                // Delete the previous window
+                _showTimeModifyWindow.Close();
+                _showTimeModifyWindow = null;
+            }
+
+            _showTimeModifyWindow = new ShowTimeModifyWindow(SelectedShowtime.Showtime);
+            _showTimeModifyWindow.Activate();
+            _showTimeModifyWindow.Closed += _showTimeModifyWindow_Closed;
         }
 
         public ShowtimeViewModel()
@@ -162,7 +185,7 @@ namespace CinemaManagement.ViewModels
         //    }
         //}
 
-        private ObservableCollection<ShowtimeCommand> GenerateSampleData(RelayCommand DeleteCommand)
+        private ObservableCollection<ShowtimeCommand> GenerateSampleData(RelayCommand DeleteCommand, RelayCommand EditCommand)
         {
             // Generate sample data for G
             ObservableCollection<ShowtimeCommand> res = new ObservableCollection<ShowtimeCommand>();
@@ -172,7 +195,7 @@ namespace CinemaManagement.ViewModels
 
             foreach (var show in ShowTimes)
             {
-                res.Add(new ShowtimeCommand(show, DeleteCommand));
+                res.Add(new ShowtimeCommand(show, DeleteCommand, EditCommand));
             }
             return res;
 
@@ -330,17 +353,26 @@ namespace CinemaManagement.ViewModels
 
         private void _showTimeModifyWindow_Closed(object sender, Microsoft.UI.Xaml.WindowEventArgs args)
         {
-            if (_showTimeModifyWindow.returnVal.Item1)
+            if (_showTimeModifyWindow.returnVal.Item1 && _showTimeModifyWindow.returnVal.Item3 != -1)
             {
+                // Check if the showtime is already in the list
+                var currRow = ShowtimesList.Where(t => t.Showtime.ShowTimeId == _showTimeModifyWindow.returnVal.Item3).FirstOrDefault();
                 var newShowtime = _context.ShowTimes
                     .Where(st => st.ShowTimeId == _showTimeModifyWindow.returnVal.Item3)
                     .Include(st => st.Movie)
                     .Include(st => st.Tickets)
                     .FirstOrDefault();
-                // Add the new showtime to the first of the list
-                ShowtimesList.Insert(0, new ShowtimeCommand(newShowtime, DeleteCommand));
-                TotalTickets = CalculateTotalTickets();
-                TotalSaleTickets = CalculateTotalSaleTickets();
+                if (currRow == null)
+                {
+                    ShowtimesList.Insert(0, new ShowtimeCommand(newShowtime, DeleteCommand, EditCommand));
+                    TotalTickets = CalculateTotalTickets();
+                    TotalSaleTickets = CalculateTotalSaleTickets();
+                } else
+                {
+                    currRow.Showtime = newShowtime;
+                    TotalTickets = CalculateTotalTickets();
+                    TotalSaleTickets = CalculateTotalSaleTickets();
+                }
             }
         }
     }

@@ -38,17 +38,8 @@ namespace CinemaManagement.Views
 
         private void ShowtimeDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var data = sender as DataGrid;
-            Debug.WriteLine(data.SelectedIndex);
-            Debug.WriteLine(data.SelectedItem);
+            var data = sender as DataGrid;      
             (data.DataContext as ShowtimeViewModel).SelectedShowtime = data.SelectedItem as ShowtimeCommand;
-
-            //if (data != null)
-            //{
-            //    Debug.WriteLine(data.movie.Title);
-            //}
-            Debug.WriteLine(sender);
-            Debug.WriteLine(e);
         }
     }
 }

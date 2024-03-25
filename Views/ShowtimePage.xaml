@@ -157,7 +157,6 @@
 
         </StackPanel>
 
-
         <Grid
             Name="BookDateTime"
             Grid.Row="1"
@@ -214,11 +213,6 @@
                 </DropDownButton>
             </StackPanel>
         </Grid>
-
-
-
-
-
         <!--  Pivot content goes here  -->
 
         <Grid
@@ -389,7 +383,10 @@
                                         HorizontalAlignment="Center"
                                         Orientation="Horizontal"
                                         Spacing="10">
-                                        <Button Padding="10" Style="{StaticResource AccentButtonStyle}">
+                                        <Button
+                                            Padding="10"
+                                            Command="{Binding EditCommand}"
+                                            Style="{StaticResource AccentButtonStyle}">
                                             <FontIcon
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"

@@ -32,7 +32,7 @@ namespace CinemaManagement.WindowViews
         public ShowTimeModifyWindow(ShowTime showtime)
         {
             this.InitializeComponent();
-            this.Content = new ShowTimeModifierPage();
+            this.Content = new ShowTimeModifierPage(showtime);
             _viewModel = (Content as ShowTimeModifierPage)._viewModel as ShowtimeModifyViewModel;
             _viewModel.PropertyChanged += OnSaveReturnChange;
         }

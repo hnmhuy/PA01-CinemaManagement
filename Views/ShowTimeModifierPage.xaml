@@ -11,11 +11,15 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
-    <Page.DataContext>
+    <!--<Page.DataContext>
         <vm:ShowtimeModifyViewModel />
-    </Page.DataContext>
+    </Page.DataContext>-->
 
     <Page.Resources>
+
+        <vm:VIPBorderConverter x:Key="VIPBorderConverter" />
+        <local:VisibleConverter x:Key="VisibleConverter" />
+
         <Style x:Key="MapSeat" TargetType="Grid">
             <Setter Property="Padding" Value="24" />
             <Setter Property="Background" Value="{StaticResource AcrylicBackgroundFillColorBaseBrush}" />
@@ -52,33 +56,40 @@
 
         <!--  Data template  -->
         <DataTemplate x:Key="Seat" x:DataType="m:Ticket">
-            <ToggleButton
-                Name="InteractiveSeat"
-                Width="50"
-                Height="50"
-                Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
-                Checked="InteractiveSeat_Checked"
-                IsChecked="False"
-                IsEnabled="{Binding IsAvailable}"
-                Unchecked="InteractiveSeat_Unchecked">
-                <StackPanel Orientation="Vertical">
-                    <FontIcon
-                        FontFamily="{StaticResource FIcon}"
-                        FontSize="18"
-                        Glyph="&#xE747;" />
-                    <FontIcon
-                        Margin="0,-10,0,-8"
-                        FontFamily="{StaticResource FIcon}"
-                        FontSize="25"
-                        FontWeight="Bold"
-                        Glyph="&#xE75D;" />
+            <Border
+                Width="52"
+                Height="52"
+                BorderBrush="{StaticResource AccentAAFillColorDefaultBrush}"
+                BorderThickness="{Binding IsVip, Converter={StaticResource VIPBorderConverter}}"
+                CornerRadius="5">
+                <ToggleButton
+                    Name="InteractiveSeat"
+                    Width="50"
+                    Height="50"
+                    Background="{StaticResource ToggleButtonBackgroundThemeBrush}"
+                    Checked="InteractiveSeat_Checked"
+                    IsChecked="False"
+                    IsEnabled="{Binding IsAvailable}"
+                    Unchecked="InteractiveSeat_Unchecked">
+                    <StackPanel Orientation="Vertical">
+                        <FontIcon
+                            FontFamily="{StaticResource FIcon}"
+                            FontSize="18"
+                            Glyph="&#xE747;" />
+                        <FontIcon
+                            Margin="0,-10,0,-8"
+                            FontFamily="{StaticResource FIcon}"
+                            FontSize="25"
+                            FontWeight="Bold"
+                            Glyph="&#xE75D;" />
 
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock FontSize="10" Text="{Binding Row}" />
-                        <TextBlock FontSize="10" Text="{Binding Col}" />
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock FontSize="10" Text="{Binding Row}" />
+                            <TextBlock FontSize="10" Text="{Binding Col}" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </ToggleButton>
+                </ToggleButton>
+            </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="RowName" x:DataType="x:String">
@@ -109,8 +120,8 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height=".5*" />
+            <RowDefinition Height=".5*" />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -220,6 +231,7 @@
             <AutoSuggestBox
                 Name="MovieSelection"
                 DisplayMemberPath="Title"
+                IsEnabled="{Binding IsCreating}"
                 PlaceholderText="Search movie"
                 SuggestionChosen="MovieSelection_SuggestionChosen"
                 TextChanged="MovieSelection_TextChanged"
@@ -232,12 +244,14 @@
                 x:Name="DatePicker"
                 Width="400"
                 DateChanged="DatePicker_DateChanged"
-                Header="Date" />
+                Header="Date"
+                IsEnabled="{Binding IsCreating}" />
             <TimePicker
                 x:Name="TimePicker"
                 Width="400"
                 ClockIdentifier="24HourClock"
                 Header="Time"
+                IsEnabled="{Binding IsCreating}"
                 TimeChanged="TimePicker_TimeChanged" />
             <!--  Size  -->
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Seat map size" />
@@ -250,14 +264,26 @@
                 <TextBox
                     x:Name="NumberRow"
                     Width="50"
+                    IsEnabled="{Binding IsCreating}"
                     TextChanged="NumberRow_TextChanged" />
                 <TextBlock VerticalAlignment="Center" Text="Columns: " />
                 <TextBox
                     x:Name="NumberCol"
                     Width="50"
+                    IsEnabled="{Binding IsCreating}"
                     TextChanged="NumberCol_TextChanged" />
-                <Button Command="{Binding UpdateMapCommand}" Content="Generate map" />
+                <Button
+                    Command="{Binding UpdateMapCommand}"
+                    Content="Generate map"
+                    IsEnabled="{Binding IsCreating}" />
             </StackPanel>
+
+            <InfoBar
+                IsClosable="False"
+                IsIconVisible="True"
+                IsOpen="True"
+                Message="You are not able to edit these infomation!"
+                Visibility="{Binding IsCreating, Converter={StaticResource VisibleConverter}, ConverterParameter=true}" />
         </StackPanel>
 
         <StackPanel
@@ -306,7 +332,7 @@
                 IsClosable="False"
                 IsIconVisible="True"
                 IsOpen="True"
-                Message="Interact with the seat map to choose VIP ticket" />
+                Message="Check on the seats to reverse the type of seats." />
 
             <StackPanel
                 Name="ActionButtons"
@@ -315,7 +341,7 @@
                 Spacing="8">
                 <Button
                     Width="100"
-                   
+                    Command="{Binding CancelCommand}"
                     Content="Cancel" />
                 <Button
                     Width="100"

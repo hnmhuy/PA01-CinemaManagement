@@ -31,16 +31,30 @@ namespace CinemaManagement.Views
         public ShowtimeModifyViewModel _viewModel;
         private int _screenWidth;
         private int _screenHeight;
+        private ShowTime _showtime;
         private ObservableCollection<Movie> filteredMovies;
 
-        public ShowTimeModifierPage()
+        public ShowTimeModifierPage(ShowTime showTime)
         {
             this.InitializeComponent();
-            _viewModel = new ShowtimeModifyViewModel();
+            this._showtime = showTime;
+            _viewModel = new ShowtimeModifyViewModel(showTime);
             this.DataContext = _viewModel;
             _viewModel.PropertyChanged += _viewModel_PropertyChanged;
             DatePicker.MinDate = DateTime.Now.AddDays(1);
             DatePicker.MaxDate = DateTime.Now.AddDays(8);
+            if (showTime != null)
+            {
+                BindingIfShowtimeExist();
+            }
+        }
+
+        private void BindingIfShowtimeExist()
+        {
+            DatePicker.Date = _viewModel.SelectedDate;  
+            TimePicker.Time = _viewModel.SelectedTime;
+            NumberRow.Text = _viewModel.NumberOfRows.ToString();
+            NumberCol.Text = _viewModel.NumberOfColumns.ToString();
         }
 
         private void _viewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -152,7 +166,7 @@ namespace CinemaManagement.Views
             var ticket = _viewModel.TicketList.FirstOrDefault(x => x.Row == seat.Row && x.Col == seat.Col);
             if (ticket != null)
             {
-                ticket.IsVip = true;
+                ticket.IsVip = !ticket.IsVip;
             }
 
         }
@@ -164,7 +178,7 @@ namespace CinemaManagement.Views
             var ticket = _viewModel.TicketList.FirstOrDefault(x => x.Row == seat.Row && x.Col == seat.Col);
             if (ticket != null)
             {
-                ticket.IsVip = false;
+                ticket.IsVip = !ticket.IsVip;
             }
         }
     }

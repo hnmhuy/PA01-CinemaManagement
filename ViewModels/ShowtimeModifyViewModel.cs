@@ -1,4 +1,7 @@
-﻿using CinemaManagement.Models;
+﻿using ABI.Microsoft.UI.Xaml;
+using CinemaManagement.Models;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -65,6 +68,7 @@ namespace CinemaManagement.ViewModels
 
         public RelayCommand UpdateMapCommand { get; set; }
         public RelayCommand SaveCommand { get; set; }
+        public RelayCommand CancelCommand { get; set; }
         public ObservableCollection<Ticket> TicketList { get; set; } = new ObservableCollection<Ticket>();
         public ObservableCollection<string> rowsName { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<Movie> MovieList { get; set; } = new ObservableCollection<Movie>();
@@ -126,13 +130,60 @@ namespace CinemaManagement.ViewModels
             }
         }
 
-        public ShowtimeModifyViewModel()
+        private bool _isCreating { get; set; }
+        public bool IsCreating
         {
-            UpdateMapCommand = new RelayCommand(UpdateMap);
-            SaveCommand = new RelayCommand(OnSave);
+            get { return _isCreating; }
+            set
+            {
+                _isCreating = value;
+                OnPropertyChanged(nameof(IsCreating));
+            }
+        }
+
+        private ShowTime _editingShowtime;
+
+        public ShowtimeModifyViewModel(ShowTime showtime)
+        {
+            this._editingShowtime = showtime;
             LoadMovie();
-            VipPrice = 0;
-            NormalPrice = 0;
+            CancelCommand = new RelayCommand(OnCancle);
+            if (showtime == null)
+            {
+                IsCreating = true;
+                UpdateMapCommand = new RelayCommand(UpdateMap);
+                SaveCommand = new RelayCommand(OnSave);
+                VipPrice = 0;
+                NormalPrice = 0;
+            } else
+            {
+                IsCreating = false;
+                // Find the current movie of showtime and select it
+                SelectedMovie = MovieList.FirstOrDefault(x => x.MovieId == showtime.MovieId);
+                SelectedDate = showtime.ShowDate;
+                SelectedTime = showtime.ShowDate.TimeOfDay;
+                NumberOfRows = showtime.MaxRow;
+                NumberOfColumns = showtime.MaxCol;
+                CalculateMapSize();
+                ConvertIndexesToLetters(NumberOfRows);
+                var tickets = db.Tickets.Where(t => t.ShowTimeId == showtime.ShowTimeId).ToList();
+                TicketList.Clear();
+                foreach (Ticket t in tickets)
+                {
+                    TicketList.Add(t);
+                }
+                _normalPrice = TicketList.Where(t => t.IsVip == false).FirstOrDefault().Price;
+                var temp = TicketList.Where(t => t.IsVip == true).FirstOrDefault();
+                if (temp != null)
+                {
+                    _vipPrice = temp.Price;
+                } else
+                {
+                    _vipPrice = 0;
+                }
+
+                SaveCommand = new RelayCommand(OnSaveEdit);
+            }
         }
 
         private void LoadMovie()
@@ -191,8 +242,8 @@ namespace CinemaManagement.ViewModels
 
         public void CalculateMapSize()
         {
-            MapHeight = NumberOfRows * 50 + (NumberOfRows) * 12;
-            MapWidth = NumberOfColumns * 50 + (NumberOfColumns) * 12;
+            MapHeight = NumberOfRows * 52 + (NumberOfRows) * 12;
+            MapWidth = NumberOfColumns * 52 + (NumberOfColumns) * 12;
         }
 
         public bool CanUpdateMap(object obj)
@@ -283,10 +334,59 @@ namespace CinemaManagement.ViewModels
             }
         }
 
+        public void OnSaveEdit(object obj)
+        {
+            if (CanSave() && db.Database.CanConnect())
+            {
+                UpdateTicketPrice();
+                // Update the list of tickets in the showtime   
+                var dbTicket = db.Tickets.Where(t => t.ShowTimeId == _editingShowtime.ShowTimeId).ToList(); 
+                foreach(Ticket t in TicketList)
+                {
+                    var temp = dbTicket.FirstOrDefault(x => x.TicketId == t.TicketId);
+                    if (temp != null)
+                    {
+                        temp.Price = t.Price;
+                        temp.IsVip = t.IsVip;
+                    }
+                }
+                try
+                {
+                    db.SaveChanges();
+                    returnValue = (true, "Showtime updated successfully", _editingShowtime.ShowTimeId);
+                    IsSaved = true;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    returnValue = (false, "Error updating showtime! " + e.Message, -1);
+                    IsSaved = false;
+                }
+            }
+        }
+
         public void OnCancle(object obj)
         {
             returnValue = (false, "Operation canceled", -1);
             IsSaved = false;
+        }
+    }
+
+    public class VIPBorderConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            bool isVip = (bool)value;
+            // Convert to Thickness
+            if (isVip)
+            {
+                return new Microsoft.UI.Xaml.Thickness(1);
+            } else return new Microsoft.UI.Xaml.Thickness(0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
         }
     }
 }

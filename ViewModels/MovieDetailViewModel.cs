@@ -410,8 +410,8 @@ namespace CinemaManagement.ViewModels
         }    
         private void CalculateSeatMapSize()
         {
-            SeatMapWidth = (int)displayingShowtime.MaxCol * 50 + ((int)displayingShowtime.MaxCol - 1) * 12;
-            SeatMapHeight = (int)displayingShowtime.MaxRow * 50 + ((int)displayingShowtime.MaxRow - 1) * 12;
+            SeatMapWidth = (int)displayingShowtime.MaxCol * 52 + ((int)displayingShowtime.MaxCol - 1) * 12;
+            SeatMapHeight = (int)displayingShowtime.MaxRow * 52 + ((int)displayingShowtime.MaxRow - 1) * 12;
         }
         private void LoadTicket()
         {
@@ -628,5 +628,18 @@ namespace CinemaManagement.ViewModels
         }
 
     }
-    
+
+    public class TicketTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+           bool isViP = (bool)value;
+            return isViP ? "VIP" : "Normal";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
