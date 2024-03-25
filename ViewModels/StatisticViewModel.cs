@@ -6,6 +6,7 @@ using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.VisualElements;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using SkiaSharp;
 using System;
@@ -16,21 +17,82 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Windows.Foundation.Collections;
+using Windows.UI;
+using static CinemaManagement.ViewModels.StatisticViewModel;
 
 namespace CinemaManagement.ViewModels
 {
+
     class StatisticViewModel : ObservableObject, INotifyPropertyChanged
     {
+
+
+        public DateTime minDate = new DateTime(2020, 1, 1);
+        public DateTime maxDate = DateTime.Now;
         public ObservableCollection<ShowTime> ShowTimeList { get; set; }
-        public ISeries[] SeriesMonth { get; set; }
-        public ISeries[] SeriesYear { get; set; }
-        public ISeries[] SeriesDay { get; set; }
-        public ISeries[] SeriesWeek { get; set; }
+        public ObservableCollection<string> ShowTimeDate { get; set; }
+        public bool _isSelected;
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+
+        public ISeries[] _seriesMonth;
+        public ISeries[] SeriesMonth
+        {
+            get { return _seriesMonth; }
+            set
+            {
+                _seriesMonth = value;
+                OnPropertyChanged(nameof(SeriesMonth));
+            }
+        }
+
+        public ISeries[] _seriesYear;
+        public ISeries[] SeriesYear
+        {
+            get { return _seriesYear; }
+            set
+            {
+                _seriesYear = value;
+                OnPropertyChanged(nameof(SeriesYear));
+            }
+        }
+
+        public ISeries[] _seriesDay;
+        public ISeries[] SeriesDay {
+            get { return _seriesDay; }
+            set
+            {
+                _seriesDay = value;
+                OnPropertyChanged(nameof(SeriesDay));
+            }
+        }
+        public ISeries[] _seriesWeek;
+        public ISeries[] SeriesWeek
+        {
+            get { return _seriesWeek; }
+            set
+            {
+                _seriesWeek = value;
+                OnPropertyChanged(nameof(SeriesWeek));
+            }
+        }
+
         public Axis[] XAxesMonth { get; set; }
         public Axis[] XAxesDay { get; set; }
         public Axis[] XAxesWeek { get; set; }
         public Axis[] XAxesYear { get; set; }
         public RelayCommand CheckRevenue { get; set; }
+        public RelayCommand Search { get; set; }
+        public RelayCommand Clear { get; set; }
         public new event PropertyChangedEventHandler PropertyChanged;
         private new void OnPropertyChanged(string propertyName)
         {
@@ -38,7 +100,17 @@ namespace CinemaManagement.ViewModels
         }
 
         private LabelVisual _titleMonth;
-
+        public string _selectedShowTime;
+        public string SelectedShowTime
+        { 
+            get { return _selectedShowTime; }
+            set
+            {
+                _selectedShowTime = value;
+                OnPropertyChanged(nameof(SelectedShowTime));
+                UpdateChart();
+            }
+        }
         public LabelVisual TitleMonth
         {
             get { return _titleMonth; }
@@ -97,26 +169,65 @@ namespace CinemaManagement.ViewModels
             }
         }
 
-        private string _selectedMode;
-        public string SelectedMode
+        public DateTimeOffset? _selectedYear;
+
+        public DateTimeOffset? SelectedYear
         {
-            get { return _selectedMode; }
+            get { return _selectedYear; }
             set
             {
-                _selectedMode = value;
-                OnPropertyChanged(nameof(SelectedMode));
+                _selectedYear = value;
+                OnPropertyChanged(nameof(SelectedYear));
+                UpdateChart();
             }
         }
-        public ObservableCollection<string> Modes { get; set; }
-        private ObservableCollection<string> _allCats;
-        private ObservableCollection<string> _filteredCats;
-        public ObservableCollection<string> FilteredCats
+
+        public DateTimeOffset? _selectedWeek;
+        public DateTimeOffset? SelectedWeek
         {
-            get => _filteredCats;
+            get { return _selectedWeek; }
             set
             {
-                _filteredCats = value;
-                OnPropertyChanged();
+                _selectedWeek = value;
+                OnPropertyChanged(nameof(SelectedWeek));
+            }
+        }
+
+        public DateTimeOffset? _SelectedDayFrom;
+        public DateTimeOffset? SelectedDayFrom
+        {
+            get { return _SelectedDayFrom; }
+            set
+            {
+                _SelectedDayFrom = value;
+                OnPropertyChanged(nameof(SelectedDayFrom));
+            }
+        }
+
+        public DateTimeOffset? _SelectedDayTo;
+        public DateTimeOffset? SelectedDayTo
+        {
+            get { return _SelectedDayTo; }
+            set
+            {
+                _SelectedDayTo = value;
+                Debug.WriteLine(_SelectedDayTo.ToString());
+                OnPropertyChanged(nameof(SelectedDayTo));
+            }
+        }
+
+        public ObservableCollection<string> Modes { get; set; }
+
+        public ObservableCollection<Movie> _allMovies;
+        public ObservableCollection<string> _allMovieTitles;
+        public ObservableCollection<string> _filteredMovies;
+        public ObservableCollection<string> FilteredMovies
+        {
+            get => _filteredMovies;
+            set
+            {
+                _filteredMovies = value;
+                OnPropertyChanged(nameof(FilteredMovies));
             }
         }
 
@@ -128,12 +239,12 @@ namespace CinemaManagement.ViewModels
             {
                 _searchText = value;
                 OnPropertyChanged();
-                FilterCats();
+                FilterMovies();
             }
         }
 
-        private string _selectedItem;
-        public string SelectedItem
+        private Movie _selectedItem;
+        public Movie SelectedItem
         {
             get => _selectedItem;
             set
@@ -142,16 +253,34 @@ namespace CinemaManagement.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public DbCinemaManagementContext db = new DbCinemaManagementContext();
         public StatisticViewModel()
         {
+            SelectedDayFrom = new DateTimeOffset(DateTime.Now);
+            SelectedDayTo = new DateTimeOffset(DateTime.Now);
+            SelectedYear = new DateTimeOffset(DateTime.Now);
+            SelectedWeek = new DateTimeOffset(DateTime.Now);
             var values = new ObservableCollection<DateTimePoint>();
-            _allCats = new ObservableCollection<string>()
+            ShowTimeList = new ObservableCollection<ShowTime>();
+            ShowTimeDate = new ObservableCollection<string>();
+            ShowTimeDate.Add("All");
+            var allMovies = db.Movies.ToList();
+
+            Debug.WriteLine(allMovies.Count);
+
+            _allMovies = new ObservableCollection<Movie>(allMovies);
+            _allMovieTitles = new ObservableCollection<string>();
+            foreach(Movie movie in _allMovies)
             {
-                "Abyssinian",
-                "Aegean",
-                "American Bobtail",
-            };
-            _filteredCats = new ObservableCollection<string>(_allCats);
+                _allMovieTitles.Add(movie.Title);
+            }
+            _filteredMovies = new ObservableCollection<string>();
+            foreach (var movie in allMovies)
+            {
+                _filteredMovies.Add(movie.Title);
+            }
+
             TitleDay =
             new LabelVisual
             {
@@ -186,191 +315,762 @@ namespace CinemaManagement.ViewModels
             };
             XAxesWeek = new Axis[]
             {
-                    new DateTimeAxis(TimeSpan.FromDays(1), date => date.ToString("ddd", CultureInfo.InvariantCulture))
+                    new DateTimeAxis(TimeSpan.FromDays(1), date => date.ToString("dd", CultureInfo.InvariantCulture))
             };
-            ObservableCollection<ShowTime> res = new ObservableCollection<ShowTime>();
-            var showTime1 = new ShowTime
-            {
-                ShowTimeId = 1,
-                MovieId = 1,
-                ShowDate = DateTime.Parse("2024-03-19 10:30:00"),
-                MaxRow = 12,
-                MaxCol = 10,
-                Tickets = new List<Ticket>
-                {
-                    new Ticket { TicketId = 1, IsAvailable = true, Price = 10, ShowTimeId = 1 },
-                    new Ticket { TicketId = 2, IsAvailable = false, Price = 10, ShowTimeId = 1 },
-                    new Ticket { TicketId = 3, IsAvailable = true, Price = 10, ShowTimeId = 1 },
-                    // Add more tickets for ShowTime 1 as needed
-                }
-            };
-            res.Add(showTime1);
+            
+            CalculateMovieRevenueFromDayToDay(SelectedDayFrom, SelectedDayTo);
+            CalculateMovieRevenueInAWeek(SelectedWeek);
+            CalculateMovieRevenueInMonths(SelectedYear);
+            CalculateMovieRevenueInYears();
 
-            var showTime2 = new ShowTime
-            {
-                ShowTimeId = 2,
-                MovieId = 2,
-                ShowDate = DateTime.Parse("2024-02-15 10:30:00"),
-                MaxRow = 12,
-                MaxCol = 10,
-                Tickets = new List<Ticket>
-                {
-                    new Ticket { TicketId = 4, IsAvailable = true, Price = 10, ShowTimeId = 2 },
-                    new Ticket { TicketId = 5, IsAvailable = true, Price = 10, ShowTimeId = 2 },
-                    // Add more tickets for ShowTime 2 as needed
-                }
-            };
-
-            // Add ShowTime 2 to the result list
-            res.Add(showTime2);
-
-
-
-            var showTime3 = new ShowTime
-            {
-                ShowTimeId = 3,
-                MovieId = 3,
-                ShowDate = DateTime.Parse("2024-03-20 15:30:00"),
-                MaxRow = 12,
-                MaxCol = 10,
-                Tickets = new List<Ticket>
-                {
-                    new Ticket { TicketId = 6, IsAvailable = true, Price = 10, ShowTimeId = 3 },
-                    new Ticket { TicketId = 7, IsAvailable = false, Price = 10, ShowTimeId = 3 },
-                    new Ticket { TicketId = 8, IsAvailable = true, Price = 15, ShowTimeId = 3 },
-                    new Ticket { TicketId = 9, IsAvailable = false, Price = 20, ShowTimeId = 3 },
-                    new Ticket { TicketId = 10, IsAvailable = true, Price = 10, ShowTimeId = 3 },
-                    // Add more tickets for ShowTime 3 as needed
-                }
-            };
-
-            // Add ShowTime 3 to the result list
-            res.Add(showTime3);
-
-            ShowTimeList = res;
-            //DateTime selectedDate = new DateTime(2021, 1, 1);
-            //int daysUntilMonday = (int)selectedDate.DayOfWeek - (int)DayOfWeek.Monday;
-            //if (daysUntilMonday < 0)
+            //SeriesMonth = new ISeries[]
             //{
-            //    daysUntilMonday += 7;
-            //}
+            //    new PolarLineSeries<ObservablePolarPoint>
+            //    {
+            //        Values = new[]
+            //    {
+            //        new ObservablePolarPoint(0, 10),
+            //        new ObservablePolarPoint(45, 15),
+            //        new ObservablePolarPoint(90, 20),
+            //        new ObservablePolarPoint(135, 25),
+            //        new ObservablePolarPoint(180, 30),
+            //        new ObservablePolarPoint(225, 35),
+            //        new ObservablePolarPoint(270, 40),
+            //        new ObservablePolarPoint(315, 45),
+            //        new ObservablePolarPoint(360, 50),
+            //    },
+            //        IsClosed = false,
+            //        Fill = null
+            //    }
+            //};
 
-            //DateTime startDate = selectedDate.AddDays(-daysUntilMonday);
 
-            //for (int i = 0; i < 7; i++)
-            //{
-            //    DateTime date = startDate.AddDays(i);
-            //    int value = i % 2 == 0 ? 3 : 5;
-            //    values.Add(new DateTimePoint(date, value));
-            //}
+            MovieResult = SelectedItem;
+            Search = new RelayCommand(SearchItem);
+            Clear = new RelayCommand(ClearItem);
+        }
 
-            for (int i = 1; i <= 7; i++)
+        public class MonthlyRevenue
+        {
+            public DateTime Month { get; set; }
+            public double Revenue { get; set; }
+        }
+
+        public class DailyRevenue
+        {
+            public DateTime Date { get; set; }
+            public double Revenue { get; set; }
+        }
+
+        public void CalculateShowTimeRevenueInYears(ShowTime ShowTimeDate)
+        {
+            Debug.WriteLine("Function runs.");
+            var yearlyRevenues = new ObservableCollection<DailyRevenue>();
+            DateTimeOffset startDate = new DateTimeOffset(SelectedDayFrom.Value.Year, SelectedDayFrom.Value.Month, SelectedDayFrom.Value.Day, 0, 0, 0, SelectedWeek.Value.Offset);
+            Debug.WriteLine(SelectedDayFrom);
+            Debug.WriteLine(SelectedDayTo);
+
+            int YearNow = DateTime.Now.Year;
+
+            for (int year = 2020; year <= YearNow; year++)
             {
-                int value = i % 2 == 0 ? 3 : 5;
-                values.Add(new DateTimePoint(new DateTime(2024, 1, i), value));
+                var yearlyRevenue = db.ShowTimes
+                    .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                    .SelectMany(st => st.Tickets)
+                    .Where(t => !t.IsAvailable &&
+                                t.Bill.BookingTime.Year == year && t.ShowTime.ShowTimeId == ShowTimeDate.ShowTimeId)
+                    .Sum(t => t.Price);
+
+                yearlyRevenues.Add(new DailyRevenue
+                {
+                    Date = new DateTime(year, 1, 1),
+                    Revenue = yearlyRevenue
+                });
             }
-
-            SeriesDay = new ISeries[]
-{
-                new LineSeries<DateTimePoint> { Values = values }
-};
-
-            SeriesWeek = new ISeries[]
+            var values = new List<DateTimePoint>();
+            foreach (var revenue in yearlyRevenues)
             {
-                new LineSeries<DateTimePoint> { Values = values }
-            };
-
-
-            for (int i = 1; i <= 7; i++)
-            {
-                int value = i % 2 == 0 ? 3 : 5;
-                values.Add(new DateTimePoint(new DateTime(2024 + i, 1, 1), value));
+                values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
             }
-
             SeriesYear = new ISeries[]
             {
-                new LineSeries<DateTimePoint> { Values = values }
+                        new LineSeries<DateTimePoint> { Values = values }
             };
-            MovieResult = new Movie
-            {
-                MovieId = 1,
-                Title = "Avatar: The way of water",
-                Duration = 120,
-                PublishYear = 2022,
-                Imdbrating = 7.8,
-                PosterPath = "/Assets/Images/Poster/avatar_the_way_of_water.jpg",
-                Description = "\"Avatar: The Way of Water\" is a sequel to the first \"Avatar\" film, set more than a decade after the events of the first film1. The story follows the Sully family (Jake, Neytiri, and their kids) as they seek refuge with the aquatic Metkayina clan of Pandora, a habitable exomoon on which they live2",
-                TrailerPath = "/Assets/Videos/avatar.mp4",
-
-            };
-            CheckRevenue = new RelayCommand(UpdateChartTitle);
         }
-        private void FilterCats()
+
+        public void CalculateMovieRevenueInYears()
+        {
+            Debug.WriteLine("Function runs.");
+            var yearlyRevenues = new ObservableCollection<DailyRevenue>();
+            DateTimeOffset startDate = new DateTimeOffset(SelectedDayFrom.Value.Year, SelectedDayFrom.Value.Month, SelectedDayFrom.Value.Day, 0, 0, 0, SelectedWeek.Value.Offset);
+            Debug.WriteLine(SelectedDayFrom);
+            Debug.WriteLine(SelectedDayTo);
+
+            int YearNow = DateTime.Now.Year;
+
+            for (int year = 2020; year <= YearNow; year++)
+            {
+                var yearlyRevenue = db.ShowTimes
+                    .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                    .SelectMany(st => st.Tickets)   
+                    .Where(t => !t.IsAvailable &&
+                                t.Bill.BookingTime.Year == year)
+                    .Sum(t => t.Price);
+
+                yearlyRevenues.Add(new DailyRevenue
+                {
+                    Date = new DateTime(year, 1, 1),
+                    Revenue = yearlyRevenue
+                });
+            }
+            var values = new List<DateTimePoint>();
+            foreach (var revenue in yearlyRevenues)
+            {
+                values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
+            }
+            SeriesYear = new ISeries[]
+            {
+                        new LineSeries<DateTimePoint> { Values = values }
+            };
+        }
+
+        public void CalculateMovieRevenueFromDayToDay(DateTimeOffset? SelectedDayFrom, DateTimeOffset? SelectedDayTo)
+        {
+            if (SelectedDayFrom <= SelectedDayTo)
+            {
+
+                if (MovieResult != null)
+                {
+                    Debug.WriteLine("Function runs.");
+                    var dailyRevenues = new ObservableCollection<DailyRevenue>();
+                    DateTimeOffset startDate = new DateTimeOffset(SelectedDayFrom.Value.Year, SelectedDayFrom.Value.Month, SelectedDayFrom.Value.Day - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+                    Debug.WriteLine(SelectedDayFrom);
+                    Debug.WriteLine(SelectedDayTo);
+                    double days = (int) (SelectedDayTo.Value - SelectedDayFrom.Value).TotalDays + 1;
+                    if (days == 1)
+                    {
+                        for (int i = 1; i <= days; i++)
+                        {
+                            var monthlyRevenue = db.ShowTimes
+                                .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                                .SelectMany(st => st.Tickets)
+                                .Where(t => !t.IsAvailable && t.ShowTime.MovieId == MovieResult.MovieId && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                                .Sum(t => t.Price);
+
+                            dailyRevenues.Add(new DailyRevenue
+                            {
+                                Date = startDate.AddDays(i).DateTime,
+                                Revenue = monthlyRevenue
+                            });
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= days + 1; i++)
+                        {
+                            var monthlyRevenue = db.ShowTimes
+                                .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                                .SelectMany(st => st.Tickets)
+                                .Where(t => !t.IsAvailable && t.ShowTime.MovieId == MovieResult.MovieId && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                                .Sum(t => t.Price);
+
+                            dailyRevenues.Add(new DailyRevenue
+                            {
+                                Date = startDate.AddDays(i).DateTime,
+                                Revenue = monthlyRevenue
+                            });
+                        }
+                    }
+
+                    var values = new List<DateTimePoint>();
+                    foreach (var revenue in dailyRevenues)
+                    {
+                        values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
+                    }
+                    SeriesDay = new ISeries[]
+                    {
+                        new LineSeries<DateTimePoint> { Values = values }
+                    };
+
+                }
+                else
+                {
+                    Debug.WriteLine("Function runs.");
+                    var dailyRevenues = new ObservableCollection<DailyRevenue>();
+                    DateTimeOffset startDate = new DateTimeOffset(SelectedDayFrom.Value.Year, SelectedDayFrom.Value.Month, SelectedDayFrom.Value.Day - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+                    Debug.WriteLine(SelectedDayFrom);
+                    Debug.WriteLine(SelectedDayTo);
+                    double days = (int)(SelectedDayTo.Value - SelectedDayFrom.Value).TotalDays + 1;
+                    if (days == 1)
+                    {
+                        for (int i = 1; i <= days; i++)
+                        {
+                            var monthlyRevenue = db.ShowTimes
+                                .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                                .SelectMany(st => st.Tickets)
+                                .Where(t => !t.IsAvailable && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                                .Sum(t => t.Price);
+
+                            dailyRevenues.Add(new DailyRevenue
+                            {
+                                Date = startDate.AddDays(i).DateTime,
+                                Revenue = monthlyRevenue
+                            });
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= days + 1; i++)
+                        {
+                            var monthlyRevenue = db.ShowTimes
+                                .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                                .SelectMany(st => st.Tickets)
+                                .Where(t => !t.IsAvailable && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                                .Sum(t => t.Price);
+
+                            dailyRevenues.Add(new DailyRevenue
+                            {
+                                Date = startDate.AddDays(i).DateTime,
+                                Revenue = monthlyRevenue
+                            });
+                        }
+                    }
+
+                    var values = new List<DateTimePoint>();
+                    foreach (var revenue in dailyRevenues)
+                    {
+                        values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
+                    }
+                    SeriesDay = new ISeries[]
+                    {
+                        new LineSeries<DateTimePoint> { Values = values }
+                    };
+                }
+            }
+        }
+        public void CalculateShowTimeRevenueFromDayToDay(DateTimeOffset? SelectedDayFrom, DateTimeOffset? SelectedDayTo, ShowTime ShowTimeDate)
+        {
+            if (SelectedDayFrom <= SelectedDayTo)
+            {
+
+                if (MovieResult != null)
+                {
+                    Debug.WriteLine("Function runs.");
+                    var dailyRevenues = new ObservableCollection<DailyRevenue>();
+                    DateTimeOffset startDate = new DateTimeOffset(SelectedDayFrom.Value.Year, SelectedDayFrom.Value.Month, SelectedDayFrom.Value.Day - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+                    Debug.WriteLine(SelectedDayFrom);
+                    Debug.WriteLine(SelectedDayTo);
+                    double days = (int)(SelectedDayTo.Value - SelectedDayFrom.Value).TotalDays + 1;
+                    if (days == 1)
+                    {
+                        for (int i = 1; i <= days; i++)
+                        {
+                            var monthlyRevenue = db.ShowTimes
+                                .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                                .SelectMany(st => st.Tickets)
+                                .Where(t => !t.IsAvailable && t.ShowTime.ShowTimeId == ShowTimeDate.ShowTimeId && t.ShowTime.MovieId == MovieResult.MovieId && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                                .Sum(t => t.Price);
+
+                            dailyRevenues.Add(new DailyRevenue
+                            {
+                                Date = startDate.AddDays(i).DateTime,
+                                Revenue = monthlyRevenue
+                            });
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= days + 1; i++)
+                        {
+                            var monthlyRevenue = db.ShowTimes
+                                .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                                .SelectMany(st => st.Tickets)
+                                .Where(t => !t.IsAvailable && t.ShowTime.ShowTimeId == ShowTimeDate.ShowTimeId && t.ShowTime.MovieId == MovieResult.MovieId && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                                .Sum(t => t.Price);
+
+                            dailyRevenues.Add(new DailyRevenue
+                            {
+                                Date = startDate.AddDays(i).DateTime,
+                                Revenue = monthlyRevenue
+                            });
+                        }
+                    }
+
+                    var values = new List<DateTimePoint>();
+                    foreach (var revenue in dailyRevenues)
+                    {
+                        values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
+                    }
+                    SeriesDay = new ISeries[]
+                    {
+                        new LineSeries<DateTimePoint> { Values = values }
+                    };
+
+                }
+            }
+        }
+
+        public void CalculateShowTimeRevenueInAWeek(DateTimeOffset? SelectedWeek, ShowTime ShowDateTime)
+        {
+            if (MovieResult != null)
+            {
+                int daysUntilMonday = (int)SelectedWeek.Value.DayOfWeek - (int)DayOfWeek.Monday;
+                if (daysUntilMonday < 0)
+                {
+                    daysUntilMonday += 7;
+                }
+
+                DateTimeOffset startDate = new DateTimeOffset(SelectedWeek.Value.Year, SelectedWeek.Value.Month, SelectedWeek.Value.Day - daysUntilMonday - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+
+                Debug.WriteLine(startDate);
+                var weeklyRevenues = new ObservableCollection<DailyRevenue>();
+
+                for (int i = 1; i <= 7; i++)
+                {
+
+                    var monthlyRevenue = db.ShowTimes
+                        .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                        .SelectMany(st => st.Tickets)
+                        .Where(t => !t.IsAvailable && t.ShowTime.ShowTimeId == ShowDateTime.ShowTimeId && t.ShowTime.MovieId == MovieResult.MovieId && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                        .Sum(t => t.Price);
+
+
+                    weeklyRevenues.Add(new DailyRevenue
+                    {
+                        Date = startDate.AddDays(i).DateTime,
+                        Revenue = monthlyRevenue
+                    });
+                }
+
+                var values = new List<DateTimePoint>();
+
+                foreach (var revenue in weeklyRevenues)
+                {
+                    values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
+                }
+
+                SeriesWeek = new ISeries[]
+                {
+                new LineSeries<DateTimePoint> { Values = values }
+                };
+
+            }
+            else
+            {
+                int daysUntilMonday = (int)SelectedWeek.Value.DayOfWeek - (int)DayOfWeek.Monday;
+                if (daysUntilMonday < 0)
+                {
+                    daysUntilMonday += 7;
+                }
+
+                DateTimeOffset startDate = new DateTimeOffset(SelectedWeek.Value.Year, SelectedWeek.Value.Month, SelectedWeek.Value.Day - daysUntilMonday - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+
+                Debug.WriteLine(startDate);
+                var weeklyRevenues = new ObservableCollection<DailyRevenue>();
+
+                for (int i = 1; i <= 7; i++)
+                {
+
+                    var monthlyRevenue = db.ShowTimes
+                        .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                        .SelectMany(st => st.Tickets)
+                        .Where(t => !t.IsAvailable && t.ShowTime.ShowTimeId == ShowDateTime.ShowTimeId && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                        .Sum(t => t.Price);
+
+
+                    weeklyRevenues.Add(new DailyRevenue
+                    {
+                        Date = startDate.AddDays(i).DateTime,
+                        Revenue = monthlyRevenue
+                    });
+                }
+
+                var values = new List<DateTimePoint>();
+
+                foreach (var revenue in weeklyRevenues)
+                {
+                    values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
+                }
+
+                SeriesWeek = new ISeries[]
+                {
+                new LineSeries<DateTimePoint> { Values = values }
+                };
+
+            }
+        }
+
+
+        public void CalculateMovieRevenueInAWeek(DateTimeOffset? SelectedWeek)
+        {
+            if(MovieResult != null)
+            {
+                int daysUntilMonday = (int)SelectedWeek.Value.DayOfWeek - (int)DayOfWeek.Monday;
+                if (daysUntilMonday < 0)
+                {
+                    daysUntilMonday += 7;
+                }
+
+                DateTimeOffset startDate = new DateTimeOffset(SelectedWeek.Value.Year, SelectedWeek.Value.Month, SelectedWeek.Value.Day - daysUntilMonday - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+
+                Debug.WriteLine(startDate);
+                var weeklyRevenues = new ObservableCollection<DailyRevenue>();
+
+                for (int i = 1; i <= 7; i++)
+                {
+
+                    var monthlyRevenue = db.ShowTimes
+                        .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                        .SelectMany(st => st.Tickets)
+                        .Where(t => !t.IsAvailable && t.ShowTime.MovieId == MovieResult.MovieId && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                        .Sum(t => t.Price);
+
+
+                    weeklyRevenues.Add(new DailyRevenue
+                    {
+                        Date = startDate.AddDays(i).DateTime,
+                        Revenue = monthlyRevenue
+                    });
+                }
+
+                var values = new List<DateTimePoint>();
+
+                foreach (var revenue in weeklyRevenues)
+                {
+                    values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
+                }
+
+                SeriesWeek = new ISeries[]
+                {
+                new LineSeries<DateTimePoint> { Values = values }
+                };
+
+            }
+            else
+            {
+                int daysUntilMonday = (int)SelectedWeek.Value.DayOfWeek - (int)DayOfWeek.Monday;
+                if (daysUntilMonday < 0)
+                {
+                    daysUntilMonday += 7;
+                }
+
+                DateTimeOffset startDate = new DateTimeOffset(SelectedWeek.Value.Year, SelectedWeek.Value.Month, SelectedWeek.Value.Day - daysUntilMonday - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+
+                Debug.WriteLine(startDate);
+                var weeklyRevenues = new ObservableCollection<DailyRevenue>();
+
+                for (int i = 1; i <= 7; i++)
+                {
+
+                    var monthlyRevenue = db.ShowTimes
+                        .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                        .SelectMany(st => st.Tickets)
+                        .Where(t => !t.IsAvailable && t.Bill.BookingTime < startDate.AddDays(i + 1) && t.Bill.BookingTime >= startDate.AddDays(i))
+                        .Sum(t => t.Price);
+
+
+                    weeklyRevenues.Add(new DailyRevenue
+                    {
+                        Date = startDate.AddDays(i).DateTime,
+                        Revenue = monthlyRevenue
+                    });
+                }
+
+                var values = new List<DateTimePoint>();
+
+                foreach (var revenue in weeklyRevenues)
+                {
+                    values.Add(new DateTimePoint(revenue.Date, revenue.Revenue));
+                }
+
+                SeriesWeek = new ISeries[]
+                {
+                new LineSeries<DateTimePoint> { Values = values }
+                };
+
+            }
+        }
+
+        public void CalculateShowTimeRevenueInMonths(DateTimeOffset? SelectedYear, ShowTime ShowTimeDate)
+        {
+            if (MovieResult != null)
+            {
+                var monthlyRevenues = new List<MonthlyRevenue>();
+                Debug.WriteLine(SelectedYear);
+                int selectedYear = SelectedYear.Value.Year;
+
+                for (int month = 1; month <= 12; month++)
+                {
+                    DateTime startOfMonth = new DateTime(selectedYear, month, 1);
+                    DateTime endOfMonth = startOfMonth.AddMonths(1);
+
+                    var monthlyRevenue = db.ShowTimes
+                        .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                        .SelectMany(st => st.Tickets)
+                        .Where(t => !t.IsAvailable && t.ShowTime.ShowTimeId == ShowTimeDate.ShowTimeId && t.ShowTime.MovieId == MovieResult.MovieId && t.Bill.BookingTime < endOfMonth && t.Bill.BookingTime >= startOfMonth)
+                        .Sum(t => t.Price);
+
+                    monthlyRevenues.Add(new MonthlyRevenue
+                    {
+                        Month = startOfMonth,
+                        Revenue = monthlyRevenue
+                    });
+                }
+
+                SeriesMonth = new ISeries[]
+                {
+                    new PolarLineSeries<ObservablePolarPoint>
+                    {
+                        Values = new[]
+                        {
+                            new ObservablePolarPoint(0, monthlyRevenues[0].Revenue),
+                            new ObservablePolarPoint(1, monthlyRevenues[1].Revenue),
+                            new ObservablePolarPoint(2, monthlyRevenues[2].Revenue),
+                            new ObservablePolarPoint(3, monthlyRevenues[3].Revenue),
+                            new ObservablePolarPoint(4, monthlyRevenues[4].Revenue),
+                            new ObservablePolarPoint(5, monthlyRevenues[5].Revenue),
+                            new ObservablePolarPoint(6, monthlyRevenues[6].Revenue),
+                            new ObservablePolarPoint(7, monthlyRevenues[7].Revenue),
+                            new ObservablePolarPoint(8, monthlyRevenues[8].Revenue),
+                            new ObservablePolarPoint(9, monthlyRevenues[9].Revenue),
+                            new ObservablePolarPoint(10, monthlyRevenues[10].Revenue),
+                            new ObservablePolarPoint(11, monthlyRevenues[11].Revenue),
+                        },
+                        IsClosed = false,
+                        Fill = null
+                    }
+                };
+
+            }
+            else
+            {
+                var monthlyRevenues = new List<MonthlyRevenue>();
+                Debug.WriteLine(SelectedYear);
+                int selectedYear = SelectedYear.Value.Year;
+
+                for (int month = 1; month <= 12; month++)
+                {
+                    DateTime startOfMonth = new DateTime(selectedYear, month, 1);
+                    DateTime endOfMonth = startOfMonth.AddMonths(1);
+
+                    var monthlyRevenue = db.ShowTimes
+                        .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                        .SelectMany(st => st.Tickets)
+                        .Where(t => !t.IsAvailable  && t.ShowTime.ShowTimeId == ShowTimeDate.ShowTimeId && t.Bill.BookingTime < endOfMonth && t.Bill.BookingTime >= startOfMonth)
+                        .Sum(t => t.Price);
+
+                    monthlyRevenues.Add(new MonthlyRevenue
+                    {
+                        Month = startOfMonth,
+                        Revenue = monthlyRevenue
+                    });
+                }
+
+                SeriesMonth = new ISeries[]
+                {
+                    new PolarLineSeries<ObservablePolarPoint>
+                    {
+                        Values = new[]
+                        {
+                            new ObservablePolarPoint(0, monthlyRevenues[0].Revenue),
+                            new ObservablePolarPoint(1, monthlyRevenues[1].Revenue),
+                            new ObservablePolarPoint(2, monthlyRevenues[2].Revenue),
+                            new ObservablePolarPoint(3, monthlyRevenues[3].Revenue),
+                            new ObservablePolarPoint(4, monthlyRevenues[4].Revenue),
+                            new ObservablePolarPoint(5, monthlyRevenues[5].Revenue),
+                            new ObservablePolarPoint(6, monthlyRevenues[6].Revenue),
+                            new ObservablePolarPoint(7, monthlyRevenues[7].Revenue),
+                            new ObservablePolarPoint(8, monthlyRevenues[8].Revenue),
+                            new ObservablePolarPoint(9, monthlyRevenues[9].Revenue),
+                            new ObservablePolarPoint(10, monthlyRevenues[10].Revenue),
+                            new ObservablePolarPoint(11, monthlyRevenues[11].Revenue),
+                        },
+                        IsClosed = false,
+                        Fill = null
+                    }
+                };
+
+            }
+
+        }
+
+        public void CalculateMovieRevenueInMonths(DateTimeOffset? SelectedYear)
+        {
+            if(MovieResult != null)
+            {
+                var monthlyRevenues = new List<MonthlyRevenue>();
+                Debug.WriteLine(SelectedYear);
+                int selectedYear = SelectedYear.Value.Year;
+
+                for (int month = 1; month <= 12; month++)
+                {
+                    DateTime startOfMonth = new DateTime(selectedYear, month, 1);
+                    DateTime endOfMonth = startOfMonth.AddMonths(1);
+
+                    var monthlyRevenue = db.ShowTimes
+                        .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                        .SelectMany(st => st.Tickets)
+                        .Where(t => !t.IsAvailable && t.ShowTime.MovieId == MovieResult.MovieId && t.Bill.BookingTime < endOfMonth && t.Bill.BookingTime >= startOfMonth)
+                        .Sum(t => t.Price);
+
+                    monthlyRevenues.Add(new MonthlyRevenue
+                    {
+                        Month = startOfMonth,
+                        Revenue = monthlyRevenue
+                    });
+                }
+
+                SeriesMonth = new ISeries[]
+                {
+                    new PolarLineSeries<ObservablePolarPoint>
+                    {
+                        Values = new[]
+                        {
+                            new ObservablePolarPoint(0, monthlyRevenues[0].Revenue),
+                            new ObservablePolarPoint(1, monthlyRevenues[1].Revenue),
+                            new ObservablePolarPoint(2, monthlyRevenues[2].Revenue),
+                            new ObservablePolarPoint(3, monthlyRevenues[3].Revenue),
+                            new ObservablePolarPoint(4, monthlyRevenues[4].Revenue),
+                            new ObservablePolarPoint(5, monthlyRevenues[5].Revenue),
+                            new ObservablePolarPoint(6, monthlyRevenues[6].Revenue),
+                            new ObservablePolarPoint(7, monthlyRevenues[7].Revenue),
+                            new ObservablePolarPoint(8, monthlyRevenues[8].Revenue),
+                            new ObservablePolarPoint(9, monthlyRevenues[9].Revenue),
+                            new ObservablePolarPoint(10, monthlyRevenues[10].Revenue),
+                            new ObservablePolarPoint(11, monthlyRevenues[11].Revenue),
+                        },
+                        IsClosed = false,
+                        Fill = null
+                    }
+                };
+
+            } else
+            {
+                var monthlyRevenues = new List<MonthlyRevenue>();
+                Debug.WriteLine(SelectedYear);
+                int selectedYear = SelectedYear.Value.Year;
+
+                for (int month = 1; month <= 12; month++)
+                {
+                    DateTime startOfMonth = new DateTime(selectedYear, month, 1);
+                    DateTime endOfMonth = startOfMonth.AddMonths(1);
+
+                    var monthlyRevenue = db.ShowTimes
+                        .Include(st => st.Tickets).ThenInclude(t => t.Bill)
+                        .SelectMany(st => st.Tickets)
+                        .Where(t => !t.IsAvailable && t.Bill.BookingTime < endOfMonth && t.Bill.BookingTime >= startOfMonth)
+                        .Sum(t => t.Price);
+
+                    monthlyRevenues.Add(new MonthlyRevenue
+                    {
+                        Month = startOfMonth,
+                        Revenue = monthlyRevenue
+                    });
+                }
+
+                SeriesMonth = new ISeries[]
+                {
+                    new PolarLineSeries<ObservablePolarPoint>
+                    {
+                        Values = new[]
+                        {
+                            new ObservablePolarPoint(0, monthlyRevenues[0].Revenue),
+                            new ObservablePolarPoint(1, monthlyRevenues[1].Revenue),
+                            new ObservablePolarPoint(2, monthlyRevenues[2].Revenue),
+                            new ObservablePolarPoint(3, monthlyRevenues[3].Revenue),
+                            new ObservablePolarPoint(4, monthlyRevenues[4].Revenue),
+                            new ObservablePolarPoint(5, monthlyRevenues[5].Revenue),
+                            new ObservablePolarPoint(6, monthlyRevenues[6].Revenue),
+                            new ObservablePolarPoint(7, monthlyRevenues[7].Revenue),
+                            new ObservablePolarPoint(8, monthlyRevenues[8].Revenue),
+                            new ObservablePolarPoint(9, monthlyRevenues[9].Revenue),
+                            new ObservablePolarPoint(10, monthlyRevenues[10].Revenue),
+                            new ObservablePolarPoint(11, monthlyRevenues[11].Revenue),
+                        },
+                        IsClosed = false,
+                        Fill = null
+                    }
+                };
+
+            }
+
+        }
+
+        void validate()
+        {
+            CalculateMovieRevenueFromDayToDay(SelectedDayFrom, SelectedDayTo);
+            CalculateMovieRevenueInAWeek(SelectedWeek);
+            CalculateMovieRevenueInMonths(SelectedYear);
+        }
+
+        private void FilterMovies()
         {
             var splitText = SearchText?.ToLower().Split(" ") ?? Array.Empty<string>();
 
             if (splitText.Length == 0)
             {
-                // If search text is empty, reset FilteredCats to contain all categories
-                FilteredCats = new ObservableCollection<string>(_allCats);
+                FilteredMovies = new ObservableCollection<string>(_allMovieTitles);
                 return;
             }
 
-            // Filter the cats based on the search text
-            var filteredItems = _allCats.Where(cat =>
+            var filteredItems = _allMovieTitles.Where(cat =>
             {
                 return splitText.All(key => cat.ToLower().Contains(key));
             });
 
-            // Update the FilteredCats collection
-            FilteredCats.Clear();
+            FilteredMovies.Clear();
             foreach (var item in filteredItems)
             {
-                FilteredCats.Add(item);
+                FilteredMovies.Add(item);
             }
 
-            if (FilteredCats.Count == 0)
+            if (FilteredMovies.Count == 0)
             {
-                FilteredCats.Add("No results found");
+                FilteredMovies.Add("No results found");
             }
         }
 
-        // Your existing methods and constructor
 
-        private void OnSuggestionChosen(string selectedItem)
+        private void SearchItem(object obj)
         {
-            SelectedItem = selectedItem;
-        }
-
-        public ISeries[] MonthSeries { get; set; } =
-        {
-            new PolarLineSeries<ObservablePolarPoint>
+            foreach(var item in _allMovies)
             {
-                Values = new[]
+                if (SearchText == item.Title)
+                    SelectedItem = item;
+            }
+            MovieResult = SelectedItem;
+            if(MovieResult != null)
+            {
+                var res = db.ShowTimes.Where(st => st.MovieId == MovieResult.MovieId).ToList();
+                foreach (var item in res)
                 {
-                    new ObservablePolarPoint(0, 20),
-                    new ObservablePolarPoint(1, 10),
-                    new ObservablePolarPoint(2, 15),
-                    new ObservablePolarPoint(3, 20),
-                    new ObservablePolarPoint(4, 30),
-                    new ObservablePolarPoint(5, 35),
-                    new ObservablePolarPoint(6, 40),
-                    new ObservablePolarPoint(7, 45),
-                    new ObservablePolarPoint(8, 11),
-                    new ObservablePolarPoint(9, 30),
-                    new ObservablePolarPoint(10, 45),
-                    new ObservablePolarPoint(11, 50),
-                },
-                IsClosed = false,
-                Fill = null
+                    ShowTimeList.Add(item);
+                    ShowTimeDate.Add(item.ShowDate.ToString());
+                }
             }
-        };
+            validate();
+        }
+
+        private void ClearItem(object obj)
+        {
+            if(MovieResult != null)
+            {
+                if(ShowTimeList != null)
+                {
+                    ShowTimeList.Clear();
+                    MovieResult = null;
+                }
+                MovieResult = null;
+                SelectedItem = null;
+            }
+        }
+
+
 
         public PolarAxis[] MonthAxes { get; set; } =
         {
             new PolarAxis
             {
-                // force the axis to always show 360 degrees.
                 MinLimit = 0,
                 MaxLimit = 12,
                 Labeler = angle => {
@@ -383,10 +1083,29 @@ namespace CinemaManagement.ViewModels
                 MinStep = 1
             }
         };
-        private void UpdateChartTitle(object obj)
+        private void UpdateChart()
         {
-            
-        }
+            if(SelectedShowTime == "All")
+            {
+                validate();
+            } else
+            {
+                if (ShowTimeList != null)
+                {
+                    ShowTime res = new ShowTime();
+                    foreach (var showtime in ShowTimeList)
+                    {
+                        if (showtime.ShowDate.ToString() == SelectedShowTime)
+                        {
+                            res = showtime;
+                        }
+                    }
 
+                    CalculateShowTimeRevenueFromDayToDay(SelectedDayFrom, SelectedDayTo, res);
+                    CalculateShowTimeRevenueInAWeek(SelectedWeek, res);
+                    CalculateShowTimeRevenueInMonths(SelectedYear, res);
+                }
+            }
+        }
     }
 }
