@@ -154,6 +154,7 @@ namespace CinemaManagement.ViewModels
                 {
                     FullName = userData.Fullname;
                     Gender = userData.Gender;
+                    SelectedDate = new DateTimeOffset(userData.Dob);
                 }
             }
             IsAuthenticating = false;
@@ -203,14 +204,13 @@ namespace CinemaManagement.ViewModels
                 {
                     Debug.WriteLine("failed");
                 }
-                
                 context.SaveChanges();
             }
         }
 
         public void Change(object obj)
         {
-            Regex rx = new Regex(@"^(?![ .]+$)[a-zA-Z .]*$", RegexOptions.Compiled);
+            Regex rx = new Regex(@"^(?![ .]+$)[a-zA-ZÀ-ỹ\s]+$", RegexOptions.Compiled);
             MatchCollection matches1 = rx.Matches(FullName);
 
             if (matches1.Count <= 0)
@@ -255,7 +255,9 @@ namespace CinemaManagement.ViewModels
                 this.FullName = returnValue.Item2.Fullname;
                 this.Gender = returnValue.Item2.Gender;
                 // Create a date time from string
-                this.SelectedDate = new DateTimeOffset(returnValue.Item2.Dob);
+                this.SelectedDate = new DateTimeOffset(returnValue.Item2.Dob.Date);
+                Debug.WriteLine(returnValue.Item2.Dob.Date);
+                Debug.WriteLine(this.SelectedDate);
                 //this.SelectedDate = new DateTime(returnValue.Item2.Dob.Year, returnValue.Item2.Dob.Month, returnValue.Item2.Dob.Day);
                 IsAuthenticating = false;
                 IsAuthenticated = true;
