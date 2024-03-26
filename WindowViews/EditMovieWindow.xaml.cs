@@ -307,11 +307,27 @@ namespace CinemaManagement.WindowViews
                 PickAPhotoOutputTextBlock.Text = file.Name;
                 try
                 {
-                    // Get the folder where the poster will be stored
-                    StorageFolder posterFolder = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("Assets\\Images\\Poster");
 
-                    // Create a new file in the poster folder with the same name as the selected file
-                    StorageFile posterFile = await file.CopyAsync(posterFolder, file.Name, NameCollisionOption.ReplaceExisting);
+                    // Get the absolute path of the folder
+
+                    string folderPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path + "\\Assets\\Images\\Poster";
+
+                    // Checking if the folder exist or not
+                    if (!Directory.Exists(folderPath))
+                    {
+                        // If the folder does not exist, create it
+                        Directory.CreateDirectory(Windows.ApplicationModel.Package.Current.InstalledLocation.Path + "\\Assets\\Images");
+                        Directory.CreateDirectory(Windows.ApplicationModel.Package.Current.InstalledLocation.Path + "\\Assets\\Images\\Poster");
+                    }
+
+                    // Copy the selected file to the poster folder
+                    StorageFile posterFile = await file.CopyAsync(StorageFolder.GetFolderFromPathAsync(folderPath).AsTask().Result, file.Name, NameCollisionOption.ReplaceExisting);
+
+                    //// Get the folder where the poster will be stored
+                    //StorageFolder posterFolder = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync(folderPath);
+
+                    //// Create a new file in the poster folder with the same name as the selected file
+                    //StorageFile posterFile = await file.CopyAsync(posterFolder, file.Name, NameCollisionOption.ReplaceExisting);
 
                     // Optionally, you can store the path of the uploaded poster file for later use
                     string posterPath = posterFile.Path;
@@ -566,12 +582,14 @@ namespace CinemaManagement.WindowViews
 
             }
 
-            string trailerPath = string.Empty;
-            if (PickATrailerOutputTextBlock.Text != null)
-            {
-                trailerPath = "/Assets/Videos/" + PickATrailerOutputTextBlock.Text;
+            //string trailerPath = string.Empty;
+            //if (PickATrailerOutputTextBlock.Text != null)
+            //{
+            //    trailerPath = "/Assets/Videos/" + PickATrailerOutputTextBlock.Text;
 
-            }
+            //}
+
+            string trailerPath = "/Assets/Videos/dune_part_two.mp4";
 
             using (var context = new DbCinemaManagementContext())
             {

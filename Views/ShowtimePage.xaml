@@ -142,12 +142,12 @@
             HorizontalAlignment="Right"
             Spacing="20"
             Style="{StaticResource stackContent}">
-            <AutoSuggestBox
+            <!--<AutoSuggestBox
                 Width="300"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 PlaceholderText="Type a control name"
-                QueryIcon="Find" />
+                QueryIcon="Find" />-->
             <Button Command="{Binding AddNewShowtimeCommand}" Style="{StaticResource addButton}">
                 <StackPanel Orientation="Horizontal">
                     <FontIcon Margin="0,0,5,0" Glyph="&#xE710;" />
@@ -157,7 +157,7 @@
 
         </StackPanel>
 
-        <Grid
+        <!--<Grid
             Name="BookDateTime"
             Grid.Row="1"
             Style="{StaticResource BookDateTime}">
@@ -192,7 +192,7 @@
                     HorizontalAlignment="Right"
                     YearVisible="False" />
 
-                <!--  Vertical Line  -->
+                --><!--  Vertical Line  --><!--
                 <Border
                     Width="1"
                     Height="30"
@@ -212,7 +212,7 @@
                     </DropDownButton.Flyout>
                 </DropDownButton>
             </StackPanel>
-        </Grid>
+        </Grid>-->
         <!--  Pivot content goes here  -->
 
         <Grid
@@ -410,19 +410,10 @@
                                 </DataTemplate>
                             </controls:DataGridTemplateColumn.CellTemplate>
                         </controls:DataGridTemplateColumn>
-
-
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
             </Border>
         </Grid>
-
-
-
-
-
-
-
 
     </Grid>
 </Page>

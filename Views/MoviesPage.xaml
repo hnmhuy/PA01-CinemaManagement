@@ -41,7 +41,7 @@
             x:Key="addButton"
             BasedOn="{StaticResource AccentButtonStyle}"
             TargetType="Button">
-            <Setter Property="Background" Value="#3A0057" />
+            <!--  <Setter Property="Background" Value="#3A0057"  -->
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
@@ -123,13 +123,13 @@
             FontWeight="SemiBold"
             Text="All movies" />
 
-        <AutoSuggestBox
+        <!--<AutoSuggestBox
             Grid.Row="0"
             Width="300"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
             PlaceholderText="Type a control name"
-            QueryIcon="Find" />
+            QueryIcon="Find" />-->
 
 
 

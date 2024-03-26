@@ -30,6 +30,7 @@
     <None Remove="Views\GenreDialogContent.xaml" />
     <None Remove="Views\MovieDetailPage.xaml" />
     <None Remove="Views\MoviesPage.xaml" />
+    <None Remove="Views\MyTickets.xaml" />
     <None Remove="Views\NavBarLeft.xaml" />
     <None Remove="Views\NavBarTop.xaml" />
     <None Remove="Views\PersonDialogContent.xaml" />
@@ -136,6 +137,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets\Images\Poster\" />
+    <Folder Include="Assets\Images\Person\" />
     <Folder Include="ValueConverters\" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +159,9 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <Page Update="Views\MyTickets.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\PersonDialogContent.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

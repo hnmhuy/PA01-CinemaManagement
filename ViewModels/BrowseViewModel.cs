@@ -1,4 +1,5 @@
 ﻿using CinemaManagement.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,9 @@ namespace CinemaManagement.ViewModels
         public ObservableCollection<Movie> GoldenHours { get; set; }
         public ObservableCollection<Movie> NewRelease { get; set; }
         public ObservableCollection<Movie> BlockBuster { get; set; }
+        public ObservableCollection<Movie> MovieOnSale { get; set; }
         public ObservableCollection<RankMovie> TopTen { get; set; }
+        public Movie PannelMovie { get; set; }
         public DbCinemaManagementContext db = new DbCinemaManagementContext();
         private bool _isLoaded = false;
         public bool IsLoaded
@@ -147,9 +150,14 @@ namespace CinemaManagement.ViewModels
         {
             IsLoaded = false;
             // Await to load data from database
+            // Get the newest movies from database for PannelMovie base on added time
             
+            //PannelMovie = db.Movies.OrderByDescending(m => m.AddedTime).FirstOrDefault();
+
+
             LoadGoldenHours();
             LoadBlockBuster();
+            LoadMovieOnSale();
             LoadTopTen();
             IsLoaded = true;
         }   
@@ -161,7 +169,17 @@ namespace CinemaManagement.ViewModels
             {
                 TopTen = new ObservableCollection<RankMovie>();
             }
-            var temp = db.Movies.OrderByDescending(m => m.Imdbrating).Take(10).ToList();
+
+            var topTenQuer = from st in db.ShowTimes
+                             join t in db.Tickets on st.ShowTimeId equals t.ShowTimeId
+                             join m in db.Movies on st.MovieId equals m.MovieId
+                             where !t.IsAvailable
+                             group m by m into g
+                             orderby g.Count() descending
+                             select g.Key;
+
+            var temp = topTenQuer.Take(10).ToList();
+
             for (int i = 0; i < temp.Count; i++)
             {
                 // Update the AgeCertificate
@@ -173,12 +191,23 @@ namespace CinemaManagement.ViewModels
 
         private void LoadGoldenHours()
         {
-            var temp = db.Movies.Where(m => m.IsGoldenHour == true).OrderBy(m => m.PublishYear).Take(15).ToList();
+            var temp = db.Movies.Where(m => m.IsGoldenHour == true).OrderBy(m => m.PublishYear).ToList();
             if (GoldenHours == null)
             {
                 GoldenHours = new ObservableCollection<Movie>();
             }
             ConvertFromListToObservableCollection(temp, GoldenHours);
+            
+        }
+
+        private void LoadMovieOnSale()
+        {
+            var temp = db.Movies.Where(m => !m.IsGoldenHour && !m.IsBlockbuster).OrderBy(m => m.PublishYear).ToList();
+            if (MovieOnSale == null)
+            {
+                MovieOnSale = new ObservableCollection<Movie>();
+            }
+            ConvertFromListToObservableCollection(temp, MovieOnSale);
             
         }
 
@@ -189,7 +218,7 @@ namespace CinemaManagement.ViewModels
             {
                 BlockBuster = new ObservableCollection<Movie>();
             }
-            var temp = db.Movies.Where(m => m.IsBlockbuster == true).OrderBy(m => m.PublishYear).Take(15).ToList();
+            var temp = db.Movies.Where(m => m.IsBlockbuster == true).OrderBy(m => m.PublishYear).ToList();
             ConvertFromListToObservableCollection(temp, BlockBuster);
         }
 

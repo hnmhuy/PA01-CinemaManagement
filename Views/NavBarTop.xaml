@@ -29,7 +29,7 @@
                     Margin="24,0,12,0"
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
-                    <Image Height="70" Source="\Assets\Icons\app_icon.png" />
+                    <Image Height="25" Source="\Assets\logoWin.png" />
                     <!--<TextBlock
                          x:Name="AppTitle"
                          Margin="12,0,0,0"
@@ -53,6 +53,10 @@
                     Name="Search"
                     Content="Search"
                     Tag="CinemaManagement.Views.SearchPage" />
+                <NavigationViewItem
+                    Name="MyTickets"
+                    Content="My tickets"
+                    Tag="CinemaManagement.Views.MyTickets" />
                 <NavigationViewItem
                     Name="Account"
                     Content="Account"

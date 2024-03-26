@@ -37,7 +37,7 @@ namespace CinemaManagement
         /// </summary>
         /// 
         private Window _mainWindow;
-        public Window MainWindow => _mainWindow;   
+        public Window MainWindow => _mainWindow;
         public bool IsClosedFromAuthenticateWindow { get; set; }
         private (bool, int, string?) formerData;
         public App()
@@ -72,6 +72,18 @@ namespace CinemaManagement
         private void EnsureWindow()
         {
             formerData = AuthenticationControl.RestoreSession();
+            // Check if the session is still valid
+            if (formerData.Item1)
+            {
+                DateTime expired;
+                DateTime.TryParse(formerData.Item3, out expired);
+                if (expired < DateTime.Now)
+                {
+                    AuthenticationControl.DestroySession();
+                    formerData = (false, 0, null);
+                }
+
+            }
             if (formerData.Item1)
             {
                 var uid = formerData.Item2;
@@ -85,7 +97,8 @@ namespace CinemaManagement
                 {
                     _mainWindow = new CustomerWindow();
                 }
-            } else
+            }
+            else
             {
                 _mainWindow = new CustomerWindow();
             }

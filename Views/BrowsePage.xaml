@@ -454,25 +454,27 @@
         <Grid Visibility="{Binding IsLoaded, Converter={StaticResource VisibleConverter}, ConverterParameter=false}">
 
             <Grid.RowDefinitions>
-                <RowDefinition MinHeight="600" MaxHeight="780" />
+                <!--<RowDefinition MinHeight="600" MaxHeight="780" />-->
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Margin="0,0,0,-280">
+            <!--<Grid Grid.Row="0" Margin="0,0,0,-280">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width=".4*" />
                     <ColumnDefinition Width=".6*" />
                 </Grid.ColumnDefinitions>
 
-                <Image
+                <MediaPlayerElement
                     Grid.Row="0"
                     Grid.RowSpan="4"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
-                    Source="\Assets\Images\Poster_Horizontal\elemental.webp"
+                    AreTransportControlsEnabled="True"
+                    AutoPlay="False"
+                    Source="ms-appx:///Assets/Videos/avatar.mp4"
                     Stretch="UniformToFill" />
                 <Rectangle Grid.Column="0" Grid.ColumnSpan="2">
                     <Rectangle.Fill>
@@ -523,13 +525,11 @@
                         <Button Width="180" Style="{StaticResource ButtonRevealStyle}">Book A Ticket</Button>
                     </StackPanel>
                 </Grid>
-
-
-            </Grid>
+            </Grid>-->
 
             <Grid
                 Name="RankingMovie"
-                Grid.Row="1"
+                Grid.Row="0"
                 RowSpacing="2">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -564,34 +564,9 @@
                 </ScrollViewer>
             </Grid>
 
-            <!--<Grid
-            Name="New release"
-            Grid.Row="2"
-            Style="{StaticResource MovieList}">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-
-            <StackPanel Grid.Row="0">
-                <TextBlock Style="{StaticResource MovieListTitle}" Text="Golden Hour" />
-            </StackPanel>
-
-            <ScrollViewer
-                Name="GoldenHourMovieList"
-                Grid.Row="1"
-                Style="{StaticResource MovieListScroller}">
-                <ItemsRepeater ItemTemplate="{StaticResource MovieCardTemplate}" ItemsSource="{Binding NewRealse}">
-                    <ItemsRepeater.Layout>
-                        <StackLayout Orientation="Horizontal" Spacing="12" />
-                    </ItemsRepeater.Layout>
-                </ItemsRepeater>
-            </ScrollViewer>
-        </Grid>-->
-
             <Grid
                 Name="GoldenHour"
-                Grid.Row="3"
+                Grid.Row="1"
                 Style="{StaticResource MovieList}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -616,7 +591,7 @@
 
             <Grid
                 Name="BlockBuster"
-                Grid.Row="4"
+                Grid.Row="2"
                 Style="{StaticResource MovieList}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -624,7 +599,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0">
-                    <TextBlock Style="{StaticResource MovieListTitle}" Text="Golden Hour" />
+                    <TextBlock Style="{StaticResource MovieListTitle}" Text="Block Buster" />
                 </StackPanel>
 
                 <ScrollViewer
@@ -632,6 +607,31 @@
                     Grid.Row="1"
                     Style="{StaticResource MovieListScroller}">
                     <ItemsRepeater ItemTemplate="{StaticResource MovieCardTemplate}" ItemsSource="{Binding BlockBuster}">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Horizontal" Spacing="12" />
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid
+                Name="MovieOnsale"
+                Grid.Row="3"
+                Style="{StaticResource MovieList}">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0">
+                    <TextBlock Style="{StaticResource MovieListTitle}" Text="Movie on sale" />
+                </StackPanel>
+
+                <ScrollViewer
+                    Name="MovieOnsaleList"
+                    Grid.Row="1"
+                    Style="{StaticResource MovieListScroller}">
+                    <ItemsRepeater ItemTemplate="{StaticResource MovieCardTemplate}" ItemsSource="{Binding MovieOnSale}">
                         <ItemsRepeater.Layout>
                             <StackLayout Orientation="Horizontal" Spacing="12" />
                         </ItemsRepeater.Layout>

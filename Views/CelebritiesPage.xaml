@@ -118,13 +118,13 @@
             FontWeight="SemiBold"
             Text="All Celebrities" />
 
-        <AutoSuggestBox
+        <!--<AutoSuggestBox
             Grid.Row="0"
             Width="300"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
             PlaceholderText="Type a control name"
-            QueryIcon="Find" />
+            QueryIcon="Find" />-->
 
         <Pivot
             x:Name="rootPivot"

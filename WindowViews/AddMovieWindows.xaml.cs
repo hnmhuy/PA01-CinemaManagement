@@ -175,13 +175,18 @@ namespace CinemaManagement.WindowViews
                 PickAPhotoOutputTextBlock.Text = file.Name;
                 try
                 {
-                    // Get the folder where the poster will be stored
-                    StorageFolder posterFolder = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("Assets\\Images\\Poster");
+                    string folderPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path + "\\Assets\\Images\\Poster";
 
-                    // Create a new file in the poster folder with the same name as the selected file
-                    StorageFile posterFile = await file.CopyAsync(posterFolder, file.Name, NameCollisionOption.ReplaceExisting);
+                    // Checking if the folder exist or not
+                    if (!Directory.Exists(folderPath))
+                    {
+                        // If the folder does not exist, create it
+                        Directory.CreateDirectory(Windows.ApplicationModel.Package.Current.InstalledLocation.Path + "\\Assets\\Images");
+                        Directory.CreateDirectory(Windows.ApplicationModel.Package.Current.InstalledLocation.Path + "\\Assets\\Images\\Poster");
+                    }
 
-                    // Optionally, you can store the path of the uploaded poster file for later use
+                    // Copy the selected file to the poster folder
+                    StorageFile posterFile = await file.CopyAsync(StorageFolder.GetFolderFromPathAsync(folderPath).AsTask().Result, file.Name, NameCollisionOption.ReplaceExisting);
                     string posterPath = posterFile.Path;
                 }
                 catch (Exception ex)
@@ -452,7 +457,7 @@ namespace CinemaManagement.WindowViews
 
             }
 
-            string trailerPath = "/Assets/Videos/Videos/dune_part_two.mp4";
+            string trailerPath = "/Assets/Videos/dune_part_two.mp4";
             //if (PickATrailerOutputTextBlock.Text != null)
             //{
             //    trailerPath = "/Assets/Videos/" + PickATrailerOutputTextBlock.Text;

@@ -115,7 +115,7 @@ namespace CinemaManagement.Views
             var newMovieId = AddMovieWindows.newMovieId;
             if (newMovieId == -1) return;
             var db = new DbCinemaManagementContext();
-            var newMovie = db.Movies.Find(newMovieId);
+            var newMovie = db.Movies.Include(m => m.Genres).FirstOrDefault(m => m.MovieId == newMovieId);
             movieViewModel.MoviesList.Add(new MovieCommand(newMovie, movieViewModel.DeleteCommand));
         }
 
