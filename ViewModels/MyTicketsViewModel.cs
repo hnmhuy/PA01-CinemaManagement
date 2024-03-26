@@ -72,8 +72,8 @@ namespace CinemaManagement.ViewModels
                     ticketCount.totalPrice += ticket.Price;
                 }
             }
-
-            var temp = this.Bill.BillVouchers.Select(bv => bv.Voucher).ToList();
+            var db = new DbCinemaManagementContext();   
+            var temp = db.BillVouchers.Include(bv => bv.Voucher).Where(bv => bv.BillId == this.Bill.BillId).Select(bv => bv.Voucher).ToList();
             this.Voucher = temp;
             this.discount = this.Bill.Total - this.ticketCounts.Sum(tc => tc.totalPrice);
         }

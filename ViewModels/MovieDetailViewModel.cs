@@ -593,7 +593,7 @@ namespace CinemaManagement.ViewModels
             var userData = db.Accounts.Where(a => a.AccountId == returnValue.Item2).FirstOrDefault();
             if (DateTime.Now.Month == userData.Dob.Month)
             {
-                var temp = vouchers.Where(v => v.VoucherCode == "BIRTHDATE" + DateTime.Now.Month).FirstOrDefault();
+                var temp = db.Vouchers.Where(v => v.VoucherCode.Equals("BIRTHDATE" + DateTime.Now.Month)).FirstOrDefault();
                 if (temp == null)
                 {
                     // Create a new voucher
@@ -607,9 +607,9 @@ namespace CinemaManagement.ViewModels
                         VoucherCode = "BIRTHDATE" + DateTime.Now.Month
                     };
                     db.Vouchers.Add(voucher);
+                    db.SaveChanges();
                     vouchers.Add(voucher);
                     temp = voucher;
-                    db.SaveChanges();
                 } else if (temp.VoucherAmount == 0)
                 {
                     temp.VoucherAmount = 1;
