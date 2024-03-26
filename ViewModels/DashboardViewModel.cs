@@ -140,10 +140,11 @@ namespace CinemaManagement.ViewModels
 
         private int CountShowTimesThisMonth()
         {
-            DateTime startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            int thisMonth = DateTime.Now.Month;
+            int thisYear = DateTime.Now.Year;
 
             var count = db.ShowTimes
-                               .Where(st => st.ShowDate >= startOfMonth && st.ShowDate <= DateTime.Now)
+                               .Where(st => st.ShowDate.Month == thisMonth && st.ShowDate.Year == thisYear)
                                .Count();
             return count;
         }

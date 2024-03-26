@@ -155,7 +155,8 @@ namespace CinemaManagement.Views
 
         private void HighlightedMovieCard_Closed(object sender, object e)
         {
-            mediaPlayer.Pause();
+            if (mediaPlayer != null)
+                mediaPlayer.Pause();
         }
 
         private void HighlightCardContent_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -168,7 +169,8 @@ namespace CinemaManagement.Views
 
         private void HighlightedMovieCard_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
         {
-            mediaPlayer.Pause();
+            if(mediaPlayer != null)
+                mediaPlayer.Pause();
         }
 
         private void Muted_Checked(object sender, RoutedEventArgs e)
