@@ -106,6 +106,7 @@ namespace CinemaManagement.ViewModels
                    .ToList();  // Load data into memory
 
             var topMovies = showTimes
+                            .Where(st => st.Movie != null)
                             .GroupBy(st => new { st.MovieId, st.Movie.Title, st.Movie.Duration, st.Movie.PublishYear, st.Movie.PosterPath, Genres = string.Join(", ", st.Movie.Genres.Select(g => g.GenreName)), st.Movie.Imdbrating })
                             .Select(g => new
                             {

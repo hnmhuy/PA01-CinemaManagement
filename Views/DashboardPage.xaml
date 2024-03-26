@@ -268,11 +268,11 @@
 
                 <controls:DataGrid.Columns>
 
-                    <controls:DataGridTemplateColumn  Width="*" Header="Rank">
+                    <controls:DataGridTemplateColumn  Width="*" Header="Revenue">
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel HorizontalAlignment="Center" Style="{StaticResource stackContent}">
-                                    <TextBlock Text="{Binding Rank}"/>
+                                    <TextBlock Text="{Binding revenue}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </controls:DataGridTemplateColumn.CellTemplate>
