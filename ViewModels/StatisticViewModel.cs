@@ -67,7 +67,8 @@ namespace CinemaManagement.ViewModels
         }
 
         public ISeries[] _seriesDay;
-        public ISeries[] SeriesDay {
+        public ISeries[] SeriesDay
+        {
             get { return _seriesDay; }
             set
             {
@@ -102,7 +103,7 @@ namespace CinemaManagement.ViewModels
         private LabelVisual _titleMonth;
         public string _selectedShowTime;
         public string SelectedShowTime
-        { 
+        {
             get { return _selectedShowTime; }
             set
             {
@@ -271,7 +272,7 @@ namespace CinemaManagement.ViewModels
 
             _allMovies = new ObservableCollection<Movie>(allMovies);
             _allMovieTitles = new ObservableCollection<string>();
-            foreach(Movie movie in _allMovies)
+            foreach (Movie movie in _allMovies)
             {
                 _allMovieTitles.Add(movie.Title);
             }
@@ -317,7 +318,7 @@ namespace CinemaManagement.ViewModels
             {
                     new DateTimeAxis(TimeSpan.FromDays(1), date => date.ToString("dd", CultureInfo.InvariantCulture))
             };
-            
+
             CalculateMovieRevenueFromDayToDay(SelectedDayFrom, SelectedDayTo);
             CalculateMovieRevenueInAWeek(SelectedWeek);
             CalculateMovieRevenueInMonths(SelectedYear);
@@ -412,7 +413,7 @@ namespace CinemaManagement.ViewModels
             {
                 var yearlyRevenue = db.ShowTimes
                     .Include(st => st.Tickets).ThenInclude(t => t.Bill)
-                    .SelectMany(st => st.Tickets)   
+                    .SelectMany(st => st.Tickets)
                     .Where(t => !t.IsAvailable &&
                                 t.Bill.BookingTime.Year == year)
                     .Sum(t => t.Price);
@@ -446,7 +447,7 @@ namespace CinemaManagement.ViewModels
                     DateTimeOffset startDate = new DateTimeOffset(SelectedDayFrom.Value.Year, SelectedDayFrom.Value.Month, SelectedDayFrom.Value.Day - 1, 0, 0, 0, SelectedWeek.Value.Offset);
                     Debug.WriteLine(SelectedDayFrom);
                     Debug.WriteLine(SelectedDayTo);
-                    double days = (int) (SelectedDayTo.Value - SelectedDayFrom.Value).TotalDays + 1;
+                    double days = (int)(SelectedDayTo.Value - SelectedDayFrom.Value).TotalDays + 1;
                     if (days == 1)
                     {
                         for (int i = 1; i <= days; i++)
@@ -703,7 +704,7 @@ namespace CinemaManagement.ViewModels
 
         public void CalculateMovieRevenueInAWeek(DateTimeOffset? SelectedWeek)
         {
-            if(MovieResult != null)
+            if (MovieResult != null)
             {
                 int daysUntilMonday = (int)SelectedWeek.Value.DayOfWeek - (int)DayOfWeek.Monday;
                 if (daysUntilMonday < 0)
@@ -754,7 +755,9 @@ namespace CinemaManagement.ViewModels
                     daysUntilMonday += 7;
                 }
 
-                DateTimeOffset startDate = new DateTimeOffset(SelectedWeek.Value.Year, SelectedWeek.Value.Month, SelectedWeek.Value.Day - daysUntilMonday - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+                //DateTimeOffset startDate = new DateTimeOffset(SelectedWeek.Value.Year, SelectedWeek.Value.Month, SelectedWeek.Value.Day - daysUntilMonday - 1, 0, 0, 0, SelectedWeek.Value.Offset);
+                var temp = new DateTime(SelectedWeek.Value.Year, SelectedWeek.Value.Month, SelectedWeek.Value.Day).AddDays(-daysUntilMonday - 1);
+                DateTimeOffset startDate = new DateTimeOffset(temp.Year, temp.Month, temp.Day, 0, 0, 0, SelectedWeek.Value.Offset);
 
                 Debug.WriteLine(startDate);
                 var weeklyRevenues = new ObservableCollection<DailyRevenue>();
@@ -856,7 +859,7 @@ namespace CinemaManagement.ViewModels
                     var monthlyRevenue = db.ShowTimes
                         .Include(st => st.Tickets).ThenInclude(t => t.Bill)
                         .SelectMany(st => st.Tickets)
-                        .Where(t => !t.IsAvailable  && t.ShowTime.ShowTimeId == ShowTimeDate.ShowTimeId && t.Bill.BookingTime < endOfMonth && t.Bill.BookingTime >= startOfMonth)
+                        .Where(t => !t.IsAvailable && t.ShowTime.ShowTimeId == ShowTimeDate.ShowTimeId && t.Bill.BookingTime < endOfMonth && t.Bill.BookingTime >= startOfMonth)
                         .Sum(t => t.Price);
 
                     monthlyRevenues.Add(new MonthlyRevenue
@@ -896,7 +899,7 @@ namespace CinemaManagement.ViewModels
 
         public void CalculateMovieRevenueInMonths(DateTimeOffset? SelectedYear)
         {
-            if(MovieResult != null)
+            if (MovieResult != null)
             {
                 var monthlyRevenues = new List<MonthlyRevenue>();
                 Debug.WriteLine(SelectedYear);
@@ -944,7 +947,8 @@ namespace CinemaManagement.ViewModels
                     }
                 };
 
-            } else
+            }
+            else
             {
                 var monthlyRevenues = new List<MonthlyRevenue>();
                 Debug.WriteLine(SelectedYear);
@@ -1033,13 +1037,13 @@ namespace CinemaManagement.ViewModels
 
         private void SearchItem(object obj)
         {
-            foreach(var item in _allMovies)
+            foreach (var item in _allMovies)
             {
                 if (SearchText == item.Title)
                     SelectedItem = item;
             }
             MovieResult = SelectedItem;
-            if(MovieResult != null)
+            if (MovieResult != null)
             {
                 ShowTimeList.Clear();
                 ShowTimeDate.Clear();
@@ -1056,9 +1060,9 @@ namespace CinemaManagement.ViewModels
 
         private void ClearItem(object obj)
         {
-            if(MovieResult != null)
+            if (MovieResult != null)
             {
-                if(ShowTimeList != null)
+                if (ShowTimeList != null)
                 {
                     ShowTimeList.Clear();
                     MovieResult = null;
@@ -1088,10 +1092,11 @@ namespace CinemaManagement.ViewModels
         };
         private void UpdateChart()
         {
-            if(SelectedShowTime == "All")
+            if (SelectedShowTime == "All")
             {
                 validate();
-            } else
+            }
+            else
             {
                 if (ShowTimeList != null)
                 {
