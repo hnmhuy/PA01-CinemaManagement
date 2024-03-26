@@ -136,15 +136,11 @@ namespace CinemaManagement.ViewModels
             this.MyTickets = new List<MyTicketDisplay>();
             foreach (var bill in bills)
             {
-                foreach (var ticket in bill.Tickets)
+                int? showtimeId = db.Tickets.Where(t => t.BillId == bill.BillId).FirstOrDefault().ShowTimeId;
+                if (showtimeId != null)
                 {
-                    var showtimeId = ticket.ShowTimeId;
-                    var myTicket = this.MyTickets.Find(mt => mt.showTime.ShowTimeId == showtimeId);
-                    if (myTicket == null && showtimeId != null)
-                    {
-                        myTicket = new MyTicketDisplay((int)showtimeId, bill);
-                        this.MyTickets.Add(myTicket);
-                    }
+                    MyTicketDisplay myTicket = new MyTicketDisplay((int)showtimeId, bill);
+                    this.MyTickets.Add(myTicket);
                 }
             }
         }
