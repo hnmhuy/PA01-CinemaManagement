@@ -288,7 +288,10 @@ namespace CinemaManagement.ViewModels
             IsAuthenticated = session.Item1 && session.Item2 != -1;
             Authenticate = new RelayCommand(OnAuthenticate);
             BookTicket = new RelayCommand(OnBookTicket);
-
+            if (IsAuthenticated)
+            {
+                AddBirthDateVoucher();
+            }
         }
 
         // Utils
@@ -340,7 +343,7 @@ namespace CinemaManagement.ViewModels
         }
         private void LoadVouchers()
         {
-            var temp = db.Vouchers.Where(v => !v.IsExpired && v.VoucherAmount > 0).ToList();
+            var temp = db.Vouchers.Where(v => !v.IsExpired && v.VoucherAmount > 0 && !v.VoucherCode.Contains("BIRTHDATE")).ToList();
             if (this.vouchers == null)
             {
                 this.vouchers = new ObservableCollection<Voucher>();
@@ -579,6 +582,43 @@ namespace CinemaManagement.ViewModels
         {
             var returnValue = (sender as AuthenticateWindow).returnValue;   
             IsAuthenticated = returnValue.Item1;
+
+            // If this month is the user's birthday, add a birthday voucher
+            AddBirthDateVoucher();
+        }
+
+        private void AddBirthDateVoucher()
+        {
+            var returnValue = AuthenticationControl.RestoreSession();
+            var userData = db.Accounts.Where(a => a.AccountId == returnValue.Item2).FirstOrDefault();
+            if (DateTime.Now.Month == userData.Dob.Month)
+            {
+                var temp = vouchers.Where(v => v.VoucherCode == "BIRTHDATE" + DateTime.Now.Month).FirstOrDefault();
+                if (temp == null)
+                {
+                    // Create a new voucher
+                    var voucher = new Voucher()
+                    {
+                        DiscountAmount = 50,
+                        IsExpired = false,
+                        IsPercentageDiscount = true,
+                        RequirementAmount = 0,
+                        VoucherAmount = 1,
+                        VoucherCode = "BIRTHDATE" + DateTime.Now.Month
+                    };
+                    db.Vouchers.Add(voucher);
+                    vouchers.Add(voucher);
+                    temp = voucher;
+                    db.SaveChanges();
+                } else if (temp.VoucherAmount == 0)
+                {
+                    temp.VoucherAmount = 1;
+                    db.Vouchers.Update(temp);
+                    db.SaveChanges();
+                }
+                checkBoxVouchers.Add(new CheckBoxVoucher() { Voucher = temp, IsAvailable = true, IsChecked = false });
+
+            }
         }
 
         public bool CanBookTicket(object obj)
@@ -611,6 +651,7 @@ namespace CinemaManagement.ViewModels
                     }
                 }
                 bill.Total = tempTotal;
+
                 db.Bills.Add(bill);
                 try
                 {

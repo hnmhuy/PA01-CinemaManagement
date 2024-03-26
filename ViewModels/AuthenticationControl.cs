@@ -32,7 +32,7 @@ namespace CinemaManagement.ViewModels
         static public void SaveSession(int uid)
         {
             Windows.Storage.ApplicationData.Current.LocalSettings.Values[STORAGE_UID] = uid;
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values[STORAGE_EXPIRED_DATE] = DateTime.Now.AddHours(1).ToString();
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values[STORAGE_EXPIRED_DATE] = DateTime.Now.AddHours(3).ToString();
         }   
 
         static public void DestroySession()

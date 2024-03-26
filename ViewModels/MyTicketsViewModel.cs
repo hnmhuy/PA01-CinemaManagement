@@ -73,7 +73,8 @@ namespace CinemaManagement.ViewModels
                 }
             }
 
-            this.Voucher = this.Bill.BillVouchers.Select(bv => bv.Voucher).ToList();
+            var temp = this.Bill.BillVouchers.Select(bv => bv.Voucher).ToList();
+            this.Voucher = temp;
             this.discount = this.Bill.Total - this.ticketCounts.Sum(tc => tc.totalPrice);
         }
 
@@ -161,8 +162,11 @@ namespace CinemaManagement.ViewModels
             StringBuilder sb = new StringBuilder();
             foreach (var voucher in vouchers)
             {
-                sb.Append(voucher.VoucherCode);
-                sb.Append(", ");
+                if (voucher != null)
+                {
+                    sb.Append(voucher.VoucherCode);
+                    sb.Append(", ");
+                }
             }
             return sb.ToString();
         }

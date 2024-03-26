@@ -41,8 +41,8 @@ namespace CinemaManagement.Views
             _viewModel = new ShowtimeModifyViewModel(showTime);
             this.DataContext = _viewModel;
             _viewModel.PropertyChanged += _viewModel_PropertyChanged;
-            DatePicker.MinDate = DateTime.Now.AddDays(1);
-            DatePicker.MaxDate = DateTime.Now.AddDays(8);
+            //DatePicker.MinDate = DateTime.Now.AddDays(1);
+            //DatePicker.MaxDate = DateTime.Now.AddDays(8);
             if (showTime != null)
             {
                 BindingIfShowtimeExist();
